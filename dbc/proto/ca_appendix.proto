@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package localization;
+
+enum SensorType {
+  kUnKnown = 0;
+  kDeadReckon = 1;
+  kSemantic = 2;
+  kGnss = 3;
+  kVisionFeature = 4;
+  kFusion = 20;
+}
+
+enum LocStatus {
+  kInvalid = 0;
+  kUninitialized = 1;
+  kFailure = 2;
+  kGnssFilter = 3;
+  kFusionFilterLat = 4;
+  kFusionFilter = 5;
+}
+
+message CaAppendix {
+  double heading = 1;
+  double confidence = 2;
+  .localization.SensorType type = 3;
+  .localization.LocStatus loc_status = 4;
+}
+

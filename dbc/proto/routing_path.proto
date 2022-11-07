@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+import "CaApaPNCCommon.proto";
+package RoutePlanning;
+
+enum RoutingPlanningStatus {
+  ROUTING_DEFAULT = 0;
+  ROUTING_SUCCESS = 1;
+  ROUTING_FAILED = 2;
+}
+
+enum Status {
+  UNKNOWN = 0;
+  AVAILABLE = 1;
+  UNAVAILABLE = 2;
+}
+
+enum SlotType {
+  SLOT_TYPE_UNKNOWN = 0;
+  PARALLEL = 1;
+  VERTICAL = 2;
+  ANGULAR = 3;
+}
+
+message RoutingPath {
+  .CaApaPNCCommon.Header header = 1;
+  .CaApaPNCCommon.FunctionType function_type = 2;
+  .RoutePlanning.RoutingPlanningStatus planning_status = 3;
+  int32 points_num = 4;
+  repeated .RoutePlanning.RoutePoint route_points = 5;
+  .RoutePlanning.Slot goal_slot = 6;
+  double point_dist = 7;
+  int32 goal_matched_idx_on_path = 8;
+}
+
+message RoutePoint {
+  int32 map_id = 1;
+  int32 idx = 2;
+  double x = 3;
+  double y = 4;
+  double z = 5;
+  double heading = 6;
+  double curvature = 7;
+  double left_boudary = 8;
+  double right_boudary = 9;
+  double slope = 10;
+  int32 type = 11;
+  string floor_name = 12;
+}
+
+message Slot {
+  int32 map_id = 1;
+  .RoutePlanning.Status status = 2;
+  string id = 3;
+  .RoutePlanning.SlotType type = 4;
+  int32 link_id = 5;
+  repeated .RoutePlanning.Pose3D vertices = 6;
+  string floor_name = 7;
+}
+
+message Pose2D {
+  double x = 1;
+  double y = 2;
+}
+
+message Pose3D {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+

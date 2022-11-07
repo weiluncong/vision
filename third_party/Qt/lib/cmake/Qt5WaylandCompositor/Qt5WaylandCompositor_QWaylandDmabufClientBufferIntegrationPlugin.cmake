@@ -1,0 +1,6 @@
+
+add_library(Qt5::QWaylandDmabufClientBufferIntegrationPlugin MODULE IMPORTED)
+
+_populate_WaylandCompositor_plugin_properties(QWaylandDmabufClientBufferIntegrationPlugin RELEASE "wayland-graphics-integration-server/liblinux-dmabuf-unstable-v1.so")
+
+list(APPEND Qt5WaylandCompositor_PLUGINS Qt5::QWaylandDmabufClientBufferIntegrationPlugin)

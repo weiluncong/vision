@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package AebProto;
+
+message FromAEB {
+  .AebProto.AebResult aeb_result = 1;
+  .AebProto.AebTriggerAndDiagnostic aeb_triggeranddiagnostic = 2;
+}
+
+message AebResult {
+  bool shadowmode_trg = 1;
+  uint32 version = 2;
+  uint32 shadowmode_flag = 3;
+  bool aeb_decctrlavail = 4;
+  double aeb_targetdc = 5;
+  bool awb_available = 6;
+  uint32 awb_level = 7;
+  bool prf_avaiable = 8;
+  uint32 aba_abalevel = 9;
+  bool fcw_warmflag = 10;
+  bool aeb_hold = 11;
+  bool cib_alert_request = 12;
+  bool cib_autobrkreq = 13;
+  bool autobrkreq = 14;
+  uint32 autobrkreqtyp = 15;
+  double fitvehiclespeedr = 16;
+  double cip_ttc = 17;
+  bool pedbrakeactive = 18;
+  bool pedalertrequest = 19;
+  uint32 aeb_arc = 20;
+  uint32 cip_id = 21;
+  double cip_range = 22;
+  double cip_rangerate = 23;
+  double cip_latpos = 24;
+  double cip_rangeaccel = 25;
+  uint32 cip_match_conf = 26;
+  bool useped = 27;
+  uint32 cip_class = 28;
+  double cip_latrate = 29;
+  bool override = 30;
+  double traget_xolc = 31;
+  uint32 flba_flag = 32;
+  uint32 prefill_flag = 33;
+  uint32 lowbrake_flag = 34;
+  uint32 highbrake_flag = 35;
+  uint32 fullbrake_flag = 36;
+  uint32 pcs_brakerqlevel = 37;
+  bool releasebrakecmd = 38;
+  double time_to_turn = 39;
+  double time_to_brake = 40;
+  uint32 drvengage = 41;
+  bool cip_moveable = 42;
+  bool fcw_request = 43;
+  bool warningjerk_request = 44;
+  bool dis_warning_request = 45;
+  uint32 aeb_controltrpe = 46;
+  bool distance_warning_request = 47;
+  double eba_decelrequest = 48;
+  bool eba_request = 49;
+  bool hba_request = 50;
+  bool aeb_controlmode = 51;
+}
+
+message AebTriggerAndDiagnostic {
+  bool is_trigger_adr = 1;
+  uint32 diagnostic_code = 2;
+}
+

@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package ApaRenderProto;
+
+message SceneRecData {
+  .ApaRenderProto.Header header = 1;
+  repeated .ApaRenderProto.ObjectsData objects = 2;
+  .ApaRenderProto.CarRealInfo car_real_info = 3;
+  .ApaRenderProto.TargetParkingSlot target_park_slot = 4;
+  repeated .ApaRenderProto.Pos global_path = 5;
+  repeated .ApaRenderProto.Pos local_path = 6;
+  repeated .ApaRenderProto.Pos parking_path = 7;
+  repeated .ApaRenderProto.Pos parking_traveled_path = 8;
+  .ApaRenderProto.PathParam path_param = 9;
+  repeated .ApaRenderProto.LaneLine lines = 10;
+}
+
+message Header {
+  double time_stamp = 1;
+  uint32 seq = 2;
+  string frame_id = 3;
+}
+
+message Pos {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+  double heading_angle = 4;
+  string floor_name = 5;
+}
+
+message Size {
+  double length = 1;
+  double width = 2;
+  double height = 3;
+}
+
+message ObjectsData {
+  uint32 id = 1;
+  uint32 type = 2;
+  uint32 state = 3;
+  .ApaRenderProto.Pos pos = 4;
+  .ApaRenderProto.Size size = 5;
+  uint32 color = 6;
+  uint32 speed = 7;
+  uint32 turn_signal = 8;
+}
+
+message CarRealInfo {
+  .ApaRenderProto.Pos pos = 1;
+  uint32 speed = 2;
+  uint32 gear_position = 3;
+  uint32 left_distance = 4;
+}
+
+message TargetParkingSlot {
+  .ApaRenderProto.Pos pos = 1;
+  .ApaRenderProto.Size size = 2;
+}
+
+message PathParam {
+  uint32 target_park_slot_valid = 1;
+  uint32 global_path_valid = 2;
+  uint32 global_path_count = 3;
+  uint32 local_path_valid = 4;
+  uint32 local_path_count = 5;
+  uint32 parking_path_valid = 6;
+  uint32 parking_path_count = 7;
+  uint32 parking_traveled_path_valid = 8;
+  uint32 parking_traveled_path_count = 9;
+}
+
+message LaneLine {
+  uint32 line_track_id = 1;
+  uint32 line_lr = 2;
+  uint32 type = 3;
+  uint32 color = 4;
+  double start_x = 5;
+  double end_x = 6;
+  double curve_parameter_a0 = 7;
+  double curve_parameter_a1 = 8;
+  double curve_parameter_a2 = 9;
+  double curve_parameter_a3 = 10;
+  double mean_curvature = 11;
+}
+

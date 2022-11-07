@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package forstmodcProto;
+
+message BusForStm {
+  uint32 srs_crashout_front = 1;
+  uint32 srs_crashout_left = 2;
+  uint32 srs_crashout_right = 3;
+  uint32 srs_crashout_rear = 4;
+  uint32 srs_crashout_micro = 5;
+  uint32 cdc_totmilg = 6;
+  uint32 rcan_ib_brk_pedl_sts_gb = 7;
+  uint32 epb_status = 8;
+  double time_stamp = 9;
+}
+
+message BusForOdc {
+  uint32 lvsm_failurestatus = 1;
+  uint32 lvsm_leftfront_camera_failure = 2;
+  uint32 lvsm_rear_camera_failure = 3;
+  uint32 lvsm_rightrear_camera_failure = 4;
+  uint32 lvsm_rightfront_camera_failure = 5;
+  uint32 lvsm_leftrear_camera_failure = 6;
+  uint32 ins_sts = 7;
+  uint32 ins_imu_valid = 8;
+  uint32 ipju_ads_sts_e2e_faout = 9;
+  uint32 ipju_ads_show_infa = 10;
+  uint32 ipju_ads_show_outfa = 11;
+  uint32 rcan_eps2_latctrl_availability_status = 12;
+  uint32 rcan_eps2_adas_activemode = 13;
+  uint32 rcan_eps2_ads_abortfeedback = 14;
+  uint32 rcan_eps2_ads_controlfeedback = 15;
+  uint32 ibcu_apc_fullfunc_avail = 16;
+  uint32 vcu_com_fltsts = 17;
+  uint32 rbm_veh_standstill = 18;
+  uint32 esp_lat_accel = 19;
+  uint32 fr_workmode = 20;
+  uint32 rlr_workmode = 21;
+  uint32 lvsm_workmode = 22;
+  uint32 fc_cam_workmode = 23;
+  uint32 rrr_workmode = 24;
+  uint32 flr_workmode = 25;
+  uint32 frr_workmode = 26;
+  uint32 lvsm_calibration_status = 27;
+  uint32 bcm_sqf_q = 28;
+  double time_stamp = 29;
+}
+

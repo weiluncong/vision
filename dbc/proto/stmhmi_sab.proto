@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "CaApaPNCCommon.proto";
+package stmhmisab;
+
+message Twist {
+  double linear = 1;
+  double angular = 2;
+  double covariance = 3;
+}
+
+message Quaternion {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+  double w = 4;
+}
+
+message Pose {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+  .stmhmisab.Quaternion q = 4;
+  double covariance = 5;
+  double heading = 6;
+  double confidence = 7;
+}
+
+message BusOdometry {
+  .stmhmisab.Pose pose = 1;
+  .stmhmisab.Twist twist = 2;
+  uint32 type = 3;
+  uint32 apa7func = 4;
+  .CaApaPNCCommon.Header header = 5;
+  int32 avpfloor = 6;
+}
+

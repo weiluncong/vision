@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package localization;
+
+message Header {
+  double time_stamp = 1;
+  uint32 seq = 2;
+  string frame_id = 3;
+  bool time_valid = 4;
+}
+

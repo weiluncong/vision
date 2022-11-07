@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "header.proto";
+import "odometry.proto";
+package localization;
+
+message Channel {
+  string name = 1;
+  repeated double values = 2;
+}
+
+message PointCloud {
+  .localization.Header header = 1;
+  repeated .localization.Point points = 2;
+  repeated .localization.Channel channels = 3;
+}
+

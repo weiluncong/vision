@@ -1,0 +1,158 @@
+syntax = "proto3";
+
+package FromgrdProto;
+
+message BusAdsHUSetProcs {
+  uint32 grd_iacchwa_function_ena_sts = 1;
+  uint32 grd_irlc_function_ena_sts = 2;
+  uint32 grd_ads_lane_change_voice_ena_sts = 3;
+  uint32 grd_udlc_function_ena_sts = 4;
+  uint32 grd_nda_function_ena_sts = 5;
+  uint32 grd_nda_nav_ena_sts = 6;
+  uint32 grd_nda_set_spd_mode_sts = 7;
+  uint32 grd_nda_audio_war_ena_sts = 8;
+  uint32 grd_csl_ena_sts = 9;
+  uint32 grd_over_speed_voice_warn_ena_sts = 10;
+  int32 grd_over_speed_warn_offset_ena_sts = 11;
+  uint32 grd_ads_safe_voice_enable_sts = 12;
+  uint32 grd_ads_road_voice_enable_sts = 13;
+  uint32 grd_companion_assit_mode_enable_sts = 14;
+  uint32 grd_lane_change_style_sts = 15;
+  double time_stamp = 16;
+}
+
+message BusButtonProcs {
+  uint32 grd_crusie_switch_sts = 1;
+  uint32 grd_cancel_switch_sts = 2;
+  uint32 grd_dist_switch_plus_sts = 3;
+  uint32 grd_iacc_switch_sts = 4;
+  uint32 grd_res_switch_sts = 5;
+  uint32 grd_set_switch_sts = 6;
+  uint32 grd_dist_switch_reduce_sts = 7;
+  double time_stamp = 8;
+}
+
+message BusChassisFilureSts {
+  uint32 grd_main_power_system_failure_sts = 1;
+  uint32 grd_main_brake_system_failure_sts = 2;
+  uint32 grd_2nd_brake_system_failure_sts = 3;
+  uint32 grd_main_epb_system_failure_sts = 4;
+  uint32 grd_2nd_epb_system_failure_sts = 5;
+  uint32 grd_main_steering_system_failure_sts = 6;
+  uint32 grd_2nd_steering_system_failure_sts = 7;
+  uint32 grd_main_sas_sensor_failure_sts = 8;
+  uint32 grd_2nd_sas_sensor_failure_sts = 9;
+  uint32 grd_main_tyer_spd_signal_sts = 10;
+  uint32 grd_2nd_tyer_spd_signal_sts = 11;
+  uint32 grd_main_steer_torq_sensor_fail_sts = 12;
+  uint32 grd_2nd_steer_torq_sensor_fail_sts = 13;
+  double time_stamp = 14;
+}
+
+message BusDriverOperation {
+  uint32 grd_hands_off_sts_by_eps = 1;
+  uint32 grd_hands_off_sts_by_all = 2;
+  uint32 grd_driver_head_postion_offset_level = 3;
+  uint32 grd_driver_shake_ster_wheel_sts = 4;
+  uint32 grd_driver_pull_ster_wheel_sts = 5;
+  uint32 grd_debug_req = 6;
+  uint32 grd_driver_takeover_lateralctl = 7;
+  uint32 grd_driver_indriverseat_flag = 8;
+  uint32 grd_driver_not_drive_sts = 9;
+  double time_stamp = 10;
+}
+
+message BusEnvironment {
+  uint32 grd_environment_brightness_sts = 1;
+  uint32 grd_rain_sts = 2;
+  uint32 grd_temperature_sts = 3;
+  double time_stamp = 4;
+}
+
+message BusRoadSts {
+  uint32 grd_current_lane_width = 1;
+  uint32 grd_current_lane_congestion = 2;
+  uint32 grd_tunnel_exit_area_sts = 3;
+  uint32 grd_road_jolt_sts = 4;
+  uint32 grd_road_smooth_sts = 5;
+  double time_stamp = 6;
+}
+
+message BusVehBodySts {
+  uint32 grd_tyre_pressure_sts = 1;
+  uint32 grd_tyre_temperature_sts = 2;
+  uint32 grd_wiper_move_stop_sts = 3;
+  uint32 grd_left_turn_lights_sts = 4;
+  uint32 grd_right_turn_lights_sts = 5;
+  uint32 grd_brake_lights_sts = 6;
+  uint32 grd_low_beam_sts = 7;
+  uint32 grd_doors_sts = 8;
+  uint32 grd_windows_sts = 9;
+  uint32 grd_ims_sts = 10;
+  double time_stamp = 11;
+}
+
+message BusVehConditon {
+  uint32 grd_continue_driving_odo_sts = 1;
+  uint32 grd_vehicle_stable_sts = 2;
+  uint32 grd_vehicle_over_spd_sts = 3;
+  uint32 grd_vehicle_speed_at_ip = 4;
+  uint32 grd_vehicle_foll_forward_sts = 5;
+  uint32 grd_vehicle_foll_back_sts = 6;
+  uint32 grd_vehicle_risk_alarm_sts = 7;
+  double time_stamp = 8;
+}
+
+message BusRadCamSts {
+  uint32 grd_front_mradar_sts = 1;
+  uint32 grd_flr_sts = 2;
+  uint32 grd_frr_sts = 3;
+  uint32 grd_rlr_sts = 4;
+  uint32 grd_rrr_sts = 5;
+  uint32 grd_front_camera_sts = 6;
+  double time_stamp = 7;
+}
+
+message BusActiveSts {
+  uint32 grd_esp_aeb_fun_res_sts = 1;
+  uint32 grd_aeb_active_sts = 2;
+  uint32 grd_fcw_active_sts = 3;
+  uint32 grd_tjp_ena_sts = 4;
+  uint32 grd_ddsa_ena_sts = 5;
+  uint32 grd_heart_beat = 6;
+  uint32 grd_ads_error_sts = 7;
+  double time_stamp = 8;
+}
+
+message grd_learning_map_move_dis {
+  uint32 TripDis = 1;
+  uint32 BackDis = 2;
+  uint32 DisSts = 3;
+}
+
+message BusAPASts {
+  uint32 grd_apa_vehicle_4g_singal_sts = 1;
+  uint32 grd_apa_vehicle_ble_connect_sts = 2;
+  uint32 grd_remote_distance_set_sts = 3;
+  uint32 grd_remote_safe_distance_set_sts = 4;
+  uint32 grd_apa_ecu_login_tsp_sts = 5;
+  uint32 grd_apa_app_heartbeat_sts = 6;
+  uint32 grd_apa_system_failure_for_tjp_flag = 7;
+  uint32 grd_parking_assistant_enable_sts = 8;
+  uint32 grd_automated_valet_parking_enable_sts = 9;
+  uint32 grd_novice_enable_sts = 10;
+  uint32 grd_apa_rpa_key_parking_ctrl_singal_sts = 11;
+  uint32 grd_apa_rpa_key_fb_ctrl_singal_sts = 12;
+  .FromgrdProto.grd_learning_map_move_dis grd_learing_map = 13;
+  double time_stamp = 14;
+}
+
+message BusSwitchSts {
+  uint32 grd_tsr_enable_sts = 1;
+  uint32 grd_tla_enable_sts = 2;
+  uint32 grd_fkp_warning_sound_enable_sts = 3;
+  uint32 grd_front_radar_fun_enable_sts = 4;
+  uint32 grd_laeb_enable_sts = 5;
+  double time_stamp = 6;
+}
+

@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib/x86_64-linux-gnu
+includedir=${prefix}/include
+plugindir=${libdir}/OGRE-1.9.0
+
+Name: OGRE
+Description: Object-Oriented Graphics Rendering Engine
+Version: 1.9.0
+URL: http://www.ogre3d.org
+Libs: -L${libdir} -lOgreMain  -lpthread
+Cflags: -I${includedir} -I${includedir}/OGRE -pthread

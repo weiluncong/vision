@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package CaApaPNCCommon;
+
+enum FunctionType {
+  FUNCTION_TYPE_UNKNOWN = 0;
+  FUNCTION_TYPE_AVP = 1;
+  FUNCTION_TYPE_HZP = 2;
+  FUNCTION_TYPE_SUMMON_AVP = 3;
+  FUNCTION_TYPE_SUMMON_HZP = 4;
+  FUNCTION_TYPE_ERROR = 5;
+}
+
+message Header {
+  double time_stamp = 1;
+  uint32 seq = 2;
+  string frame_id = 3;
+}
+

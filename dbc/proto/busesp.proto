@@ -1,0 +1,130 @@
+syntax = "proto3";
+
+package BusespProto;
+
+message BusBrkPressure {
+  double ibcu_pfs_brake_pressure = 1;
+  uint32 ibcu_pfs_brake_pressure_valid = 2;
+  double ibcu_plunger_brake_pressure = 3;
+  uint32 ibcu_plunger_brake_pressure_valid = 4;
+  double esp_mas_cyl_brake_pressure = 5;
+  uint32 esp_mas_cyl_brake_pressure_valid = 6;
+  double time_stamp = 7;
+}
+
+message BusEpbFunInfo {
+  uint32 cdc_epb_swt_set = 1;
+  uint32 epb_achieved_clamp_force = 2;
+  uint32 epb_achieved_clamp_force_primary = 3;
+  uint32 epb_apa_request_available = 4;
+  uint32 epb_fail_statuss_primary = 5;
+  uint32 epb_failr_sts = 6;
+  uint32 epb_sts = 7;
+  uint32 epb_sts_primary = 8;
+  uint32 esp_epb_req_avl = 9;
+  uint32 epb_switch_position = 10;
+  uint32 epb_switch_position_valid = 11;
+  double time_stamp = 12;
+  uint32 dcm_epbfctlamp = 13;
+  uint32 dcm_epb1fctlamp = 14;
+  uint32 dcm_epbfailrlamp = 15;
+  uint32 dcm_epb1failrlamp = 16;
+}
+
+message BusEspFbSts {
+  uint32 esp_brake_force = 1;
+  uint32 esp_cdd_active = 2;
+  uint32 esp_cdd_available = 3;
+  uint32 esp_prefill_active = 4;
+  uint32 esp_prefill_available = 5;
+  uint32 esp_qdcacc = 6;
+  uint32 esp_brk_li_on_req = 7;
+  uint32 ibcu_adc_active_state = 8;
+  uint32 ibcu_adc_ramp_off_suspend_state = 9;
+  uint32 ibcu_communication_invalid = 10;
+  uint32 ibcu_full_func_avail = 11;
+  uint32 ibcu_reduce_func_avail = 12;
+  double time_stamp = 13;
+  double dcm_esp_brakedischightempwarning = 14;
+}
+
+message BusEspFbStsforAPA {
+  uint32 apa_available_full_function = 1;
+  uint32 apa_available_reduced_function = 2;
+  uint32 esp_apa_driver_override = 3;
+  uint32 esp_apa_status = 4;
+  uint32 esp_cdd_active_apa = 5;
+  uint32 esp_cdd_available_apa = 6;
+  uint32 esp_apa_cddap_vehicle_hold = 7;
+  double time_stamp = 8;
+}
+
+message BusEspFuncSts {
+  uint32 esp_aba_active = 1;
+  uint32 esp_aba_available = 2;
+  uint32 esp_aeb_available = 3;
+  uint32 esp_aeb_dec_active = 4;
+  uint32 esp_awb_active = 5;
+  uint32 esp_awb_available = 6;
+  uint32 esp_brake_over_heat_brake_disc_temp = 7;
+  uint32 esp_imu_calibrated = 8;
+  uint32 esp_abs_actv = 9;
+  uint32 esp_abs_failr = 10;
+  uint32 esp_actv_sts = 11;
+  uint32 esp_auto_hold_actv_sts = 12;
+  uint32 esp_fct_open_sts = 13;
+  int32 esp_re_whl_dec_tar_tq = 14;
+  uint32 esp_re_whl_dec_tar_tq_actv = 15;
+  int32 esp_re_whl_inc_tar_tq = 16;
+  uint32 esp_re_whl_inc_tar_tq_actv = 17;
+  uint32 esp_tcs_actv_sts = 18;
+  uint32 esp_tcs_failr = 19;
+  uint32 esp_vdc_actv_sts = 20;
+  uint32 esp_veh_standstill = 21;
+  uint32 esp_cdp_parking_active_for_acc = 22;
+  uint32 esp_cdp_parking_avail_for_acc = 23;
+  uint32 esp_hdc_status = 24;
+  uint32 esp_hhc_active = 25;
+  uint32 esp_rwu_parking_active_for_acc = 26;
+  uint32 esp_rwu_parking_avail_for_acc = 27;
+  double time_stamp = 28;
+}
+
+message BusEspMbr {
+  int32 mb_rgn_tar_whl = 1;
+  uint32 mb_rgn_tar_whl_qlfr = 2;
+  double time_stamp = 3;
+}
+
+message BusEspMotionInfo {
+  double esp_lat_accel = 1;
+  uint32 esp_lat_accel_valid = 2;
+  double esp_long_accel = 3;
+  uint32 esp_long_accel_valid = 4;
+  double esp_yaw_rate = 5;
+  uint32 esp_yaw_rate_valid = 6;
+  double esp_veh_spd = 7;
+  uint32 esp_veh_spd_vld = 8;
+  double time_stamp = 9;
+}
+
+message BusEspWhlSpd {
+  uint32 whl_spd_frnt_le_pls = 1;
+  uint32 whl_spd_frnt_ri_pls = 2;
+  double whl_spd_le_frnt_data = 3;
+  uint32 whl_spd_le_frnt_data_vld = 4;
+  uint32 whl_spd_le_frnt_dir = 5;
+  double whl_spd_le_re_data = 6;
+  uint32 whl_spd_le_re_data_vld = 7;
+  uint32 whl_spd_le_re_dir = 8;
+  uint32 whl_spd_re_le_pls = 9;
+  uint32 whl_spd_re_ri_pls = 10;
+  double whl_spd_ri_frnt_data = 11;
+  uint32 whl_spd_ri_frnt_data_vld = 12;
+  uint32 whl_spd_ri_frnt_dir = 13;
+  double whl_spd_ri_re_data = 14;
+  uint32 whl_spd_ri_re_data_vld = 15;
+  uint32 whl_spd_ri_re_dir = 16;
+  double time_stamp = 17;
+}
+

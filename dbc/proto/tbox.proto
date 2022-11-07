@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package TboxProto;
+
+message BusTboxSts {
+  uint32 tbox_apa_control_enable = 1;
+  uint32 tbox_apa_function_req = 2;
+  uint32 tbox_hzp_function_req = 3;
+  uint32 tbox_remote_detect_req = 4;
+  uint32 tbox_remote_dis_req = 5;
+  uint32 tbox_remote_start_req = 6;
+  uint32 tbox_signal_strength = 7;
+  uint32 tbox_signal_type = 8;
+  uint32 tbox_vehicle_vedio_detect_req = 9;
+  uint32 tbox_hzp_control_enable = 10;
+  double time_stamp = 11;
+  double dcm_tbox_app_xlevel = 12;
+  double dcm_tbox_app_ylevel = 13;
+}
+
+message BusTboxTime {
+  uint32 tbox_local_ti_date = 1;
+  uint32 tbox_local_ti_hr = 2;
+  uint32 tbox_local_ti_mins = 3;
+  uint32 tbox_local_ti_mth = 4;
+  uint32 tbox_local_ti_sec = 5;
+  uint32 tbox_local_ti_vld = 6;
+  uint32 tbox_local_ti_year = 7;
+  double time_stamp = 8;
+}
+

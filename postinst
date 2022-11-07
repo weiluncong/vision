@@ -1,0 +1,73 @@
+#! /bin/bash
+
+# 注意:安装脚本中不使用sudo
+
+app_name=cavision
+
+prefix_bin="/usr/local/bin/"
+prefix_opt="/opt/${app_name}/"
+
+# 添加启动脚本的软链接
+script="$app_name"
+bin=""
+for m in $script $bin
+do
+    link=$prefix_bin$m
+    if [ -h $link ] #软链接
+    then
+        rm -rf $link
+    fi
+
+    if [[ $script =~ $m ]]
+    then
+        file=$prefix_opt$m'.sh'
+        chmod +x $file
+        ln -s $file $link
+    else
+        file=$prefix_opt$m
+        chmod +x $file
+        ln -s $file $link
+    fi
+done
+
+#if [ -z "$(cat /etc/ld.so.conf)" ]
+#then
+#    echo -e >> /etc/ld.so.conf   # 空文件无法使用sed插入内容, 故而加入一行空行
+#fi
+
+# 正则表达式:
+# * 匹配前面的子表达式一次或多次。要匹配*字符，使用\*。
+# . 匹配除换行符\n以外的任何单字符，要匹配.，使用\.。
+# [ 标记一个中括号表达式的开始，要匹配[，使用\[。
+#line=$(cat /etc/ld.so.conf | grep -xn include[\ ]/etc/ld.so.conf.d/[\*][\.]conf | cut -f1 -d:) # 取出配置文件路径在环境变量中的行数
+#if [ ! -z "$line" ]
+#then
+#    sed -i ${line}d /etc/ld.so.conf # 删除配置文件路径
+#fi
+
+# 将库路径添加到环境变量中
+#lib_root_path="/opt/${app_name}/third_party"
+#libpaths="${lib_root_path} 
+#            ${lib_root_path}/Qt/lib 
+#	    ${lib_root_path}/OpenCV/lib 
+#	    ${lib_root_path}/yaml 
+#            ${lib_root_path}/mdf4 
+#	    ${lib_root_path}/pack 
+#	    ${lib_root_path}/Qt/plugins 
+#	    ${lib_root_path}/Boost 
+#	    ${lib_root_path}/Ogre
+#	    ${lib_root_path}/pcan
+#	    ${lib_root_path}/python3.7m/lib
+#            ${lib_root_path}/capilot/lib"
+
+#lineNum=1
+#for libpath in $libpaths
+#do
+#    sed -i "${lineNum} i ${libpath}" /etc/ld.so.conf # sed -i(edit file in place) "作用范围行 插入行前(i)/行后(a) 插入内容" 文件名
+#    lineNum=$((lineNum+1))
+#done
+
+#echo "include /etc/ld.so.conf.d/*.conf" >> /etc/ld.so.conf # 将配置文件路径写在最后面
+
+ldconfig
+

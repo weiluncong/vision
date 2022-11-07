@@ -1,0 +1,6 @@
+
+add_library(Qt5::QWaylandXCompositeEglClientBufferPlugin MODULE IMPORTED)
+
+_populate_WaylandClient_plugin_properties(QWaylandXCompositeEglClientBufferPlugin RELEASE "wayland-graphics-integration-client/libxcomposite-egl.so")
+
+list(APPEND Qt5WaylandClient_PLUGINS Qt5::QWaylandXCompositeEglClientBufferPlugin)

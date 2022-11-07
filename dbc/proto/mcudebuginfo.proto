@@ -1,0 +1,360 @@
+syntax = "proto3";
+
+package McuDebugInfo;
+
+message BusApaBodyLockCtrl {
+  uint32 apa_back_door_lock_rq = 1;
+  uint32 apa_door_lock_rq = 2;
+}
+
+message BusApaWinCtrl {
+  uint32 apa_driver_window_control = 1;
+  uint32 apa_left_rear_window_control = 2;
+  uint32 apa_passenger_window_control = 3;
+  uint32 apa_right_rear_window_control = 4;
+  uint32 apa_sunroof_control = 5;
+}
+
+message TX550Trigger {
+  uint32 tx550_triger = 1;
+}
+
+message BusApaEspCtrl {
+  uint32 apa_esp_decompression_model = 1;
+  uint32 apa_esp_brake_function_mode = 2;
+  uint32 apa_esp_standstill_request = 3;
+  uint32 apa_esp_dist_to_stop = 4;
+  uint32 apa_emergence_brake = 5;
+  uint32 apa_epb_request = 6;
+  uint32 apa_epb_request_valid = 7;
+  uint32 apa_hsahd_forbidden = 8;
+  uint32 apa_increase_pressure_req = 9;
+  uint32 apa_lsc_action = 10;
+  uint32 apa_prefill_req = 11;
+  uint32 apa_release_pressure_req = 12;
+  double apa_target_acceleration = 13;
+  uint32 apa_target_acceleration_valid = 14;
+}
+
+message BusPEPSCtrl {
+  uint32 peps_apa_close_win_feedback = 1;
+  uint32 peps_apa_engine0ff_feedback = 2;
+  uint32 peps_apa_lock_feedback = 3;
+  uint32 peps_apa_power_mirror_fold_feedback = 4;
+  uint32 peps_apa_remote_parking_off = 5;
+  uint32 peps_apa_remote_parking_on = 6;
+  uint32 peps_lock_key_status = 7;
+  uint32 peps_peps_fail_status = 8;
+  uint32 peps_remote_apa_done_key_off_req = 9;
+  uint32 peps_remote_start_key_status = 10;
+  uint32 peps_trunk_key_status = 11;
+  uint32 peps_un_lock_key_status = 12;
+  uint32 peps_remote_start_feedback = 13;
+}
+
+message BusApaEpsCtrl {
+  double apa_steering_angle_req = 1;
+  uint32 apa_steering_angle_req_protection = 2;
+}
+
+message BusApaEmsCtrl {
+  uint32 apa_acc_ped_shield_req = 1;
+  uint32 apa_engine_trq_req_enable = 2;
+  double apa_eng_torq_req = 3;
+}
+
+message BusApaTcuCtrl {
+  uint32 apa_tcu_clutch_combination_req = 1;
+  uint32 apa_trans_prnd_shift_enable = 2;
+  uint32 apa_trans_prnd_shift_request = 3;
+  uint32 apa_trans_prnd_shift_req_valid = 4;
+  uint32 apa_trq_hold_for_tcu_cl = 5;
+}
+
+message BusAPAStart {
+  uint32 apa_startmode = 1;
+  uint32 parkoutunavailable = 2;
+  uint32 apa_startok = 3;
+  uint32 apa_unactivainfo = 4;
+  uint32 apa_startfail = 5;
+  uint32 drivercancel = 6;
+  uint32 remoteparkin = 7;
+  uint32 rads_avail = 8;
+  uint32 systemfailureflag = 9;
+}
+
+message BusTask50msChassisInfo {
+  uint32 esp_vehiclespeed = 1;
+  uint32 vehstdstill = 2;
+  uint32 vehspdsta = 3;
+  uint32 pgear = 4;
+  uint32 epbapplied = 5;
+  uint32 vehhold = 6;
+  uint32 epbreleased = 7;
+  uint32 tcu_actualgear = 8;
+  uint32 manual = 9;
+  uint32 engineon = 10;
+  uint32 remotesetdist_cm = 11;
+}
+
+message BusTask50msDriverTakeAction {
+  uint32 brkpedpressed = 1;
+  uint32 epbswitchapply = 2;
+  uint32 driveron = 3;
+  uint32 drivertakeover = 4;
+  uint32 driverinterruptgear = 5;
+  uint32 accpedpressed = 6;
+  uint32 epbswitchrelease = 7;
+  uint32 drivertakeeps = 8;
+}
+
+message BusTask50msAppExit {
+  uint32 rfbt_apamaneuvercancel = 1;
+  uint32 gw_safcertsts_exit = 2;
+  uint32 rfbt_bleconnectsts_exit = 3;
+  uint32 smartphone_apamoduleen_exit = 4;
+  uint32 app_exitflag = 6;
+}
+
+message BusTask50msDriverMoveAction {
+  uint32 dircancel = 1;
+  uint32 keypointpress_inout = 2;
+  .McuDebugInfo.BusTask50msAppExit appexit = 3;
+  uint32 safcertfail = 4;
+  uint32 blecutoff = 5;
+  uint32 keypulsesiglost = 6;
+  uint32 apparksuspend = 7;
+  uint32 appmanuevercancel = 8;
+  uint32 keypause_parkin = 9;
+  uint32 keyexit_parkin = 10;
+  uint32 fourgmaneuverstart = 11;
+  uint32 congfigsignal = 12;
+}
+
+message BusPtLtcDebug {
+  uint32 ptstatus = 1;
+  double outdrx_cm = 2;
+  double outdry_cm = 3;
+  double outdrangle_deg = 4;
+  int32 epos_cm = 5;
+  double eyaw_deg = 6;
+  double tarc = 7;
+  int32 dth_cm = 8;
+  uint32 targetgear = 9;
+  double targetspeed = 10;
+  uint32 parkstep = 11;
+  uint32 shiftcounter = 12;
+  double parksteptime_s = 13;
+  uint32 parkstepfinish = 14;
+  int32 inoutmovdist_cm = 15;
+  uint32 firstrgearstatus = 16;
+  uint32 parkpercent = 17;
+  uint32 trackingerrorlevel = 18;
+  uint32 pathvalid = 19;
+  int32 dth_all = 20;
+  uint32 ptversion = 21;
+  uint32 tpcloloopreq = 22;
+  uint32 phase1_type = 23;
+  uint32 phase2_type = 24;
+  uint32 phase3_type = 25;
+  uint32 phase4_type = 26;
+  uint32 phase5_type = 27;
+  int32 phase1_para1 = 28;
+  int32 phase1_para2 = 29;
+  int32 phase1_para3 = 30;
+  int32 phase2_para1 = 31;
+  int32 phase2_para2 = 32;
+  int32 phase2_para3 = 33;
+  int32 phase3_para1 = 34;
+  int32 phase3_para2 = 35;
+  int32 phase3_para3 = 36;
+  int32 phase4_para1 = 37;
+  int32 phase4_para2 = 38;
+  int32 phase4_para3 = 39;
+  int32 phase1_endpoint_x = 40;
+  int32 phase1_endpoint_y = 41;
+  int32 phase2_endpoint_x = 42;
+  int32 phase2_endpoint_y = 43;
+  int32 phase3_endpoint_x = 44;
+  int32 phase3_endpoint_y = 45;
+  int32 phase4_endpoint_x = 46;
+  int32 phase4_endpoint_y = 47;
+  uint32 parkphase = 48;
+  double stependpose = 49;
+  uint32 pathtrackingreq = 50;
+  double globalx = 51;
+  double globaly = 52;
+  double globalang = 53;
+  uint32 actualgear = 54;
+  uint32 vehstandstill = 55;
+  uint32 engtrqreqen = 56;
+  uint32 lsc_finishsta = 57;
+  double ltc_steeringangreq = 58;
+  uint32 ltc_status = 59;
+  uint32 ltcversion = 60;
+  uint32 steermiddle = 61;
+  uint32 steerfull = 62;
+}
+
+message BusVlcOut {
+  uint32 acctrqreqena = 1;
+  uint32 cddaxenable = 2;
+  uint32 vlc_accellimitstate = 3;
+  double pitchfilter_degree = 4;
+  double slopeaccelbyvh = 5;
+  uint32 longactive = 6;
+  uint32 acc24e_cddaxenable = 7;
+  uint32 dectostop_signal = 8;
+  double accel_vh_mpss = 9;
+  double esp_vehiclespeed = 10;
+  uint32 esp_brakeforce = 11;
+  uint32 acc25e_acctrqreqena = 12;
+  double acc24e_acctargetacceleration = 13;
+  double at_lnp_mpss = 14;
+  double roadgrade_mpss = 15;
+  double pitchslopeaccel = 16;
+  uint32 driveoff_request_signal = 17;
+  uint32 decbeltstartstate = 18;
+  double slopeaccelarbitration = 19;
+  double acc25e_acctrqreq = 20;
+  uint32 vlc_decellimitstate = 21;
+  uint32 vlc_deltaccelstate = 22;
+  uint32 vlc_acceldragstatus = 23;
+  double ctrsw_slopeaccel = 24;
+  uint32 deltdcc_iena = 25;
+  double dcc_ierr_saturationed = 26;
+  double dcc_compen_rated = 27;
+  double slope_decel = 28;
+  double standstill_decel = 29;
+  double acctargetacceleration = 30;
+  uint32 dcc_compenena = 31;
+  double vlc_torquepid = 32;
+  double torqued_nm = 33;
+  double torquei_nm = 34;
+  double torquep_nm = 35;
+  uint32 unavailablestatus = 36;
+  double deltaccel = 37;
+  double atrateout_mpsss = 38;
+  double torque_feedforwardatrate = 39;
+  double torque_feedforwardvh = 40;
+  double torque_feedforwardaccel = 41;
+  double torquefeedforwardstart = 42;
+  double torque_feed = 43;
+  double slopetorque_nm = 44;
+  double acctrqreq = 45;
+  double torque_feedforward = 46;
+  uint32 dectostop = 47;
+  uint32 driveoff_request = 48;
+  double at_mpss = 49;
+  double version = 50;
+}
+
+message DebugBusSst {
+  uint32 actatorhandshakests = 1;
+  uint32 vehstdstill = 2;
+  uint32 vehhold = 3;
+  uint32 doorclosed = 4;
+  uint32 esp_vehiclespeed = 5;
+  uint32 pgear = 6;
+  uint32 epbapplied = 7;
+  uint32 epbreleased = 8;
+  uint32 tcu_actualgear = 9;
+  uint32 accclosed = 10;
+  uint32 manual = 11;
+  uint32 dircancel = 12;
+  uint32 rmaslopeok = 13;
+  uint32 slopeok = 14;
+  uint32 inoutmovdiststa = 15;
+  uint32 brkpedpressed = 16;
+  uint32 accpedpressed = 17;
+  uint32 congfigsignal = 18;
+  uint32 appmanueverstart = 19;
+  uint32 apa_buttonpress = 20;
+  uint32 keypointpress_inout = 21;
+  uint32 safcertfail = 22;
+  uint32 blecutoff = 23;
+  uint32 keypulsesiglost = 24;
+  uint32 apparksuspend = 25;
+  uint32 appmanuevercancel = 26;
+  uint32 keypause_parkin = 27;
+  uint32 fourgmaneuverstart = 28;
+  uint32 fourgmaneuvercancel = 29;
+  uint32 fourgmaneuversuspend = 30;
+  uint32 epbswitchapply = 31;
+  uint32 driveron = 32;
+  uint32 drivertakeover = 33;
+  uint32 driverinterruptgear = 34;
+  uint32 epbswitchrelease = 35;
+  uint32 drivertakeeps = 36;
+  uint32 drivercancel = 37;
+  uint32 driverpause = 38;
+  uint32 driveroperate = 39;
+  uint32 inoutdir = 40;
+  uint32 ctrlstatus = 41;
+  uint32 pausemode = 42;
+  uint32 trackingerrorlevel = 43;
+  uint32 steerangleerror = 44;
+  uint32 steeranglerateerror = 45;
+  uint32 deaccreqerror = 46;
+  uint32 abnormal_crosstp_y = 47;
+  uint32 ctrlreq = 48;
+  uint32 holdreq_soc = 49;
+  uint32 od_warning = 50;
+  uint32 sennodereset = 51;
+  uint32 canodereset = 52;
+  uint32 tracksloterror = 53;
+  uint32 lsc_status = 54;
+  uint32 pausetimes = 55;
+  uint32 controlemergencyfinish = 56;
+  uint32 controlnormalfinish = 57;
+  uint32 emergencyparkfinishinfo = 58;
+  uint32 normalparkfinishinfo = 59;
+}
+
+message DebugBusCsmLcm {
+  double vehiclespeed = 1;
+  uint32 eps_apa_abortfeedback = 2;
+  uint32 eps_apa_cnotrolfeedback = 3;
+  uint32 esp_cdd_acive = 4;
+  uint32 esp_cdd_available = 5;
+  uint32 ctrreq = 6;
+  double roadslope = 7;
+  uint32 outcsm_sts_mcu_controlstatus = 8;
+  uint32 pathtrackcontrolreq = 9;
+  uint32 longcontrolreq = 10;
+  uint32 latcontrolreq = 11;
+  uint32 dtc_controlreq = 12;
+  uint32 handshakeabortreasondetail = 13;
+  uint32 actatorhandshakests = 14;
+  uint32 vehiclestandstill = 15;
+  double lsc_targetvehiclespeed = 16;
+  uint32 lsc_longcoordstatue = 17;
+  double lsc_productfriction = 18;
+  double lsc_productprop = 19;
+  double lsc_productslope = 20;
+  double lsc_productintergal = 21;
+  double lsc_targetaccelerationspd = 22;
+  double lsc_targetaccelerationdist = 23;
+  double lsc_slopetorque = 24;
+  double lsc_targetspeedtorque = 25;
+  double lsc_targetspeedaccel = 26;
+  double lsc_targetdistdistctr = 27;
+  double lsc_targetdist = 28;
+  uint32 lsc_releasediststs = 29;
+  double lsc_disttohint_m = 30;
+  uint32 lsc_finishsta = 31;
+  uint32 normalbrktostopflg = 32;
+  uint32 targetgearprocess = 33;
+  double lsc_targettorque = 34;
+  double lsc_targetacceleration = 35;
+  uint32 epb_request = 36;
+  uint32 brakepedalstatus = 37;
+  uint32 actualgear = 38;
+}
+
+message BusParkingInfo {
+  uint32 pausemode = 1;
+  uint32 normalparkfinishinfo = 2;
+  uint32 emergencyparkfinishinfo = 3;
+}
+

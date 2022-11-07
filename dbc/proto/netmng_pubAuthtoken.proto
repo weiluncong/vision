@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package netmngPubAuthtoken;
+
+message AuthToken {
+  string token = 1;
+  string tuid = 2;
+  string secret_key = 3;
+}
+

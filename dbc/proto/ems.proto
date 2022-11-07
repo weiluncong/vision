@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package EmsProto;
+
+message BusEmsMotionInfo {
+  double ems_engine_speed = 1;
+  double ems_frictional_torq = 2;
+  double ems_indicated_driver_req_torq = 3;
+  double ems_indicated_real_eng_torq = 4;
+  double ems_max_indicated_torq = 5;
+  double ems_min_indicated_torq = 6;
+  uint32 ems_torque_constant = 7;
+  double time_stamp = 8;
+}
+
+message BusEmsSts {
+  uint32 ems_accpedel_error = 1;
+  uint32 ems_acc_req_possible = 2;
+  double ems_acc_pedal = 3;
+  uint32 ems_apa_torq_request_available = 4;
+  uint32 ems_ecgp_ovrd = 5;
+  uint32 ems_engine_speed_error = 6;
+  uint32 ems_engine_status = 7;
+  uint32 ems_engine_status_with_stt = 8;
+  uint32 ems_qecacc = 9;
+  double ems_real_acc_pedal = 10;
+  uint32 ems_torq_failure = 11;
+  uint32 ems_brake_pedal_status = 12;
+  double time_stamp = 13;
+}
+

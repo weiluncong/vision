@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+message StateMachine {
+  uint32 active_state = 1;
+  uint32 set_speed = 2;
+  uint32 set_timegap_level = 3;
+}
+

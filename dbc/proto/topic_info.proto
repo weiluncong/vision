@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package topic;
+
+message TopicPubInfo
+{
+    string topicName=1;
+    uint64 batch=2;
+    float average_period=3;
+    float std_var=4;
+    float min=5;
+    float max=6;
+}
+
+message TopicSubInfo
+{
+    string topicName=1;
+    uint64 batch=2;
+    float average_latency=3;
+    float std_var=4;
+    float min=5;
+    float max=6;
+}
+
+
+message TopicStatisticsInfo
+{
+    TopicPubInfo pubInfo=1;
+    TopicSubInfo subInfo=2;
+}

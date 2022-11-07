@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+import "common.proto";
+package FusionProto;
+
+message SensorFailure {
+  .CommonProto.SensorFlag flag = 1;
+  .CommonProto.CommunicationFailure communication_fail = 2;
+  .CommonProto.SensorStateFailure state_fail = 3;
+}
+
+message FusFailureInfo {
+  double time_stamp = 1;
+  .CommonProto.FusionStateFailure fusion_fail = 2;
+  repeated .FusionProto.SensorFailure sensor_fail = 3;
+  repeated .CommonProto.FrameClue input_info = 4;
+  int32 frame_index = 5;
+}
+

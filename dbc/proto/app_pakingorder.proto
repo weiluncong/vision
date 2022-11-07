@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package appParkorder;
+
+message ParkCommand {
+  uint32 apa_function_req = 1;
+  uint32 apa_control_enable = 2;
+  uint32 type = 3;
+  string parking_area = 4;
+  string park_slotid_str = 5;
+  string floor = 6;
+  .appParkorder.CallPoint poi_setting = 7;
+  .appParkorder.RMAPos rma_slot_choose = 8;
+  .appParkorder.CrusingSet crusing_set = 9;
+  uint32 pop_up_window_operate = 10;
+  repeated .appParkorder.CallPoint slot_info = 11;
+}
+
+message CrusingSet {
+  uint32 status = 1;
+  uint32 crusingtime = 2;
+}
+
+message RMAPos {
+  double x = 1;
+  double y = 2;
+}
+
+message CallPoint {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message AppOrderResult {
+  uint32 rec_code = 1;
+}
+

@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+package ApaMts;
+
+message BusMtsHistVeloInfo {
+  repeated float average_speed_x = 1;
+  repeated float average_speed_y = 2;
+  repeated float hv_hist_state = 3;
+}
+
+message BusMtsTargetSlotInfo {
+  float num_of_points_to_path_goal = 1;
+  uint32 summon_parkout_direction = 2;
+  float nearest_point_heading = 3;
+  float target_slot_center_x = 4;
+  float target_slot_center_y = 5;
+  int32 target_slot_floor_id = 6;
+  uint32 target_slot_status = 7;
+  uint32 target_slot_type = 8;
+}
+
+message BusMtsBaseLineInfo {
+  float current_point_index = 1;
+  float map_ad_ready = 2;
+  float lane_width = 3;
+  float num_of_points_to_path_end = 4;
+  float uturn_start_index = 5;
+  float uturn_end_index = 6;
+  repeated float baseline_points = 7;
+  float preview_ptich = 8;
+  .ApaMts.BusMtsTargetSlotInfo target_slot_info = 9;
+  float min_dist = 10;
+}
+
+message BusMtsObj4TPP {
+  repeated float moving_objects = 1;
+  repeated float static_objects = 2;
+  repeated float pedestrian_points = 3;
+  float num_of_static_objects = 4;
+  float num_of_moving_objects = 5;
+  float num_of_pedestrian = 6;
+}
+
+message BusMtsFollowObjectPlanningInfo {
+  float follow_object_index = 1;
+  float obj_lat_rel_vel_mps = 2;
+  float obj_long_rel_vel_mps = 3;
+  float obj_vertex_fl_lat_pos_m = 4;
+  float obj_vertex_fl_long_pos_m = 5;
+  float obj_vertex_fr_lat_pos_m = 6;
+  float obj_vertex_fr_long_pos_m = 7;
+  float obj_vertex_rl_lat_pos_m = 8;
+  float obj_vertex_rl_long_pos_m = 9;
+  float obj_vertex_rr_lat_pos_m = 10;
+  float obj_vertex_rr_long_pos_m = 11;
+  float obj_track_id = 12;
+  float obj_class = 13;
+  float obj_motion_status = 14;
+  float obj_confidence = 15;
+}
+
+message BusMtsNearRightLaneInfo {
+  float near_right_lane_id = 1;
+  float near_right_lane_type = 2;
+  float near_right_lane_color = 3;
+  float near_right_lane_confidence = 4;
+  float near_right_lane_position = 5;
+  float near_right_lane_curvature = 6;
+  float near_right_lane_width = 7;
+  float near_right_lane_c0 = 8;
+  float near_right_lane_c1 = 9;
+  float near_right_lane_c2 = 10;
+  float near_right_lane_c3 = 11;
+  float near_right_lane_near = 12;
+  float near_right_lane_far = 13;
+}
+
+message BusMtsRightLaneInfo {
+  float right_lane_id = 1;
+  float right_lane_type = 2;
+  float right_lane_color = 3;
+  float right_lane_confidence = 4;
+  float right_lane_position = 5;
+  float right_lane_curvature = 6;
+  float right_lane_width = 7;
+  float right_lane_c0 = 8;
+  float right_lane_c1 = 9;
+  float right_lane_c2 = 10;
+  float right_lane_c3 = 11;
+  float right_lane_near = 12;
+  float right_lane_far = 13;
+}
+
+message BusMtsLeftLaneInfo {
+  float left_lane_id = 1;
+  float left_lane_type = 2;
+  float left_lane_color = 3;
+  float left_lane_confidence = 4;
+  float left_lane_position = 5;
+  float left_lane_curvature = 6;
+  float left_lane_width = 7;
+  float left_lane_c0 = 8;
+  float left_lane_c1 = 9;
+  float left_lane_c2 = 10;
+  float left_lane_c3 = 11;
+  float left_lane_near = 12;
+  float left_lane_far = 13;
+}
+
+message BusMtsNearLeftLaneInfo {
+  float near_left_lane_id = 1;
+  float near_left_lane_type = 2;
+  float near_left_lane_color = 3;
+  float near_left_lane_confidence = 4;
+  float near_left_lane_position = 5;
+  float near_left_lane_curvature = 6;
+  float near_left_lane_width = 7;
+  float near_left_lane_c0 = 8;
+  float near_left_lane_c1 = 9;
+  float near_left_lane_c2 = 10;
+  float near_left_lane_c3 = 11;
+  float near_left_lane_near = 12;
+  float near_left_lane_far = 13;
+}
+
+message BusMtsSelectedLaneInfo {
+  .ApaMts.BusMtsNearLeftLaneInfo neat_left_lane_info = 1;
+  .ApaMts.BusMtsLeftLaneInfo left_lane_info = 2;
+  .ApaMts.BusMtsRightLaneInfo right_lane_info = 3;
+  .ApaMts.BusMtsNearRightLaneInfo near_right_lane_info = 4;
+}
+
+message BusMtsFollowObjectLNGInfo {
+  float obj_lat_rel_vel_mps = 1;
+  float obj_long_rel_vel_mps = 2;
+  float obj_lat_pos_m = 3;
+  float obj_long_pos_m = 4;
+  float obj_track_id = 5;
+  float obj_class = 6;
+  float obj_motion_status = 7;
+  float obj_confidence = 8;
+  float obj_detect_sensor = 9;
+}
+
+message BusMts {
+  .ApaMts.BusMtsFollowObjectLNGInfo follow_object_lng_info = 1;
+  repeated float freespace = 2;
+  .ApaMts.BusMtsSelectedLaneInfo selected_lane_info = 3;
+  .ApaMts.BusMtsFollowObjectPlanningInfo follow_object_planning_info = 4;
+  .ApaMts.BusMtsObj4TPP objects_for_tpp = 5;
+  .ApaMts.BusMtsBaseLineInfo baseline_info = 6;
+  .ApaMts.BusMtsHistVeloInfo hist_velo_info = 7;
+}
+

@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package VcuProto;
+
+message BusVcuEngine {
+  uint32 vcu_acc_ped_shield = 1;
+  uint32 vcu_apa_request_enable = 2;
+  uint32 vcu_accr_mod = 3;
+  uint32 vcu_apa_torq_request_available = 4;
+  uint32 vcu_com_flt_sts = 5;
+  uint32 vcu_eny_recycl_mod = 6;
+  uint32 vcu_ovrd_mod_req = 7;
+  int32 vcu_pt_tq_lim_max = 8;
+  uint32 vcu_pt_tq_lim_max_vld = 9;
+  int32 vcu_pt_tq_lim_min = 10;
+  uint32 vcu_pt_tq_lim_min_vld = 11;
+  int32 vcu_pt_tq_real = 12;
+  uint32 vcu_pt_tq_real_vld = 13;
+  uint32 vcu_pt_tq_req_avl = 14;
+  uint32 vcu_rdy_sts = 15;
+  int32 vcu_veh_whl_req_tq = 16;
+  uint32 vcu_veh_whl_req_tq_vld = 17;
+  uint32 vcu_simn_epb_swt_sts = 18;
+  uint32 vcu_simn_epb_swt_sts_vld = 19;
+  double vcu_battlowu = 20;
+  double time_stamp = 21;
+}
+
+message BusVcuPedl {
+  double vcu_accr_pedl_posn = 1;
+  uint32 vcu_accr_pedl_posn_vld = 2;
+  double vcu_calcn_accr_pedl_posn = 3;
+  uint32 vcu_calcn_accr_pedl_posn_vld = 4;
+  uint32 ib_brk_pedl_sts_gb = 5;
+  uint32 ib_brk_pedl_sts_gb_vld = 6;
+  double time_stamp = 7;
+}
+
+message BusVcuSwitchSts {
+  uint32 vcu_crs_dst_swt_plus_sts = 1;
+  uint32 vcu_crs_resu_swt_sts = 2;
+  uint32 vcu_crs_set_swt_sts = 3;
+  uint32 vcu_crs_swt_diag_info = 4;
+  uint32 vcu_crs_dst_swt_reduce_sts = 5;
+  double time_stamp = 6;
+}
+
+message BusVcuTransmission {
+  uint32 vcuap_adriver_interruption = 1;
+  uint32 vcu_shift_postion_valid = 2;
+  uint32 vcu_gear_posn = 3;
+  uint32 vcu_shift_lvl_posn = 4;
+  uint32 vcu_veh_gear_posn_vld = 5;
+  double time_stamp = 6;
+}
+

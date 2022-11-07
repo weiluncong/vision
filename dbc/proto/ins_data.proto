@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+import "header.proto";
+import "wheel_data.proto";
+package localization;
+
+enum GpsStatus {
+  kNone = 0;
+  kSingle = 1;
+  kPsrDiffSBAS = 2;
+  kDGPS = 3;
+  kRtkFloat = 4;
+  kRtkInt = 5;
+  kInsPos = 6;
+}
+
+message InsData {
+  double sec_of_week = 1;
+  double gps_week_number = 2;
+  double utc = 3;
+  .localization.GpsStatus position_type = 4;
+  uint32 numsv = 5;
+  uint32 ins_status = 6;
+  double temperature = 7;
+  double latitude = 8;
+  double longitude = 9;
+  double altitude = 10;
+  double north_velocity = 11;
+  double east_velocity = 12;
+  double ground_velocity = 13;
+  double roll = 14;
+  double pitch = 15;
+  double heading = 16;
+  double x_angular_velocity = 17;
+  double y_angular_velocity = 18;
+  double z_angular_velocity = 19;
+  double x_acc = 20;
+  double y_acc = 21;
+  double z_acc = 22;
+  double latitude_std = 23;
+  double longitude_std = 24;
+  double altitude_std = 25;
+  double north_velocity_std = 26;
+  double east_velocity_std = 27;
+  double ground_velocity_std = 28;
+  double roll_std = 29;
+  double pitch_std = 30;
+  double heading_std = 31;
+  double atb_0 = 32;
+  double atb_1 = 33;
+  double atb_2 = 34;
+  double q_x = 35;
+  double q_y = 36;
+  double q_z = 37;
+  double q_w = 38;
+  .localization.WheelData wheel_data = 39;
+  .localization.Header header = 40;
+  double time_stamp_local = 41;
+}
+

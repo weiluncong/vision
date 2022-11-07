@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+package PcsProto;
+
+message FromPCS {
+  .PcsProto.PcsDiagnosisInfo pcs_diagnosis_info = 1;
+  .PcsProto.PcsHeartBeats pcs_heart_beats = 2;
+  .PcsProto.DebugPCS debug_pcs = 3;
+  .PcsProto.PcsStsOut pcs_sts_out = 4;
+  .PcsProto.PcsPathOut pcs_path_out = 5;
+  .PcsProto.RoadLineModleStsOut road_line_modle_sts_out = 6;
+  .PcsProto.RoadLineModlePathOut road_line_modle_path_out = 7;
+}
+
+message DebugPCS {
+  bool getinto_ramp_plansts = 1;
+  .PcsProto.PcsPathEquation path_getinto_ramp = 2;
+  bool inramp_plansts = 3;
+  .PcsProto.PcsPathEquation path_inramp = 4;
+  bool lnchange_ramp_plansts = 5;
+  .PcsProto.PcsPathEquation path_lnchange_ramp = 6;
+  bool tomainroad_ramp_plansts = 7;
+  .PcsProto.PcsPathEquation path_tomainroad = 8;
+  .PcsProto.PcsBezierPath path_lanechangeceof = 9;
+  .PcsProto.PcsBezierPath path_changeabortceof = 10;
+  .PcsProto.PcsPathEquation path_rampceof = 11;
+  .PcsProto.PcsPathEquation path_obstacle_avoidanceceof = 12;
+  uint32 force_choss_fclnsts = 13;
+  uint32 ramp_fcln_switch = 14;
+  bool ramp_plan_enable = 15;
+  uint32 lane_depature_decreq = 16;
+  uint32 latwarning_sts = 17;
+  uint32 ramp_warningflag = 18;
+  uint32 rlm_warning = 19;
+  uint32 pcs_diagn_warning = 20;
+  bool obstacle_avaidence_fit_vaild = 21;
+  uint32 obstacle_avaidence_target_column = 22;
+  bool reference_line_valid = 23;
+  uint32 offset_warning = 24;
+  uint32 hv_cloumn = 25;
+  uint32 host_left_avail_column = 26;
+  uint32 host_right_avail_column = 27;
+}
+
+message PcsBezierPath {
+  double p1y = 1;
+  double p2y = 2;
+  double p3y = 3;
+  double p4y = 4;
+  double p5y = 5;
+  double p6y = 6;
+  double p7y = 7;
+  double current_t = 8;
+  double total_t = 9;
+}
+
+message PcsDiagnosisInfo {
+  double time_stamp = 1;
+  uint32 front_module_fail = 2;
+  uint32 input_signal_invalid = 3;
+  uint32 module_running_error = 4;
+  uint32 is_dtc = 5;
+  double reserved = 6;
+}
+
+message PcsHeartBeats {
+  uint32 heart_beats = 1;
+}
+
+message PcsPathEquation {
+  double a0 = 1;
+  double a1 = 2;
+  double a2 = 3;
+  double a3 = 4;
+  double range = 5;
+}
+
+message PcsPathOut {
+  .PcsProto.PcsPathEquation path_final_ceof = 1;
+  double lane_change_target_lat_dis = 2;
+  double getintomainroad_crslinetime = 3;
+  double latoffset_remaintime = 4;
+}
+
+message PcsStsOut {
+  double version_num = 1;
+  uint32 warning_notice = 2;
+  bool path_valid = 3;
+  uint32 lane_change_inprogress = 4;
+  uint32 lane_change_inprogress_fida = 5;
+  uint32 obstacle_avoidance_inprogress = 6;
+  uint32 lat_offset_inprogress = 7;
+  uint32 lat_avoid_obstacle_status = 8;
+  bool trace_planning_fun_sts = 9;
+  bool crss_line_sts = 10;
+  bool enter_ramp_finish_flag = 11;
+  bool enter_mainroad_finish_flag = 12;
+  bool ramp_lanechange_finish_flag = 13;
+  uint32 pathplanning_warningsts = 14;
+  uint32 path_mode = 15;
+  uint32 refneceline_triger_flag = 16;
+  uint32 leftlane_triger_flag = 17;
+  uint32 rightlane_triger_flag = 18;
+  bool lane_depature_decreq = 19;
+  uint32 lat_aes_inprogress = 20;
+  bool ramp_plan_status = 21;
+}
+
+message RoadLineModlePathOut {
+  .PcsProto.PcsPathEquation current_line_ceof = 1;
+  .PcsProto.PcsPathEquation left_line_ceof = 2;
+  .PcsProto.PcsPathEquation right_line_ceof = 3;
+  .PcsProto.PcsPathEquation tracked_left_line_ceof = 4;
+  .PcsProto.PcsPathEquation tracked_right_line_ceof = 5;
+  .PcsProto.PcsPathEquation tracked_lleft_line_ceof = 6;
+  .PcsProto.PcsPathEquation tracked_rright_line_ceof = 7;
+  double cl_lane_width = 8;
+  repeated double line_maker_mat = 9;
+}
+
+message RoadLineModleStsOut {
+  int32 left_lane_selection_id = 1;
+  int32 current_lane_selection_id = 2;
+  int32 right_lane_selection_id = 3;
+  uint32 fnl_line_id = 4;
+  int32 final_lane_selection_id = 5;
+}
+

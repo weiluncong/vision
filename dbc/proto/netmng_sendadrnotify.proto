@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package NetmngSendAdrNotifyProto;
+
+message FileInfo {
+  string file_id = 1;
+  string file_name = 2;
+  string file_path = 3;
+  string controller_code = 4;
+}
+
+message EventDownInfo {
+  string taskid = 1;
+  string x_vcs_huauthtoken = 2;
+  string tuid = 3;
+  string secret_key = 4;
+  uint64 event_time = 5;
+  string eventcatelog = 6;
+  string event_code = 7;
+  repeated .NetmngSendAdrNotifyProto.FileInfo fileinfo = 8;
+}
+

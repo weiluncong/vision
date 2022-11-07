@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+import "ca_appendix.proto";
+import "header.proto";
+package localization;
+
+message Point {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message Quaternion {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+  double w = 4;
+}
+
+message Pose {
+  .localization.Point position = 1;
+  .localization.Quaternion quaternion = 2;
+  repeated double covariance = 3;
+}
+
+message Twist {
+  .localization.Point linear = 1;
+  .localization.Point angular = 2;
+  repeated double covariance = 3;
+}
+
+message Odometry {
+  .localization.Header header = 1;
+  string child_frame_id = 2;
+  .localization.Pose pose = 3;
+  .localization.Twist twist = 4;
+  .localization.CaAppendix ca_related = 5;
+}
+

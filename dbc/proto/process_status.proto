@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+enum ProcessState
+{
+    RUNING=0;
+    SLEEPING=1;
+    DISK_SLEEP=2;
+    STOPPED=3;
+    TRACING_STOP=4;
+    ZOMBIE=5;
+    DEAD=6;
+};
+
+message ProcessStatus
+{
+    string name=1;//进程名
+    ProcessState state=2;
+    int32 pid=3;//进程id
+    int32 ppid=4;//当前进程的父进程id
+    int64 vm_peak=5;//进程所使用虚拟内存的峰值
+    int64 vm_size=6;//进程当前所使用虚拟内存的大小
+    int64 vm_lock=7;//锁住的物理内存大小
+    int64 vm_hwm=8;//进程所使用物理内存的峰值
+    int64 vm_rss=9;//进程当前使用物理内存的大小
+    int64 vm_data=10;//进程当前占用数据段的大小
+    int64 vm_stk=11;//进程占用堆区的大小
+    int32 vm_exe=12;//进程占用代码段大小
+    int32 vm_lib=13;//进程加载的动态库所占用的内存大小
+    int32 vm_pte=14;//进程占用的页表大小
+    int32 vm_swap=15;//进程所使用的交换区的大小
+    int32 threads=16;//线程数量
+    int32 voluntary_ctxt_switches=17;//进程主动切换的次数
+    int32 nonvoluntary_ctxt_switches=18;//进程被动切换次数
+    float cpu_percent=19;//cpu占用百分比
+    int32 priority = 20;// priority level
+    int32 nice = 21;// nice level
+    int32 task_cpu = 22;// which CPU the task is scheduled on
+    int32 tr_priority = 23;// realtime priority
+    int32 policy = 24;// scheduling policy (man sched_setscheduler)
+}

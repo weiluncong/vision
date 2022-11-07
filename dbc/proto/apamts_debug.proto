@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package ApaMtsDebug;
+
+message MTS_debug {
+  repeated float SlotLnObjNumOut = 1;
+  repeated float SlotLnIndexOut = 2;
+  repeated float ObjOnLane = 3;
+  uint32 MTS_version_num = 4;
+}
+

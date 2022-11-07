@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+import "common.proto";
+package FusionProto;
+
+message FreeSpacePoint {
+  .CommonProto.PointMotionState motion_state = 1;
+  .CommonProto.PointType type = 2;
+  .CommonProto.Point3DPosition position = 3;
+  int32 confidence = 4;
+  .CommonProto.PointDetectedSensor detected_sensor = 5;
+}
+
+message FusFreeSpace {
+  double time_stamp = 1;
+  repeated .FusionProto.FreeSpacePoint points = 2;
+  repeated .CommonProto.FrameClue input_info = 3;
+  int32 frame_index = 4;
+}
+
+message RadarFreeSpace {
+  double time_stamp = 1;
+  repeated .FusionProto.FreeSpacePoint points = 2;
+  repeated .CommonProto.FrameClue input_info = 3;
+  int32 frame_index = 4;
+}
+
+message VisionFreeSpace {
+  double time_stamp = 1;
+  repeated .FusionProto.FreeSpacePoint points = 2;
+  repeated .CommonProto.FrameClue input_info = 3;
+  int32 frame_index = 4;
+}
+

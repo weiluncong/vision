@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package LidarObjectProto;
+
+enum ObjectType {
+  UNKNOW_OBJ = 0;
+  CONE = 1;
+  PEDESTRAIN = 2;
+  CAR = 3;
+  CYCLIST = 4;
+  MINI_TRUCK = 5;
+  MEDIUM_TRUCK = 6;
+  BIG_TRUCK = 7;
+}
+
+enum MotionType {
+  UNKNOW_MOTION = 0;
+  MOVING = 1;
+  MOVABLE = 2;
+  STATIONARY = 3;
+  MAX_MOTION_STATE_NUM = 4;
+}
+
+enum LanePosition {
+  UNKNOW_LANE = 0;
+  LEFT_SIXTH = 1;
+  LEFT_FIFTH = 2;
+  LEFT_FOURTH = 3;
+  LEFT_THIRD = 4;
+  LEFT_ADJACENT = 5;
+  LEFT_EGO = 6;
+  EGO_LANE = 7;
+  RIGHT_EGO = 8;
+  RIGHT_ADJACENT = 9;
+  RIGHT_THIRD = 10;
+  RIGHT_FOURTH = 11;
+  RIGHT_FIFTH = 12;
+  RIGHT_SIXTH = 13;
+  OFF_DRIVABLE = 14;
+}
+
+enum SizeType {
+  SMALL = 0;
+  MEDIUM = 1;
+  LARGE = 2;
+  MAX_SIZE_TYPE_NUM = 3;
+}
+
+enum DataSource {
+  NONE = 0;
+  DL = 1;
+  SEG = 2;
+  FUSION = 3;
+}
+
+enum TrackingState {
+  UNKNOW = 0;
+  INIT = 1;
+  STABLE = 2;
+  PREDICTION = 3;
+}
+
+message Objects {
+  double timestamp = 1;
+  int32 object_num = 2;
+  repeated .LidarObjectProto.Object obj = 3;
+}
+
+message CoreInfos {
+  double timestamp = 1;
+  int32 priority_id = 2;
+  float exist_confidence = 3;
+  .LidarObjectProto.Vector3f center = 4;
+  .LidarObjectProto.Vector3f center_cov = 5;
+  .LidarObjectProto.Vector3f size = 6;
+  .LidarObjectProto.Vector3f size_cov = 7;
+  .LidarObjectProto.Vector3f direction = 8;
+  .LidarObjectProto.Vector3f direction_cov = 9;
+  .LidarObjectProto.ObjectType type = 10;
+  float type_confidence = 11;
+  .LidarObjectProto.MotionType motion_state = 12;
+  .LidarObjectProto.LanePosition lane_pos = 13;
+  int32 tracker_id = 14;
+  float age = 15;
+  .LidarObjectProto.Vector3f velocity = 16;
+  .LidarObjectProto.Vector3f relative_velocity = 17;
+  .LidarObjectProto.Vector3f velocity_cov = 18;
+  .LidarObjectProto.Vector3f relative_velocity_cov = 19;
+  .LidarObjectProto.Vector3f acceleration = 20;
+  .LidarObjectProto.Vector3f acceleration_cov = 21;
+  float angle_velocity = 22;
+  float angle_velocity_cov = 23;
+  float angle_acceleration = 24;
+  float angle_acceleration_cov = 25;
+}
+
+message SupplementInfos {
+  int32 unique_id = 1;
+  repeated .LidarObjectProto.Vector3f polygon = 2;
+  int32 left_point_index = 3;
+  int32 right_point_index = 4;
+  repeated int32 cloud_indices = 5;
+  repeated float latent_types = 6;
+  .LidarObjectProto.SizeType size_type = 7;
+  .LidarObjectProto.DataSource source = 8;
+  bool in_roi = 9;
+  .LidarObjectProto.TrackingState tracking_state = 10;
+  .LidarObjectProto.Vector3f geo_center = 11;
+  .LidarObjectProto.Vector3f geo_size = 12;
+  repeated .LidarObjectProto.Vector3f trajectory = 13;
+  repeated .LidarObjectProto.Vector3f history_velocity = 14;
+  repeated .LidarObjectProto.ObjectType history_type = 15;
+}
+
+message Object {
+  .LidarObjectProto.CoreInfos coreInfo = 1;
+  .LidarObjectProto.SupplementInfos supInfo = 2;
+}
+
+message Vector3f {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+}
+

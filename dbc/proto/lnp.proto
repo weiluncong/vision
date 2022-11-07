@@ -1,0 +1,214 @@
+syntax = "proto3";
+
+package LnpProto;
+
+message FromLNP {
+  .LnpProto.LongPlanMsg long_plan_msg = 1;
+  .LnpProto.LaneChangeSts lane_change_sts = 2;
+  .LnpProto.LnpDiagnosisInfo lnp_diagnosis_info = 3;
+  .LnpProto.LnpHeartBeats lnp_heart_beats = 4;
+  .LnpProto.DebugLNP debug_lnp = 5;
+}
+
+message DebugLNP {
+  double at_strlnp_mpss = 1;
+  double at_steeringangle_mpss = 2;
+  double at_oppressscene_mpss = 3;
+  double at_slowtrafficflow_mpss = 4;
+  double mix_at_mpss_min = 5;
+  double mix_at_mpss_active = 6;
+  double lnp_version = 7;
+  double at_mix_mpss = 8;
+  double at_ssc_mpss = 9;
+  double at_safestop_mpss = 10;
+  double at_signspeed_mpss = 11;
+  double at_csc_mpss = 12;
+  double vt_csc_mps = 13;
+  double at_ramp_mpss = 14;
+  double csc_curvature_max = 15;
+  double fop_at_constriant_mpss = 16;
+  double fop_at_people_mpss = 17;
+  uint32 fop_cutin_sts = 18;
+  double fop_dt_vf2brakedis_m = 19;
+  double fop_dintrusion = 20;
+  double foc_vt_mps = 21;
+  double fop_af_in_at_rel_comp = 22;
+  double foc_at_rel_upper = 23;
+  uint32 foc_vt_vh_status = 24;
+  double fop_at_foc_mpss = 25;
+  double at_toll_mpss = 26;
+  double at_tunnel_mpss = 27;
+  double at_target2_mpss = 28;
+  double at_alc_mpss = 29;
+  double at_fida_mpss = 30;
+  double fida_stp_mpss_raw = 31;
+  double alc_at_raw_mpss = 32;
+  double fida_at_raw_mpss = 33;
+  double foc_derrorforplan = 34;
+  double fop_at_velx_mps = 35;
+  double foc_vt_error = 36;
+  double alc_at_posx_m = 37;
+  double alc_derrorforplan = 38;
+  double alc_dintrusion = 39;
+  double alc_at_velx_mps = 40;
+  double alc_at_vt_mpss = 41;
+  double alc_vt_error = 42;
+  double cutin_at_posx_m = 43;
+  double cutin_error_posx_m = 44;
+  double cutin_dintrusion = 45;
+  double cutin_vt_mps = 46;
+  double cutin_at_velx_mps = 47;
+  double cutin_at_mpss = 48;
+  uint32 lnp_data_trigger_type = 49;
+  uint32 lnp_data_trigger_valid = 50;
+  double junction_at_mpss = 51;
+  uint32 no_junction = 52;
+  double bypass_raw_fullbrke_vel = 53;
+  bool bypassdist_1avail_0disavail = 54;
+  bool bypassdcc_restrainsts = 55;
+  bool bypass_timerestrain = 56;
+  double fop_version = 57;
+  double csl_version = 58;
+  repeated uint32 try_gap_front_track_id_arr = 59;
+  repeated uint32 try_gap_back_track_id_arr = 60;
+  bool try_flag_out = 61;
+  repeated double try_at_necessity_time_arr = 62;
+  double plan_at_out = 63;
+  double alc_vesrion = 64;
+  repeated uint32 fida_try_gap_front_track_id_arr = 65;
+  repeated uint32 fida_try_gap_back_track_id_arr = 66;
+  bool fida_try_flag_out = 67;
+  repeated double fida_try_at_necessity_time_arr = 68;
+  double fida_plan_at_out = 69;
+  double fida_vesrion = 70;
+  uint32 condsider_direction = 71;
+  double dis_to_point_out = 72;
+  double target_time_to_point = 73;
+  bool no_suit_gap = 74;
+  double host_est_time = 75;
+  double jct_acc_raw = 76;
+  bool jct_acc_valid_raw = 77;
+  double jct_target_speed = 78;
+  double jct_version = 79;
+  uint32 tgt19_track_id = 80;
+  double tgt19_posx = 81;
+  double tgt19_velx = 82;
+  uint32 tgt5_track_id = 83;
+  double tgt5_posx = 84;
+  double tgt5_velx = 85;
+  uint32 tgt3_track_id = 86;
+  double tgt3_posx = 87;
+  double tgt3_velx = 88;
+  uint32 tgt7_track_id = 89;
+  double tgt7_posx = 90;
+  double tgt7_velx = 91;
+  uint32 tgt9_track_id = 92;
+  double tgt9_posx = 93;
+  double tgt9_velx = 94;
+  uint32 tgt20_track_id = 95;
+  double tgt20_posx = 96;
+  double tgt20_velx = 97;
+  uint32 tgt6_track_id = 98;
+  double tgt6_posx = 99;
+  double tgt6_velx = 100;
+  uint32 tgt4_track_id = 101;
+  double tgt4_posx = 102;
+  double tgt4_velx = 103;
+  uint32 tgt8_track_id = 104;
+  double tgt8_posx = 105;
+  double tgt8_velx = 106;
+  uint32 tgt10_track_id = 107;
+  double tgt10_posx = 108;
+  double tgt10_velx = 109;
+  uint32 tgt11_track_id = 110;
+  double tgt11_posx = 111;
+  double tgt11_velx = 112;
+  double acc_target_posx_m = 113;
+  double acc_target_velx_mps = 114;
+  uint32 lc_tgt3_track_id = 115;
+  double lc_tgt3_posx = 116;
+  double lc_tgt3_velx = 117;
+  uint32 lc_tgt4_track_id = 118;
+  double lc_tgt4_posx = 119;
+  double lc_tgt4_velx = 120;
+  uint32 lc_tgt7_track_id = 121;
+  double lc_tgt7_posx = 122;
+  double lc_tgt7_velx = 123;
+  uint32 lc_tgt8_track_id = 124;
+  double lc_tgt8_posx = 125;
+  double lc_tgt8_velx = 126;
+  uint32 lc_tgt9_track_id = 127;
+  double lc_tgt9_posx = 128;
+  double lc_tgt9_velx = 129;
+  uint32 lc_tgt10_track_id = 130;
+  double lc_tgt10_posx = 131;
+  double lc_tgt10_velx = 132;
+  uint32 lc_tgt11_track_id = 133;
+  double lc_tgt11_posx = 134;
+  double lc_tgt11_velx = 135;
+  uint32 pedestrians_acc_type = 136;
+  uint32 triggered_pedestrians_index = 137;
+}
+
+message LaneChangeSts {
+  uint32 lc_left_front_obj_sts = 1;
+  uint32 lc_front_obj_sts = 2;
+  uint32 lc_right_front_obj_sts = 3;
+  uint32 lc_left_rear_obj_sts = 4;
+  uint32 lc_right_rear_obj_sts = 5;
+  uint32 lc_left_side_obj_sts = 6;
+  uint32 lc_right_side_obj_sts = 7;
+  uint32 lc_rear_side_return_sts = 8;
+  uint32 lc_rear_return_sts = 9;
+  uint32 lc_side_return_sts = 10;
+  uint32 lc_rear_side_takeover = 11;
+  uint32 lc_left_try_flag = 12;
+  uint32 lc_right_try_flag = 13;
+  uint32 fida_left_front_obj_sts = 14;
+  uint32 fida_front_obj_sts = 15;
+  uint32 fida_right_front_obj_sts = 16;
+  uint32 fida_left_rear_obj_sts = 17;
+  uint32 fida_right_rear_obj_sts = 18;
+  uint32 fida_left_side_obj_sts = 19;
+  uint32 fida_right_side_obj_sts = 20;
+  uint32 fida_rear_side_return_sts = 21;
+  uint32 fida_rear_return_sts = 22;
+  uint32 fida_side_return_sts = 23;
+  uint32 fida_rear_side_takeover = 24;
+  uint32 fida_left_try_flag = 25;
+  uint32 fida_right_try_flag = 26;
+}
+
+message LnpDiagnosisInfo {
+  double time_stamp = 1;
+  uint32 front_module_fail = 2;
+  uint32 input_signal_invalid = 3;
+  uint32 module_running_error = 4;
+  uint32 is_dtc = 5;
+  double reserved = 6;
+}
+
+message LnpHeartBeats {
+  uint32 heart_beats = 1;
+}
+
+message LongPlanMsg {
+  uint32 fop_accelthrd_fordanger = 1;
+  uint32 lnp_adc_req_type = 2;
+  double aceel_vh_mpss = 3;
+  double road_grade_mpss = 4;
+  uint32 decel_limit_flag = 5;
+  uint32 decel_emergency_flag = 6;
+  uint32 planning_func_status = 7;
+  uint32 dtc_input_target_err = 8;
+  uint32 dtc_road_spd_lmt_err = 9;
+  double acc_target_distance = 10;
+  double acc_target_accel = 11;
+  uint32 lng_accel_type = 12;
+  uint32 cc_acc_flag = 13;
+  uint32 avoid_parallel_status = 14;
+  uint32 cutin_req_type = 15;
+  uint32 around_barrier_restrain_status = 16;
+  uint32 cutin_mpss_source = 17;
+}
+

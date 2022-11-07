@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package FusionProto;
+
+message FusTriggerAndDiagnostic {
+  bool is_trigger_adr = 1;
+  repeated uint32 diagnostic_code = 2;
+}
+

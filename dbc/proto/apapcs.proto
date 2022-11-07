@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package ApaPcs;
+
+message BusPathScatter {
+  repeated int32 trajscatter = 1;
+  uint32 trajnum = 2;
+}
+
+message BusPcsLatControlDriving {
+  repeated float veh_path = 1;
+  float lat_err = 2;
+  float look_ahead_dis = 3;
+  float compen_sate_angle = 4;
+}
+
+message BusPcsRdDcsToHmi {
+  float SurplusDistance = 1;
+  uint32 DetourSign = 2;
+  uint32 NumofDetourForPed = 3;
+  uint32 NumofDetourForVeh = 4;
+  uint32 NumOfDetourForObs = 5;
+  uint32 HVBehaviorState = 6;
+}
+
+message BusPcsRdPathCruise {
+  repeated float local_path = 1;
+  repeated float tar_pos = 2;
+  repeated uint32 path_index = 3;
+  uint32 avoid_flag = 4;
+  uint32 crt_tar_col = 5;
+  uint32 crt_col = 6;
+  repeated float grid_matrix_all_obj = 7;
+}
+
+message BusPcsRoadDriving {
+  .ApaPcs.BusPcsRdPathCruise path_cruise = 1;
+  .ApaPcs.BusPcsRdDcsToHmi rd_dcs_to_hmi = 2;
+  uint32 rd_behavior_state_for_obj = 3;
+  uint32 rd_behavior_state_for_ped = 4;
+  uint32 rd_function_mode = 5;
+}
+
+message BusPcsLnp {
+  uint32 at_lnp_mpss = 1;
+  uint32 long_active = 2;
+  float preview_pitch = 3;
+}
+
+message BusPcsRads {
+  float rads_steer_angle_req = 1;
+  int32 rads_dth = 2;
+  uint32 rads_traj_validsta = 3;
+  uint32 rads_status = 4;
+  uint32 TR_TrajRecStatus = 5;
+  uint32 RADS_TarGear = 6;
+  float RADS_TarSpeed = 7;
+}
+
+message BusPcsDtc {
+  int32 dtc = 1;
+  uint32 dto_valid = 2;
+  int32 dto = 3;
+  uint32 collipos = 4;
+  uint32 dtoclass = 5;
+  uint32 validsec = 6;
+  uint32 dynaprop = 7;
+  uint32 coll3no = 8;
+}
+
+message BusPcsTp {
+  uint32 park_coor_status = 1;
+  uint32 tp_status = 2;
+  float tp_tarx = 3;
+  float tp_tary = 4;
+  float tp_taryaw = 5;
+  float tp_errortype = 6;
+}
+
+message BusPcsPpPhase {
+  uint32 para1 = 1;
+  int32 para2 = 2;
+  int32 para3 = 3;
+  int32 para4 = 4;
+  int32 para5 = 5;
+  uint32 para6 = 6;
+}
+
+message BusPcsPpPath {
+  .ApaPcs.BusPcsPpPhase phase1 = 1;
+  .ApaPcs.BusPcsPpPhase phase2 = 2;
+  .ApaPcs.BusPcsPpPhase phase3 = 3;
+  .ApaPcs.BusPcsPpPhase phase4 = 4;
+  .ApaPcs.BusPcsPpPhase phase5 = 5;
+  uint32 park_phase = 6;
+  float step_end_pose = 7;
+}
+
+message BusPcsPp {
+  .ApaPcs.BusPcsPpPath park_path = 1;
+  uint32 path_plan_fail = 2;
+  uint32 tar_gear_p = 3;
+  uint32 park_status = 4;
+  uint32 park_step = 5;
+}
+

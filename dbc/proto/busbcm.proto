@@ -1,0 +1,123 @@
+syntax = "proto3";
+
+package BusbcmProto;
+
+message BusBcmDoorSts {
+  uint32 bcm_drvr_door_lck_sts = 1;
+  uint32 bcm_drvr_door_sts = 2;
+  uint32 bcm_le_re_door_sts = 3;
+  uint32 bcm_pass_door_sts = 4;
+  uint32 bcm_ri_re_door_sts = 5;
+  uint32 bcm_tr_door_sts = 6;
+  uint32 bcm_hood_status = 7;
+  double time_stamp = 8;
+  uint32 bcm_pass_door_lck_sts = 9;
+}
+
+message BusBcmDsmSts {
+  double dsm_left_mirror_left_right_sts = 1;
+  double dsm_left_mirror_up_down_sts = 2;
+  double dsm_right_mirror_left_right_sts = 3;
+  double dsm_right_mirror_up_down_sts = 4;
+  double dsm_dsm_backrest_position_sts = 5;
+  double dsm_dsm_front_end_position_sts = 6;
+  double dsm_dsm_horizontal_position_sts = 7;
+  double dsm_dsm_vertical_position_sts = 8;
+  double time_stamp = 9;
+}
+
+message BusBcmLightSts {
+  uint32 bcm_turn_light_switch_sts = 1;
+  uint32 bcm_aut_head_li_sts = 2;
+  uint32 bcm_frnt_fog_lmp_sts = 3;
+  uint32 bcm_hi_beam_sts = 4;
+  uint32 bcm_emgy_li_sts = 5;
+  uint32 bcm_brake_lamp_error = 6;
+  uint32 bcm_brake_lamp_status = 7;
+  uint32 bcm_high_beam_lamp_error = 8;
+  uint32 bcm_left_low_beam_error = 9;
+  uint32 bcm_right_low_beam_error = 10;
+  uint32 bcm_turn_indicator_left_error = 11;
+  uint32 bcm_turn_indicator_right_error = 12;
+  uint32 bcm_lo_beam_sts = 13;
+  uint32 bcm_posn_lmp_sts = 14;
+  uint32 bcm_re_foglmp_sts = 15;
+  uint32 bcm_turn_indcr_le = 16;
+  uint32 bcm_turn_indcr_ri = 17;
+  double time_stamp = 18;
+}
+
+message BusBcmSts {
+  uint32 bcm_rainfall_level = 1;
+  uint32 bcm_frnt_wiper_sts = 2;
+  uint32 bcm_rls_light_switch_reason = 3;
+  uint32 bcm_key_alrm_sts = 4;
+  uint32 bcm_pwr_sts_fb = 5;
+  uint32 bcm_sts_rain_snsr = 6;
+  uint32 bcm_li_snsr_flt = 7;
+  uint32 bcm_pms_level = 8;
+  uint32 bcm_soh_life_percent = 9;
+  uint32 bcm_drive_mode = 10;
+  double time_stamp = 11;
+}
+
+message BusBcmTMS {
+  double tms_ac_envtlt = 1;
+  uint32 tms_ac_envtl_t_vld = 2;
+  uint32 tms_frnt_blow_mod = 3;
+  double tms_act_pwr = 4;
+  double time_stamp = 5;
+}
+
+message BusBcmTPMS {
+  double tpms_le_frnt_tirep = 1;
+  uint32 tpms_le_frnt_tire_p_warn = 2;
+  uint32 tpms_le_frnt_t_warn = 3;
+  double tpms_le_re_tirep = 4;
+  uint32 tpms_le_re_tire_p_warn = 5;
+  uint32 tpms_le_re_t_warn = 6;
+  double tpms_ri_frnt_tirep = 7;
+  uint32 tpms_ri_frnt_tire_p_warn = 8;
+  uint32 tpms_ri_frnt_t_warn = 9;
+  double tpms_ri_re_tirep = 10;
+  uint32 tpms_ri_re_tire_p_warn = 11;
+  uint32 tpms_ri_re_t_warn = 12;
+  uint32 tpms_tire_p_sig_sts = 13;
+  double time_stamp = 14;
+}
+
+message BusBcmWinSts {
+  uint32 bcm_sunroof_status = 1;
+  double bcm_drvr_win_sts = 2;
+  double bcm_le_re_win_sts = 3;
+  double bcm_pass_win_sts = 4;
+  double bcm_ri_re_win_sts = 5;
+  double time_stamp = 6;
+}
+
+message BusPEPS {
+  uint32 peps_apa_close_win_feedback = 1;
+  uint32 peps_apa_engine0ff_feedback = 2;
+  uint32 peps_apa_lock_feedback = 3;
+  uint32 peps_apa_power_mirror_fold_feedback = 4;
+  uint32 peps_apa_remote_parking_off = 5;
+  uint32 peps_apa_remote_parking_on = 6;
+  uint32 peps_lock_key_status = 7;
+  uint32 peps_peps_fail_status = 8;
+  uint32 peps_remote_apa_done_key_off_req = 9;
+  uint32 peps_remote_start_key_status = 10;
+  uint32 peps_trunk_key_status = 11;
+  uint32 peps_un_lock_key_status = 12;
+  uint32 peps_remote_start_feedback = 13;
+  double time_stamp = 14;
+}
+
+message BusSRS {
+  uint32 srs_crash_outp_sts = 1;
+  uint32 srs_drvr_buc_swt_sts = 2;
+  uint32 srs_pass_buc_swt_sts = 3;
+  uint32 srs_crash_out_cedr = 4;
+  double time_stamp = 5;
+  uint32 dcm_srscrashoutpstschks = 6;
+}
+

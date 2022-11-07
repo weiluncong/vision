@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package BusmfsProto;
+
+message BusMfsHod {
+  uint32 gw_mfs_handsoff_ability_detect = 1;
+  uint32 gw_mfs_handsoff_detect_result = 2;
+  uint32 gw_mfs_hod_app_status = 3;
+  uint32 gw_mfs_hod_calibrated_status = 4;
+  uint32 gw_mfs_hod_lin_status = 5;
+  uint32 gw_mfs_hod_senser_status = 6;
+  uint32 gw_mfs_hod_system_status = 7;
+  double time_stamp = 8;
+}
+
+message BusMfsSwitch {
+  uint32 gw_mfs_left_switch = 1;
+  uint32 gw_mfs_right_switch = 2;
+  uint32 gw_mfs_up_switch = 3;
+  uint32 gw_mfs_down_switch = 4;
+  uint32 gw_mfs_ok_switch = 5;
+  uint32 gw_mfs_speech_switch = 6;
+  uint32 gw_mfs_mode_switch = 7;
+  uint32 gw_mfs_dvr_switch = 8;
+  uint32 gw_mfs_cust_switch = 9;
+  uint32 gw_mfs_vol_plus_switch = 10;
+  uint32 gw_mfs_vol_reduce_switch = 11;
+  uint32 gw_mfs_mute_switch = 12;
+  uint32 gw_mfs_seek_plus_switch = 13;
+  uint32 gw_mfs_seek_reduce_switch = 14;
+  uint32 gw_mfs_diag_info_sw_38a = 15;
+  uint32 gw_mfs_hungup_switch_signal = 16;
+  uint32 gw_mfs_answer_switch_signal = 17;
+  uint32 gw_mfs_avm_switch = 18;
+  uint32 gw_mfs_crusie_switch_signal = 19;
+  uint32 gw_mfs_cancle_switch_signal = 20;
+  uint32 gw_mfs_res_plus_switch_signal = 21;
+  uint32 gw_mfs_set_reduce_switch_signal = 22;
+  uint32 gw_mfs_dist_switch_signal = 23;
+  uint32 gw_mfs_lim_switch_signal = 24;
+  uint32 gw_mfs_iacc_enable_switch_signal = 25;
+  uint32 gw_mfs_ers_plus_switch = 26;
+  uint32 gw_mfs_ers_reduce_switch = 27;
+  uint32 gw_mfs_gearshift_plus_switch = 28;
+  uint32 gw_mfs_gearshift_reduce_switch = 29;
+  uint32 gw_mfs_we_chat_switch_signal = 30;
+  double time_stamp = 31;
+}
+

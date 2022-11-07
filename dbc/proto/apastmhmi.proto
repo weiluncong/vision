@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package apastmhmi;
+
+message BusTask50msApaHmi {
+  uint32 apa_parking_mode_available_sts = 1;
+  uint32 apa_park_notice5 = 2;
+  uint32 apa_function_on_off_sts = 3;
+  uint32 apa_avm_notice = 4;
+  uint32 apa_system_failure_flag = 5;
+  uint32 apa_unactive_info = 6;
+  uint32 apa_hzp_notice = 7;
+  uint32 apa_avp_notice = 8;
+  uint32 apa_rads_notice = 9;
+  uint32 apa_slot_notice = 10;
+  uint32 apa_function_mode = 11;
+  uint32 apa_recomend_req = 12;
+  uint32 apa_cardplay_req = 13;
+  uint32 apa_touch_inf_on_off_res = 14;
+  uint32 apa_summon_notice = 15;
+  uint32 apa_activation_sts = 16;
+  uint32 apa_app_parking_status = 17;
+  uint32 apa_function_sts = 18;
+  string park_slot_id_str = 19;
+  .apastmhmi.CallPoint default_summon_point = 20;
+  uint32 map_id = 21;
+  .apastmhmi.Medal finish = 22;
+  uint32 apa_message_req = 23;
+}
+
+message CallPoint {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+  string floor = 4;
+}
+
+message Medal {
+  uint32 usage_cunter = 1;
+  uint32 saving_time = 2;
+  uint32 saving_distance = 3;
+  uint32 title = 4;
+  uint32 title_level = 5;
+  uint32 avoid_pedestrians = 6;
+  uint32 avoid_vehicles = 7;
+  string parking_position = 8;
+}
+
+message BusTask50msStmStatus {
+  uint32 stm_park_in_start = 1;
+  uint32 stm_park_out_dir = 2;
+  uint32 stm_maneuver_req = 3;
+  uint32 hold_req_soc = 4;
+  uint32 stm_notice = 5;
+  uint32 stm_apafunction = 6;
+  uint32 stm_activation_status = 7;
+  uint32 rads_avail = 8;
+  uint32 apa_start_mode = 9;
+}
+
+message BusSTMReq {
+  uint32 routing_path_enable = 1;
+  uint32 routing_path_req_type = 2;
+}
+

@@ -1,0 +1,50 @@
+#! /bin/bash
+
+# 注意:卸载脚本中不使用sudo
+
+app_name=cavision
+
+prefix_bin="/usr/local/bin/"
+prefix_opt="/opt/${app_name}/"
+
+# 删除安装文件目录
+rm -fr ${prefix_opt}
+
+# 移除启动脚本的软链接
+script="$app_name"
+bin=""
+
+for m in $script $bin
+do
+    link=$prefix_bin$m
+    if [ -h $link ]
+    then
+        rm -rf $link
+    fi
+done
+
+# 删除环境变量中的库路径
+lib_root_path="/opt/${app_name}/third_party"
+libpaths="${lib_root_path}
+            ${lib_root_path}/Qt/lib
+            ${lib_root_path}/OpenCV/lib
+            ${lib_root_path}/yaml
+            ${lib_root_path}/mdf4
+            ${lib_root_path}/pack
+            ${lib_root_path}/Qt/plugins
+            ${lib_root_path}/Boost
+            ${lib_root_path}/Ogre
+            ${lib_root_path}/pcan
+	    ${lib_root_path}/python3.7m/lib
+            ${lib_root_path}/capilot/lib"
+
+for libpath in $libpaths
+do
+    line=$(cat /etc/ld.so.conf | grep -xn ${libpath} | cut -f1 -d:) # 取出依赖库路径在环境变量中的行数
+    if [ ! -z "$line" ]
+    then
+        sed -i ${line}d /etc/ld.so.conf # 删除依赖库路径
+    fi
+done
+
+ldconfig

@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+import "common.proto";
+package FusionProto;
+
+enum ObjMeasureState {
+  MEASURE_STATE_INVALID = 0;
+  MEASURE_STATE_UNSTABLE = 1;
+  MEASURE_STATE_NEW = 2;
+  MEASURE_STATE_PREDICTED = 3;
+  MEASURE_STATE_STABLE = 4;
+}
+
+message FusObject {
+  int32 track_id = 1;
+  double longitudinal_distance = 2;
+  double lateral_distance = 3;
+  double longitudinal_absolute_velocity = 4;
+  double lateral_absolute_velocity = 5;
+  double longitudinal_absolute_acceleration = 6;
+  double lateral_absolute_acceleration = 7;
+  double length = 8;
+  double width = 9;
+  double heigh = 10;
+  double heading_angle = 11;
+  .CommonProto.ObjectClass classification = 12;
+  .CommonProto.DetectSensor detectsensor = 13;
+  int32 confidence = 14;
+  int32 age = 15;
+  bool cross_line_flag = 16;
+  double cross_line_value = 17;
+  .CommonProto.CutStatus cut_status = 18;
+  .CommonProto.ObjectMotionState status = 19;
+  int32 aebdetectsensor = 20;
+  int32 cmbbprimaryconfidence = 21;
+  int32 fcwconfidence = 22;
+  int32 aebstatus = 23;
+  int32 vistrkid = 24;
+  int32 movement = 25;
+  .CommonProto.TurnSignal turn_signal = 26;
+  double longitudinal_relative_velocity = 27;
+  double lateral_relative_velocity = 28;
+  repeated .CommonProto.Point2DPosition obj_refer_points = 29;
+  .FusionProto.ObjMeasureState obj_measure_state = 30;
+  int32 fc_source_trackid = 31;
+  int32 fr_source_trackid = 32;
+  int32 fcr_source_trackid = 33;
+  int32 rcr_source_trackid = 34;
+}
+
+message PedData {
+  int32 ped_result = 1;
+  double ped_confidence = 2;
+  int32 ped_azi = 3;
+  double ped_xm = 4;
+  double ped_ym = 5;
+}
+
+message FusObjects {
+  double time_stamp = 1;
+  repeated .FusionProto.FusObject objs = 2;
+  repeated .CommonProto.SensorParameters sensors_parameters = 3;
+  repeated .CommonProto.FrameClue input_info = 4;
+  int32 frame_index = 5;
+}
+

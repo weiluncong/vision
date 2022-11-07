@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package RawDataProto;
+
+message CanData {
+  message MetaCanFrame {
+    int32 id = 1;
+    int32 len = 2;
+    bytes candata = 3;
+  }
+  int32 channel = 1;
+  repeated .RawDataProto.CanData.MetaCanFrame canFrame = 2;
+}
+
+message ImageData {
+  bytes image = 1;
+}
+
+message StructData {
+  bytes bufData = 1;
+}
+
+message RawData {
+  double timestamp = 1;
+  int32 dataSource = 2;
+  int32 dataType = 3;
+  .RawDataProto.CanData candata = 4;
+  .RawDataProto.ImageData imageData = 5;
+  .RawDataProto.StructData structData = 6;
+  int32 frameIndex = 7;
+}
+

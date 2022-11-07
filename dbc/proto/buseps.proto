@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package BusepsProto;
+
+message BusEpsMotionInfo {
+  double eps_pinionang = 1;
+  double eps_handwheel_relang = 2;
+  double eps_actual_torsion_bar_torq = 3;
+  double eps_elect_power_consumption = 4;
+  double eps_max_safety_torsion_bar_torq = 5;
+  double eps_measured_torsion_bar_torque = 6;
+  uint32 eps_measured_torsion_bar_torq_valid = 7;
+  double eps_min_safety_torsion_bar_torq = 8;
+  double eps_steering_torque = 9;
+  double eps_actual_motor_torq = 10;
+  uint32 eps_handwheel_relang_valid = 11;
+  uint32 eps_pinionang_valid = 12;
+  double time_stamp = 13;
+}
+
+message BusEpsSts {
+  uint32 eps_apa_abortfeedback = 1;
+  uint32 eps_apa_control_feedback = 2;
+  uint32 eps_apa_epas_failed = 3;
+  uint32 eps_concuss_availability_status = 4;
+  uint32 eps_iacc_abortreason = 5;
+  uint32 eps_lat_ctrl_active = 6;
+  uint32 eps_lat_ctrl_availability_status = 7;
+  uint32 eps_mode_switch_st = 8;
+  uint32 eps_torq_sensor_status = 9;
+  uint32 eps_fault_state = 10;
+  uint32 eps_ldw_shake_lev_status = 11;
+  uint32 eps_system_st = 12;
+  uint32 eps_adas_active_mode = 13;
+  uint32 eps_faild = 14;
+  uint32 eps_steer_mod_fb = 15;
+  uint32 eps_ads_abortfeedback = 16;
+  uint32 eps_ads_control_feedback = 17;
+  double time_stamp = 18;
+}
+
+message BusSAS {
+  uint32 eps_sas_cal_sts = 1;
+  double eps_sas_steer_ag = 2;
+  uint32 eps_sas_steer_ag_vld = 3;
+  uint32 eps_steer_ag_rate = 4;
+  uint32 eps_steer_ag_sens_filr = 5;
+  double time_stamp = 6;
+}
+

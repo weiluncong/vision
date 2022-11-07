@@ -1,0 +1,141 @@
+syntax = "proto3";
+
+import "hdmap_enum.proto";
+package hdmap;
+
+message Gnss {
+  double lng = 1;
+  double lat = 2;
+}
+
+message HDMapStatus {
+  bool map_status = 1;
+  bool update_status = 2;
+  uint32 cross_reference = 3;
+  double same_of_cr = 4;
+}
+
+message Link {
+  uint64 link_id = 1;
+  double link_length = 2;
+  .hdmap.RoadType type = 3;
+  repeated .hdmap.LaneAttribute lane_attributelists = 4;
+  repeated .hdmap.Line lines = 5;
+  repeated .hdmap.GroundMarking ground_markings = 6;
+  repeated .hdmap.MapTrafficLight traffic_light = 7;
+  repeated .hdmap.MapTrafficSign traffic_info = 8;
+  bool complex_intersection = 9;
+  repeated uint64 successive_link_ids = 10;
+  bool is_routing_path = 11;
+  repeated .hdmap.RoadSplitMergeInfo split_merge_list = 12;
+  .hdmap.RoadGrade grade = 13;
+  bool is_in_tunnel = 14;
+  bool is_in_toll_booth = 15;
+  bool is_in_certified_road = 16;
+  bool is_in_odd = 17;
+}
+
+message RoadSplitMergeInfo {
+  .hdmap.RoadTransitionType type = 1;
+  double dis = 2;
+}
+
+message LineMarking {
+  .hdmap.LineMarkingType type = 1;
+  .hdmap.Color color = 2;
+  double dis = 3;
+  uint32 is_abnormal = 4;
+}
+
+message Line {
+  uint32 index = 1;
+  .hdmap.LineType line_type = 2;
+  repeated .hdmap.LineMarking markings = 3;
+  repeated .hdmap.Gnss line_points = 4;
+}
+
+message LaneWidthCurvature {
+  double dis = 1;
+  double value = 2;
+}
+
+message LaneConnectivityInfo {
+  uint64 link_id = 1;
+  uint32 lane_num = 2;
+}
+
+message SpeedLimit {
+  uint32 value = 1;
+  .hdmap.SpeedLimitType type = 2;
+}
+
+message LaneAttribute {
+  uint32 index = 1;
+  .hdmap.LaneType type = 2;
+  .hdmap.SpeedLimit speed_limit = 3;
+  uint32 left_index = 4;
+  uint32 center_index = 5;
+  uint32 right_index = 6;
+  repeated .hdmap.LaneWidthCurvature lane_width_list = 7;
+  repeated .hdmap.LaneWidthCurvature lane_curvature_list = 8;
+  repeated .hdmap.LaneConnectivityInfo lane_connectivity_list = 9;
+  repeated .hdmap.LaneArrow lane_arrows = 10;
+  repeated .hdmap.LaneWidthCurvature lane_slope_list = 11;
+}
+
+message GroundMarking {
+  .hdmap.GroundMarkType type = 1;
+  double dis = 2;
+  repeated .hdmap.Gnss points = 3;
+}
+
+message LaneArrow {
+  .hdmap.LaneArrowType arrow_type = 1;
+  .hdmap.Gnss center_point = 2;
+  repeated .hdmap.Gnss bounding_box_points = 3;
+}
+
+message MapTrafficLight {
+  .hdmap.TrafficLightLongitudinal longitudinal_position = 1;
+  .hdmap.TrafficLightLateral lateral_position = 2;
+  double relative_altitude = 3;
+  .hdmap.Gnss gnss_position = 4;
+}
+
+message AdditionalPanel {
+  .hdmap.ConditionType type = 1;
+  uint32 avaliable = 2;
+  .hdmap.ConditionPanelType panel_value_type = 3;
+  string panel_value = 4;
+}
+
+message MapTrafficSign {
+  .hdmap.SignType sign_type = 1;
+  double dis_to_sign = 2;
+  uint32 sign_value = 3;
+  int32 sign_distance = 4;
+  int32 sign_length = 5;
+  uint32 changable = 6;
+  repeated .hdmap.AdditionalPanel panels = 7;
+  .hdmap.SignShape sign_shape = 8;
+  double dis_to_link_s = 9;
+}
+
+message GobalMapInfo {
+  uint32 country_code = 1;
+  uint32 region_code = 2;
+  bool driving_side = 3;
+  bool unit_system = 4;
+  uint32 version_software = 5;
+  uint32 version_map = 6;
+  uint32 time_zone_offset = 7;
+}
+
+message StaticHDMapInfo {
+  .hdmap.Gnss anchor_pos = 1;
+  .hdmap.HDMapStatus hdmap_status = 2;
+  repeated .hdmap.Link links = 3;
+  .hdmap.GobalMapInfo map_info = 4;
+  double time_to_send = 5;
+}
+

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package BusipProto;
+
+message BusIP {
+  uint32 ip_dis_fail = 1;
+  uint32 ip_driver_lcdaled_sts = 2;
+  uint32 ip_passenger_lcdaled_sts = 3;
+  uint32 ip_q_dash_acc_fail = 4;
+  double time_stamp = 5;
+}
+

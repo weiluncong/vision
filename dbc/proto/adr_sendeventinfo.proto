@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package AdrSendEventInfoProto;
+
+message EventUpInfo {
+  uint64 event_time = 1;
+  string eventcatelog = 2;
+  string event_code = 3;
+  double latitude = 4;
+  double longitude = 5;
+  repeated .AdrSendEventInfoProto.FileInfo filectx = 6;
+}
+
+message FileInfo {
+  string file_id = 1;
+  string file_name = 2;
+  string file_path = 3;
+  string controller_code = 4;
+}
+

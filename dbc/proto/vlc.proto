@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package VlcProto;
+
+message FromVLC {
+  .VlcProto.LongCtrlCmd long_ctrl_cmd = 1;
+  .VlcProto.DebugVLC debug_vlc = 2;
+  .VlcProto.VLCDiagnosisInfo vlcdiagnosisinfo = 3;
+  .VlcProto.VLCHeartBeats vlcheartbeats = 4;
+}
+
+message DebugVLC {
+  bool decellimitstate = 1;
+  bool accellimitstate = 2;
+  bool enable_0b_1t = 3;
+  int32 torqueteminal = 4;
+  int32 torquepid = 5;
+  int32 torquefeedforward = 6;
+  int32 torqueslop = 7;
+  int32 torquefriction = 8;
+  int32 roadgrade_mpss = 9;
+  int32 deltaccel_mpss = 10;
+  int32 accelvh_mpss = 11;
+  int32 deceldeal_mpss = 12;
+  uint32 version = 13;
+  bool aeb_active = 14;
+  uint32 fc_aeb = 15;
+  bool aeb_veh_hold_req = 16;
+  bool prefill_active = 17;
+  uint32 aeb_ctrl_type = 18;
+  bool aba_active = 19;
+  uint32 aba_level = 20;
+  bool r_rctb_active = 21;
+  uint32 rctbdec = 22;
+  bool f_fctb_active = 23;
+  uint32 fctbdec = 24;
+  bool rbm_fullfunction_avail = 25;
+  uint32 ibcu_plunger_brake_pressure = 26;
+}
+
+message LongCtrlCmd {
+  uint32 acc_acctrqreq = 1;
+  bool acc_acctrqreqena = 2;
+  bool acc_cddaxena = 3;
+  uint32 acc_targetacceleration = 4;
+  bool acc_dectostop = 5;
+  bool acc_driveoff_request = 6;
+  bool vlc_funcstatus = 7;
+  bool vlc_input_err = 8;
+  bool vlc_actuator_err = 9;
+  uint32 acc_aebctrltype = 10;
+  uint32 acc_aebtargetdec = 11;
+  bool acc_aebvehicleholdreq = 12;
+  bool acc_prefillactive = 13;
+  bool acc_aebactive = 14;
+  bool acc_abaactive = 15;
+  uint32 acc_abalevel = 16;
+  uint32 adc_reqmode = 17;
+  uint32 adc_reqtype = 18;
+  bool adc_epbreq = 19;
+}
+
+message VLCDiagnosisInfo {
+  uint32 time_stamp = 1;
+  uint32 front_module_fail = 2;
+  uint32 input_signal_invalid = 3;
+  uint32 module_running_error = 4;
+  uint32 is_dtc = 5;
+  uint32 reserved = 6;
+}
+
+message VLCHeartBeats {
+  uint32 heart_beats = 1;
+}
+

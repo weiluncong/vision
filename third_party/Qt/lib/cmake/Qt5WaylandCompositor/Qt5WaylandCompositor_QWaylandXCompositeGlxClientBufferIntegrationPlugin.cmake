@@ -1,0 +1,6 @@
+
+add_library(Qt5::QWaylandXCompositeGlxClientBufferIntegrationPlugin MODULE IMPORTED)
+
+_populate_WaylandCompositor_plugin_properties(QWaylandXCompositeGlxClientBufferIntegrationPlugin RELEASE "wayland-graphics-integration-server/libxcomposite-glx.so")
+
+list(APPEND Qt5WaylandCompositor_PLUGINS Qt5::QWaylandXCompositeGlxClientBufferIntegrationPlugin)

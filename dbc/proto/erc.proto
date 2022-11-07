@@ -1,0 +1,495 @@
+syntax = "proto3";
+
+package ErcProto;
+
+message FromERC {
+  .ErcProto.LaneKalmanOut lane_kalman_out = 1;
+  .ErcProto.LaneChangeFlagOut lane_change_flag_out = 2;
+  .ErcProto.EgoTrajOut ego_traj_out = 3;
+  .ErcProto.ObjAdditionalInfoOut obj_additional_info_out = 4;
+  .ErcProto.ObjBaseInfoOut obj_base_info_out = 5;
+  .ErcProto.ErcMapOut erc_map_out = 6;
+  .ErcProto.HdMapStatusErc hdmap_status_erc = 7;
+  .ErcProto.FcLinesRaw fclines_raw = 8;
+  .ErcProto.FusionRaw fusion_raw = 9;
+  .ErcProto.ErcToDTC erc_to_dtc = 10;
+  .ErcProto.DebugERC debug_erc = 11;
+  .ErcProto.ErcDiagnosisInfo erc_diagnosis_info = 12;
+  .ErcProto.ErcHeartBeats erc_heart_beats = 13;
+}
+
+message AdasMapErc {
+  double current_curvature = 1;
+  double road_curvature_50m = 2;
+  int32 service_road_info = 3;
+  double service_road_dis = 4;
+  int32 traffic_accident_info = 5;
+  double traffic_accident_dis = 6;
+  uint32 enter_curve_info = 7;
+  double curve_dis = 8;
+  repeated double slope_gradient_list = 9;
+  uint32 enter_slope_info = 10;
+  double slope_dis = 11;
+  bool nav_status = 12;
+  int32 map_match_status = 13;
+  int32 map_data_update_status = 14;
+  double nav_guigance_status = 15;
+  int32 speed_limit_value = 16;
+  double speed_limit_distance = 17;
+  int32 nav_speed_limit_type = 18;
+  double lane_position = 19;
+  int32 lane_confluence = 20;
+  double lane_confluence_dis = 21;
+  int32 adas_road_type = 22;
+  int32 adas_road_type_600m = 23;
+  double adas_ramp_dis = 24;
+}
+
+message BoundaryAttribute {
+  double a0 = 1;
+  double a1 = 2;
+  double a2 = 3;
+  double a3 = 4;
+  double range = 5;
+  int32 type = 6;
+  int32 confidence = 7;
+}
+
+message CrossWalk {
+  repeated double distance = 1;
+  repeated int32 detect = 2;
+}
+
+message CurveInfoErc {
+  double road_curvature_100m = 1;
+  double road_curvature_200m = 2;
+  double road_curvature_300m = 3;
+}
+
+message DebugERC {
+  .ErcProto.DebugEgoCource debug_ego_cource = 1;
+  .ErcProto.DebugRampTarget debug_ramp_target = 2;
+  .ErcProto.DebugSAID debug_said = 3;
+  .ErcProto.DebugMapInfo debug_mapinfo = 4;
+}
+
+message DebugEgoCource {
+  bool use_trace = 1;
+  bool use_road = 2;
+  bool use_navi = 3;
+  bool use_cam = 4;
+  bool use_road_new = 5;
+  bool use_trace_new = 6;
+}
+
+message DebugMapInfo {
+  bool debug_loc_valid = 1;
+  uint32 debug_link_num = 2;
+  uint32 debug_current_link_index = 3;
+  repeated double debug_locinfo = 4;
+  repeated double debug_insinfo = 5;
+  repeated double debug_first_link_path = 6;
+  bool debug_isinmap = 7;
+  double debug_maputc = 8;
+  double debug_locutc = 9;
+  uint32 debug_first_avaliable_lane_num = 10;
+  uint32 debug_current_lane_num_erc = 11;
+  double debug_lane_index_cost = 12;
+  double debug_left_lane_index_cost = 13;
+  double debug_right_lane_index_cost = 14;
+  uint32 debug_route_direction = 15;
+  uint32 debug_merge_exist = 16;
+  uint32 debug_path_mode_type = 17;
+  uint32 debug_safety_action = 18;
+  repeated uint32 debug_dist_to_dashline_end = 19;
+  uint32 debug_front_event = 20;
+  repeated double debug_link_id = 21;
+  double debug_route_direction_process = 22;
+  double debug_current_lane_type = 23;
+  repeated double debug_final_direction = 24;
+}
+
+message DebugRampTarget {
+  uint32 ramp_con_debug = 1;
+  uint32 ramp_target_front = 2;
+  uint32 ramp_target_rear = 3;
+  bool hv_in_left_lane = 4;
+  bool hv_in_right_lane = 5;
+  uint32 hpp_enterramp_direction = 6;
+  uint32 hpp_mergeramp_direction = 7;
+  bool decelerate_lane_existence = 8;
+  uint32 numchange_direction = 9;
+  uint32 numchange_number = 10;
+  bool accelerate_lane_existence = 11;
+}
+
+message DebugSAID {
+  repeated uint32 sa_id = 1;
+  repeated uint32 sen_num_num = 2;
+  repeated uint32 zone_num = 3;
+  double ramp_obj_direction = 4;
+  uint32 ramp_lane_num = 5;
+  bool ramp_obj_valid = 6;
+  repeated bool obj_tracked = 7;
+  repeated double boundary_lane = 8;
+  repeated double tube_num = 9;
+  repeated double sa_id_del = 10;
+  repeated double tube_num_del = 11;
+  uint32 obs_in_left_path = 12;
+  uint32 obs_in_right_path = 13;
+  double left_point_dist = 14;
+  double right_point_dist = 15;
+}
+
+message EgoTrajOut {
+  double ego_traj_curve = 1;
+  double ego_traj_curve_rate = 2;
+  uint32 hv_in_left_lane = 3;
+  uint32 lane_valid = 4;
+  uint32 navi_available = 5;
+  uint32 fuse_other_data = 6;
+  uint32 rampcon = 7;
+  uint32 num_valid = 8;
+  double curve_back = 9;
+  uint32 freespace_obsnum_in_host = 10;
+  uint32 freespace_obsnum_in_left = 11;
+  uint32 freespace_obsnum_in_right = 12;
+  uint32 fus_obsnum_in_left = 13;
+  uint32 fus_obsnum_near_left = 14;
+  uint32 fus_obsnum_in_host = 15;
+  uint32 fus_obsnum_near_right = 16;
+  uint32 fus_obsnum_in_right = 17;
+}
+
+message ErcDiagnosisInfo {
+  double time_stamp = 1;
+  uint32 front_module_fail = 2;
+  uint32 input_signal_invalid = 3;
+  uint32 module_running_error = 4;
+  uint32 is_dtc = 5;
+  double reserved = 6;
+}
+
+message ErcHeartBeats {
+  double heart_beats = 1;
+}
+
+message ErcMapOut {
+  uint32 map_status = 1;
+  .ErcProto.FusMapInfo fus_map_info = 2;
+  .ErcProto.AdasMapErc adas_map_info = 3;
+  .ErcProto.HdmapErc hdmap_info = 4;
+}
+
+message ErcToDTC {
+  uint32 erc_dtc_error = 1;
+  bool adr_erc_out = 2;
+  double erc_version_info = 3;
+}
+
+message FcLinesAttribute {
+  bool is_valid = 1;
+  double curve_parameter_a0 = 2;
+  double curve_parameter_a1 = 3;
+  double curve_parameter_a2 = 4;
+  double curve_parameter_a3 = 5;
+  double mean_curvature = 6;
+  int32 color = 7;
+  int32 type = 8;
+  double line_range = 9;
+  int32 confidence = 10;
+  double start_x = 11;
+  double end_x = 12;
+  int32 line_track_id = 13;
+}
+
+message FcLinesRaw {
+  .ErcProto.FcLinesAttribute left_line = 1;
+  .ErcProto.FcLinesAttribute right_line = 2;
+  .ErcProto.FcLinesAttribute line_neighbor_left = 3;
+  .ErcProto.FcLinesAttribute line_neighbor_right = 4;
+  .ErcProto.FcLinesAttribute left_guardrail = 5;
+  .ErcProto.FcLinesAttribute right_guardrail = 6;
+}
+
+message FreeSpaceRaw {
+  repeated double motion_state = 1;
+  repeated double type = 2;
+  repeated double longitudinal_distance = 3;
+  repeated double lateral_distance = 4;
+  repeated double vertical_distance = 5;
+  repeated int32 confidence = 6;
+}
+
+message FusBoundary {
+  int32 sensor_type = 1;
+  .ErcProto.BoundaryAttribute boundary_left = 2;
+  .ErcProto.BoundaryAttribute boundary_right = 3;
+}
+
+message FusFreeSpaceRaw {
+  .ErcProto.FreeSpaceRaw fus_freespace = 1;
+  .ErcProto.FreeSpaceRaw vision_freespace = 2;
+  .ErcProto.FreeSpaceRaw radar_freespace = 3;
+}
+
+message FusMapInfo {
+  .ErcProto.RampInfoErc ramp_info = 1;
+  .ErcProto.SpecialAreaErc special_area_info = 2;
+  .ErcProto.CurveInfoErc curve_info = 3;
+  .ErcProto.RoadInfoErc road_info = 4;
+}
+
+message FusTsrRaw {
+  int32 sensor_type = 1;
+  .ErcProto.TrafficSignRaw ts = 2;
+  .ErcProto.GroundTrafficSignRaw gs = 3;
+  .ErcProto.TrafficLightRaw tl = 4;
+  .ErcProto.CrossWalk cw = 5;
+}
+
+message FusionRaw {
+  .ErcProto.FusTsrRaw fustsr_raw = 1;
+  .ErcProto.FusBoundary fus_boundary = 2;
+  .ErcProto.FusFreeSpaceRaw fusfreespace_raw = 3;
+}
+
+message GroundTrafficSignRaw {
+  repeated int32 type = 1;
+  repeated double longitudinal_distance = 2;
+  repeated double lateral_distance = 3;
+  repeated double confidence = 4;
+}
+
+message HdMapStatusErc {
+  uint32 hpp_sts = 1;
+  double hpp_confidence = 2;
+  uint32 hpp_hdmap_map_status = 3;
+  uint32 hpp_hdmap_map_update_status = 4;
+  double loc_status_erc = 5;
+  int32 loc_match_fclines_sts = 6;
+}
+
+message HdmapErc {
+  .ErcProto.HppRampInfoErc hpp_rampinfo_erc = 1;
+  .ErcProto.HppSpeedlimitErc hpp_speedlimit_erc = 2;
+  .ErcProto.HppLaneInfoErc hpp_laneinfo_erc = 3;
+  .ErcProto.HppLineInfoErc hpp_lineinfo_erc = 4;
+  .ErcProto.HppRoadInfoErc hpp_roadinfo_erc = 5;
+}
+
+message HppLaneInfoErc {
+  uint32 crt_lane_num = 1;
+  uint32 hpp_num_of_lanes = 2;
+  uint32 target_lane = 3;
+  uint32 hpp_lane_id = 4;
+  uint32 hpp_lane_type = 5;
+  uint32 hpp_left_lane_id = 6;
+  uint32 hpp_left_lane_type = 7;
+  uint32 hpp_right_lane_id = 8;
+  uint32 hpp_right_lane_type = 9;
+  uint32 hpp_numchangeoflanes_id = 10;
+  double hpp_to_numchangeoflanes_dist = 11;
+  uint32 hpp_to_numchangeoflanes_type = 12;
+  double split_warning = 13;
+  double hpp_lane_trafficflow_vel = 14;
+  double hpp_l_lane_trafficflow_vel = 15;
+  double hpp_r_lane_trafficflow_vel = 16;
+  uint32 hpp_avaliable_lane_num = 17;
+  double distance_to_avaliable_lane_merge = 18;
+}
+
+message HppLineInfoErc {
+  repeated double path = 1;
+  uint32 path_mode = 2;
+  repeated double refline_points_enu = 3;
+  repeated double left_refline_points_enu = 4;
+  repeated double right_refline_points_enu = 5;
+  repeated double trans_target_point_enu = 6;
+  double hpp_leftline_type_change_dis = 7;
+  double hpp_rightline_type_change_dis = 8;
+  .ErcProto.PathEquation hdmap_left_line_ceof = 9;
+  .ErcProto.PathEquation hdmap_right_line_ceof = 10;
+  .ErcProto.PathEquation hdmap_lleft_line_ceof = 11;
+  .ErcProto.PathEquation hdmap_rright_line_ceof = 12;
+}
+
+message HppRampInfoErc {
+  double split_start_dis_erc = 1;
+  double split_end_dis_erc = 2;
+  double merge_start_dis_erc = 3;
+  double merge_end_dis_erc = 4;
+  double to_planning_ramp_start_dis_erc = 5;
+  double to_planning_ramp_end_dis_erc = 6;
+  double to_planning_mainroad_start_dis_erc = 7;
+  double to_planning_mainroad_end_dis_erc = 8;
+  bool to_planning_mainroad_flag = 9;
+  uint32 hpp_ramp_dirction = 10;
+  uint32 light_dirction = 11;
+  uint32 hpp_mergeramp_lane_id = 12;
+  uint32 hpp_splitramp_lane_id = 13;
+  bool enter_ramp_trig = 14;
+  bool enter_ramp_condition = 15;
+  bool enter_main_rd_trig = 16;
+  bool enter_main_rd_condition = 17;
+  bool lnchge_inramp_trig = 18;
+  bool lnchge_inramp_condition = 19;
+  uint32 erc_pathplan_light_ctrl = 20;
+  uint32 split_ramp_num = 21;
+  uint32 merge_ramp_num = 22;
+  double hpp_ramp_curve_min_dis = 23;
+}
+
+message HppRoadInfoErc {
+  uint32 hpp_grade = 1;
+  uint32 hpp_road_type = 2;
+  uint32 road_attribute = 3;
+  double distance_to_merge_link = 4;
+  double distance_to_cross_point = 5;
+  double split_direction = 6;
+  double merge_direction = 7;
+  double cross_line_sts = 8;
+  uint32 hpp_within_geofence = 9;
+  double hpp_to_geogenceterminal_dis = 10;
+  double hpp_current_pos_long_enu = 11;
+  double hpp_current_pos_lat_enu = 12;
+  double hpp_current_pos_heading = 13;
+  double to_odd_false_erc = 14;
+  uint32 is_in_static_fence = 15;
+  double to_static_fence_dis = 16;
+  uint32 is_in_odd_erc = 17;
+  double to_link_without_suc_erc = 18;
+  double distance_to_split_path = 19;
+}
+
+message HppSpeedlimitErc {
+  double crt_mainroad_speedlimit = 1;
+  double crt_ramp_speedlimit = 2;
+  double forward_road_speedlimit = 3;
+  double forward_road_speedlimit_dis = 4;
+  double cent_ln_spdlmt = 5;
+  double target_ln_spdlmt = 6;
+  double hpp_lane_speedlimit = 7;
+  double hpp_llane_speedlimit = 8;
+  double hpp_rlane_speedlimit = 9;
+}
+
+message LaneChangeFlagOut {
+  uint32 lc_flag = 1;
+  uint32 s1_flag = 2;
+  uint32 s2_flag = 3;
+}
+
+message LaneKalmanOut {
+  double left_a0 = 1;
+  double left_a1 = 2;
+  double left_curve = 3;
+  double left_curve_rate = 4;
+  double right_a0 = 5;
+  double right_a1 = 6;
+  double right_curve = 7;
+  double right_curve_rate = 8;
+  uint32 lane_change = 9;
+  double cam_range = 10;
+  double ego_curve = 11;
+  uint32 left_confidence = 12;
+  uint32 right_confidence = 13;
+  double lane_width = 14;
+  uint32 left_type = 15;
+  uint32 right_type = 16;
+}
+
+message ObjAdditionalInfoOut {
+  repeated uint32 obj_tracked = 1;
+  repeated uint32 obj_is_stop = 2;
+  repeated uint32 obj_is_moving = 3;
+  repeated uint32 obj_is_stationary = 4;
+  repeated uint32 obj_is_oncoming = 5;
+  repeated double obj_dist2ref = 6;
+  repeated double obj_speed2ref = 7;
+  repeated double obj_latdist_fixed = 8;
+  repeated double obj_width_fixed = 9;
+  repeated double obj_dist2lane = 10;
+  repeated double obj_speed2lane = 11;
+  repeated uint32 obj_lane_assist = 12;
+  repeated int32 obj_id_direction = 13;
+}
+
+message ObjBaseInfoOut {
+  repeated uint32 trackid = 1;
+  repeated uint32 zoneid = 2;
+  repeated double posx = 3;
+  repeated double velx = 4;
+  repeated double atx = 5;
+  repeated uint32 classtype = 6;
+  repeated uint32 detect_sensor = 7;
+  repeated uint32 confidence = 8;
+  repeated double posy = 9;
+  repeated double vely = 10;
+  repeated double length = 11;
+  repeated double heading_angle = 12;
+  repeated double width = 13;
+  repeated uint32 status = 14;
+  repeated uint32 age = 15;
+  repeated double cross_lane_value = 16;
+  repeated uint32 cross_lane_flag = 17;
+  repeated double dist_lane = 18;
+  repeated double aty = 19;
+  repeated double turn_light = 20;
+  repeated double lateral_relative_velocity = 21;
+  repeated double longitudinal_relative_velocity = 22;
+}
+
+message PathEquation {
+  double a0 = 1;
+  double a1 = 2;
+  double a2 = 3;
+  double a3 = 4;
+  double range = 5;
+}
+
+message RampInfoErc {
+  int32 ramp_info = 1;
+  double ramp_distance = 2;
+  int32 enter_ramp_info = 3;
+  int32 rampside = 4;
+  int32 ramp_event = 5;
+}
+
+message RoadInfoErc {
+  int32 is_infence = 1;
+  int32 current_road_type = 2;
+  int32 forward_roadtype = 3;
+}
+
+message SpecialAreaErc {
+  int32 tunnel_info = 1;
+  double tunnel_distance = 2;
+  double tunnel_length = 3;
+  int32 toll_info = 4;
+  double toll_dis = 5;
+  int32 construction_info = 6;
+  double construction_dis = 7;
+}
+
+message TrafficLightRaw {
+  repeated int32 color = 1;
+  repeated int32 dirction = 2;
+  repeated double longitudinal_distance = 3;
+  repeated double lateral_distance = 4;
+  repeated double height = 5;
+  repeated double confidence = 6;
+  repeated int32 time_stamp_local = 7;
+  repeated int32 type = 8;
+  repeated int32 status = 9;
+}
+
+message TrafficSignRaw {
+  repeated int32 type = 1;
+  repeated double longitudinal_distance = 2;
+  repeated double lateral_distance = 3;
+  repeated double height = 4;
+  repeated double sign_value = 5;
+  repeated double confidence = 6;
+}
+

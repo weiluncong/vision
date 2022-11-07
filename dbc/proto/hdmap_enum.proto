@@ -1,0 +1,312 @@
+syntax = "proto3";
+
+package hdmap;
+
+enum PathPlanningType {
+  kNone = 0;
+  kInSpecialArea = 1;
+  kOutSpecialArea = 2;
+}
+
+enum SpecialAreaType {
+  kSATUnkown = 0;
+  kSATTunnel = 1;
+  kSATToll = 2;
+  kSATConstruction = 3;
+}
+
+enum CurrentRelatedSpecialArea {
+  kCRSAUnkown = 0;
+  kCRSALeave = 1;
+  kCRSAEnter = 2;
+  kCRSAIn = 3;
+}
+
+enum LineMarkingType {
+  kLMTNone = 0;
+  kLMTUnknown = 1;
+  kLMTSolidLine = 2;
+  kLMTDashedLine = 3;
+  kLMTDoubleSolidLine = 4;
+  kLMTDoubleDashedLine = 5;
+  kLMTLeftSolidRightDashed = 6;
+  kLMTRightSolidLeftDashed = 7;
+  kLMTDashedBlocks = 8;
+  kLMTShadedArea = 9;
+  kLMTPhysicalDivider = 10;
+  kLMTVirtual = 11;
+  kLMTOther = 99;
+}
+
+enum Color {
+  kUnknown = 0;
+  kOther = 1;
+  kWhite = 2;
+  kYellow = 3;
+  kOrange = 4;
+  kRed = 5;
+  kBlue = 6;
+  kGreen = 7;
+  kGrey = 8;
+}
+
+enum LineType {
+  kLineTNone = 0;
+  kLineTCenterLine = 1;
+  kLineTLaneMarking = 2;
+  kLineTBoundary = 3;
+  kLineTGuardrail = 4;
+  kLineTFence = 5;
+  kLineTKerb = 6;
+  kLineTWall = 7;
+}
+
+enum TrafficLightLongitudinal {
+  kTLLonUnknown = 0;
+  kTLLonBefore = 1;
+  kTLLonAfter = 2;
+}
+
+enum TrafficLightLateral {
+  kTLLatUnknown = 0;
+  kTLLatRight = 1;
+  kTLLatLeft = 2;
+  kTLLatAbove = 4;
+  kTLLatSurface = 8;
+}
+
+enum ConditionType {
+  kCTUnknown = 0;
+  kCTVehicle = 1;
+  kCTLoad = 2;
+  kCTTimeOfDay = 3;
+  kCTDaysOfWeek = 4;
+  kCTWeight = 5;
+  kCTTurnDirection = 6;
+  kCTWeather = 7;
+  kCTFuzzyTime = 8;
+}
+
+enum ConditionPanelType {
+  kCPTInvalid = 0;
+  kCPTConditionNumeric = 1;
+  kCPTConditionVehicleType = 2;
+  kCPTConditionLoad = 3;
+  kCPTConditionTimeOfDay = 4;
+  kCPTConditionWeather = 5;
+  kCPTConditionFuzzyTime = 6;
+  kCPTConditionTurnDirection = 7;
+  kCPTMax = 8;
+}
+
+enum SignType {
+  kSignTUnknown = 0;
+  kSignTPassLeftOrRightSide = 1;
+  kSignTPassLeftSide = 2;
+  kSignTPassRightSide = 3;
+  kSignTDomesticAnimalsCrossing = 4;
+  kSignTWildAnimalsCrossing = 5;
+  kSignTRoadWorks = 6;
+  kSignTResidentialArea = 7;
+  kSignTEndOfResidentialArea = 8;
+  kSignTRightBend = 9;
+  kSignTLeftBend = 10;
+  kSignTDoubleBendRightFirst = 13;
+  kSignTDoubleBendLeftFirst = 14;
+  kSignTCurvyRoad = 17;
+  kSignTOvertakingByGoodsVehiclesProhibited = 20;
+  kSignTEndOfProhibitionOnOvertakingForGoodsVehicles = 21;
+  kSignTDangerousIntersection = 22;
+  kSignTTunnel = 24;
+  kSignTFerryTerminal = 25;
+  kSignTNarrowBridge = 26;
+  kSignTHumpbackBridge = 28;
+  kSignTRiverBank = 29;
+  kSignTRiverBankLeft = 30;
+  kSignTLightSignals = 31;
+  kSignTGiveWay = 32;
+  kSignTStop = 33;
+  kSignTPriorityRoad = 34;
+  kSignTIntersection = 35;
+  kSignTIntersectionWithMinorRoad = 36;
+  kSignTIntersectionWithPriorityToTheRight = 37;
+  kSignTDirectionToTheRight = 38;
+  kSignTDirectionToTheLeft = 39;
+  kSignTCarriageWayNarrows = 40;
+  kSignTCarriageWayNarrowsRight = 41;
+  kSignTCarriageWayNarrowsLeft = 42;
+  kSignTLaneMergeLeft = 43;
+  kSignTLaneMergeRight = 44;
+  kSignTLaneMergeCenter = 45;
+  kSignTOvertakingProhibited = 46;
+  kSignTEndOfProhibitionOnOvertaking = 47;
+  kSignTProtectedPassingEnd = 48;
+  kSignTPedestrianCrossing = 51;
+  kSignTChildren = 52;
+  kSignTSchoolZone = 53;
+  kSignTCyclists = 54;
+  kSignTTwoWayTraffic = 55;
+  kSignTRailwayCrossingWithGates = 56;
+  kSignTRailwayCrossingWithoutGates = 57;
+  kSignTRailwayCrossing = 58;
+  kSignTTramWay = 59;
+  kSignTFallingRocksLeft = 61;
+  kSignTFallingRocksRight = 62;
+  kSignTSteepDropLeft = 63;
+  kSignTSteepDropRight = 64;
+  kSignTVariableSignMechanicElements = 65;
+  kSignTSlipperyRoad = 66;
+  kSignTSteepAscent = 67;
+  kSignTSteepDescent = 68;
+  kSignTUnevenRoad = 69;
+  kSignTHump = 70;
+  kSignTDip = 71;
+  kSignTRoadFloods = 72;
+  kSignTIcyRoad = 73;
+  kSignTSideWinds = 74;
+  kSignTTafficCongestion = 75;
+  kSignTHighAccidentArea = 76;
+  kSignTBeginningOfBuiltUpArea = 77;
+  kSignTAudibleWarning = 78;
+  kSignTEndOfAllProhibitions = 79;
+  kSignTVariableSignLightElements = 80;
+  kSignTPriorityOverOncomingTraffic = 81;
+  kSignTPriorityForOncomingTraffic = 82;
+  kSignTEndOfBuiltUpArea = 83;
+  kSignTMinSpeedLimit = 86;
+  kSignTMaxSpeedLimit = 87;
+  kSignTEndOfSpeedLimit = 88;
+  kSignTSwingBridge = 89;
+  kSignTNoEntrance = 250;
+  kSignTEndOfHighway = 251;
+  kSignTStartOfHighway = 252;
+  kSignTLeftCurve = 253;
+  kSignTRightCurve = 254;
+  kSignTDanger = 255;
+  kSignTSeriesCurves = 256;
+}
+
+enum SignShape {
+  kSignSUnknown = 0;
+  kSignSRectangle = 1;
+  kSignSTriangle = 2;
+  kSignSRound = 3;
+  kSignSDiamond = 4;
+  kSignSHexagon = 5;
+  kSignSOctagon = 6;
+  kSignSFurcation = 7;
+  kSignSCombination = 8;
+  kSignSOther = 99;
+}
+
+enum LaneType {
+  kLaneTUnknown = 0;
+  kLaneTNormal = 1;
+  kLaneTExit = 2;
+  kLaneTEntry = 3;
+  kLaneTAuxiliary = 4;
+  kLaneTEmergency = 5;
+  kLaneTRestrictedForbidden = 6;
+  kLaneTRestrictedUsable = 7;
+  kLaneTHOV = 8;
+  kLaneTExpress = 9;
+  kLaneTReversible = 10;
+  kLaneTSlow = 11;
+  kLaneTDrivableShoulder = 12;
+  kLaneTTurnOrSuicide = 13;
+  kLaneTExpressAndSlow = 14;
+  kLaneTNonMotorVehicle = 15;
+  kLaneTMixedLane = 16;
+  kLaneTSidewalk = 17;
+  kLaneTClimbingLane = 18;
+  kLaneTOther = 99;
+}
+
+enum RoadType {
+  kRoadTInvalid = 0;
+  kRoadTHighway = 1;
+  kRoadTRamp = 2;
+  kRoadTUrbanRoad = 3;
+}
+
+enum RoadGrade {
+  kRoadGInvalid = 0;
+  kRoadGNationHighway = 1;
+  kRoadGProvincialHighway = 2;
+  kRoadGMianRoad = 3;
+  kRoadGMinorRoad = 4;
+  kRoadGOrdinaryRoad = 5;
+  kRoadGCountyRoad = 6;
+  kRoadGVillageRoad = 7;
+  kRoadGCountyInternalRoad = 8;
+  kRoadGHighway = 9;
+  kRoadGCityExpressway = 10;
+  kRoadGCountyOther = 99;
+}
+
+enum GroundMarkType {
+  kGMTInvalid = 0;
+  kGMTPedestrianCrossing = 1;
+  kGMTStopLine = 2;
+  kGMTSpeedBump = 3;
+  kGMTWord = 4;
+}
+
+enum RoadTransitionType {
+  kRLTNone = 0;
+  kRLTMergingStart = 1;
+  kRLTMergingEnd = 2;
+  kRLTSplittingStart = 3;
+  kRLTSplittingEnd = 4;
+}
+
+enum LaneArrowType {
+  kLATUnknown = 0;
+  kLATForward = 1;
+  kLATRight = 2;
+  kLATRightAndForward = 3;
+  kLATLeft = 4;
+  kLATLeftAndForward = 5;
+  kLATLeftAndRight = 6;
+  kLATUturn = 8;
+  kLATForwardAndUturn = 9;
+  kLATLeftAndUturn = 12;
+  kLATLeftConfluence = 16;
+  kLATRightConfluence = 32;
+  kLATNoLeftTurn = 33;
+  kLATNoRightTurn = 34;
+  kLATFwardAndLeftAndRight = 35;
+  kLATForwardAndLeftAndUturn = 36;
+  kLATTurnRightAndUturn = 37;
+  kLATNoUturn = 38;
+}
+
+enum RelativeDirection {
+  kDirextionNone = 0;
+  kBoth = 1;
+  kAlongPathDirection = 2;
+  kAgainstPathDirection = 3;
+}
+
+enum SurfaceCondition {
+  kSCUnknown = 0;
+  kSCavedRigid = 1;
+  kSCPavedFlexible = 2;
+  kSCBlocks = 3;
+  kSCGravel = 4;
+  kSCDirt = 5;
+}
+
+enum SpeedLimitType {
+  kSLTNone = 0;
+  kSLTUnknown = 1;
+  kSLTImplicit = 2;
+  kSLTExplicitOnTrafficSign = 3;
+  kSLTExplicitNight = 4;
+  kSLTExplicitDay = 5;
+  kSLTExplicitTimeOrDay = 6;
+  kSLTExplicitRain = 7;
+  kSLTExplicitSnow = 8;
+  kSLTExplicitFog = 9;
+}
+

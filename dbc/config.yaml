@@ -1,0 +1,12 @@
+ParseFilter: ""
+CSVFilter: ""
+RecordFilter: ""
+ConsoleFilter: ""
+SignalFilter: ""
+showMaxLength: 10
+showMiniLength: 0
+DataToCsvFullName: 0
+InterFaceVersion: 3
+yaml_dat_path: /mnt/hgfs/share/data/dtm/0905/C385_500131_2022-09-03_11-28-53.dat
+capilotVersion: 3
+CtrlEnterSignalSwitch: 1

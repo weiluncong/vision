@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "fusion_object.proto";
+import "common.proto";
+package FusionProto;
+
+message SingleAssoInfo {
+  int32 asso_obj_track_id = 1;
+  int32 asso_age = 2;
+  int32 asso_weight = 3;
+  int32 asso_loss_frames = 4;
+  .FusionProto.FusObject sensor_object = 5;
+}
+
+message SingleSensorAssoInfo {
+  .CommonProto.SensorFlag flag = 1;
+  .FusionProto.SingleAssoInfo asso_obj = 2;
+  repeated int32 asso_points_index = 3;
+  int32 sure_merged_track_id = 4;
+  int32 sensor_asso_loss_frames = 5;
+  repeated int32 asso_all_objs_track_id = 6;
+}
+
+message FusExObject {
+  .FusionProto.FusObject self_obj = 1;
+  repeated .FusionProto.SingleSensorAssoInfo asso_sensors_info = 2;
+  int32 fus_flag = 3;
+}
+
+message FusExObjects {
+  double time_stamp = 1;
+  repeated .FusionProto.FusExObject objs = 2;
+  repeated .CommonProto.FrameClue input_info = 3;
+  int32 frame_index = 4;
+}
+

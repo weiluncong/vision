@@ -1,0 +1,422 @@
+syntax = "proto3";
+
+package CommonProto;
+
+enum PointType {
+  POINT_TYPE_IGNORE = 0;
+  POINT_TYPE_CAR = 1;
+  POINT_TYPE_ROADDELIMITER = 2;
+  POINT_TYPE_PEDESTRAIN = 3;
+  POINT_TYPE_CONE = 4;
+  POINT_TYPE_STATICOBJECT = 5;
+  POINT_TYPE_UNKNOWN = 6;
+  POINT_TYPE_INVALID = 7;
+}
+
+enum PointMotionState {
+  POINT_MOTION_UNKNOWN = 0;
+  POINT_MOTION_MOVING = 1;
+  POINT_MOTION_STATIONARY = 2;
+}
+
+enum PointDetectedSensor {
+  POINT_FROM_DEFAULT = 0;
+  POINT_FROM_CR = 1;
+  POINT_FROM_FR = 2;
+  POINT_FROM_SC = 3;
+  POINT_FROM_FC = 4;
+  POINT_FROM_FUSION = 5;
+}
+
+enum ObjectClass {
+  OBJECT_CLASS_UNKNOWN = 0;
+  OBJECT_CLASS_CAR = 1;
+  OBJECT_CLASS_TRUCK = 2;
+  OBJECT_CLASS_MOTORCYCLE = 3;
+  OBJECT_CLASS_PEDESTRIAN = 4;
+  OBJECT_CLASS_CYCLIST = 5;
+  OBJECT_CLASS_ANIMAL = 6;
+  OBJECT_CLASS_BUS = 7;
+  OBJECT_CLASS_OTHER = 8;
+  OBJECT_CLASS_HANDCART = 9;
+  OBJECT_CLASS_COLUMN = 10;
+  OBJECT_CLASS_CONE = 11;
+  OBJECT_CLASS_PARKING_LOCKED = 12;
+  OBJECT_CLASS_PARKING_UNLOCKED = 13;
+  OBJECT_CLASS_PEDHEAD = 14;
+  OBJECT_CLASS_GENERAL = 15;
+}
+
+enum TurnSignal {
+  NONE_TRUN_SIGNAL = 0;
+  TRUN_LEFT_SIGNAL = 1;
+  TRUN_RIGHT_SIGNAL = 2;
+  TRUN_DOUBLE_SIGNAL = 3;
+}
+
+enum ReferencePointType {
+  REFERENCE_POINT_UNKNOWN = 0;
+  REFERENCE_POINT_REAR_LEFT = 1;
+  REFERENCE_POINT_REAR_CENTER = 2;
+  REFERENCE_POINT_REAR_RIGHT = 3;
+  REFERENCE_POINT_CENTER_LEFT = 4;
+  REFERENCE_POINT_CENTER_CENTER = 5;
+  REFERENCE_POINT_CENTER_RIGHT = 6;
+  REFERENCE_POINT_FRONT_LEFT = 7;
+  REFERENCE_POINT_FRONT_CENTER = 8;
+  REFERENCE_POINT_FRONT_RIGHT = 9;
+  REFERENCE_POINT_FRONT_WHEEL = 10;
+  REFERENCE_POINT_REAR_WHEEL = 11;
+  REFERENCE_POINT_INNER_WHEEL = 12;
+}
+
+enum ObjectMotionState {
+  OBJECT_MOTION_UNKNOWN = 0;
+  OBJECT_MOTION_MOVING = 1;
+  OBJECT_MOTION_STATIONARY = 2;
+  OBJECT_MOTION_STOPPED = 3;
+  OBJECT_MOTION_MOVING_SLOWLY = 4;
+}
+
+enum ObjectLaneAssignment {
+  OBJECT_IN_UNKNOWN = 0;
+  OBJECT_IN_LEFT_LEFT = 1;
+  OBJECT_IN_LEFT = 2;
+  OBJECT_IN_HOST = 3;
+  OBJECT_IN_RIGHT = 4;
+  OBJECT_IN_RIGHT_RIGHT = 5;
+}
+
+enum CutStatus {
+  CUT_STATUS_UNKNOWN = 0;
+  CUT_STATUS_NORMAL = 1;
+  CUT_STATUS_CUTIN = 2;
+  CUT_STATUS_CUTOUT = 3;
+}
+
+enum CutInFlag {
+  CUT_IN_FLAG_INVALID = 0;
+  CUT_IN_FLAG_HOSTLANE = 1;
+  CUT_IN_FLAG_FOV = 2;
+}
+
+enum MeasureState {
+  MEASURE_STATE_INVALID = 0;
+  MEASURE_STATE_MEASURED = 1;
+  MEASURE_STATE_PREDICTED = 2;
+}
+
+enum DetectSensor {
+  DETECT_SENSOR_NONE = 0;
+  DETECT_SENSOR_ONLY_FRONT_CAMERA = 1;
+  DETECT_SENSOR_ONLY_AROUND_CAMERA = 2;
+  DETECT_SENSOR_ONLY_SURROUND_CAMERA = 3;
+  DETECT_SENSOR_ONLY_FRONT_RADAR = 4;
+  DETECT_SENSOR_ONLY_CORNER_RADAR = 5;
+  DETECT_SENSOR_ONLY_LIDAR = 6;
+  DETECT_SENSOR_RADAR_VISION = 7;
+  DETECT_SENSOR_RADAR_LIDAR = 8;
+  DETECT_SENSOR_LIDAR_VISION = 9;
+  DETECT_SENSOR_RADAR_VISION_LIDAR = 10;
+}
+
+enum LineColor {
+  LINE_COLOR_UNKNOWN = 0;
+  LINE_COLOR_WHITE = 1;
+  LINE_COLOR_YELLOW = 2;
+  LINE_COLOR_MIXED = 3;
+  LINE_COLOR_NUM = 4;
+}
+
+enum LineType {
+  LINE_TYPE_SOLID = 0;
+  LINE_TYPE_DASHED = 1;
+  LINE_TYPE_DASHED_DASHED = 2;
+  LINE_TYPE_DASHED_SOLID = 3;
+  LINE_TYPE_SOLID_DASHED = 4;
+  LINE_TYPE_SOLID_SOLID = 5;
+  LINE_TYPE_MULTIPLE = 6;
+  LINE_TYPE_MULTIPLE_WARNING = 7;
+  LINE_TYPE_CAR_POOL = 8;
+  LINE_TYPE_ASPHALT_JOINT = 9;
+  LINE_TYPE_BOT_DOTT = 10;
+  LINE_TYPE_ROAD_EDGE = 11;
+  LINE_TYPE_GUARDRAIL = 12;
+  LINE_TYPE_CURBSTONE = 13;
+  LINE_TYPE_WALL = 14;
+  LINE_TYPE_TRAFFIC_CONE = 15;
+  LINE_TYPE_DELINEATOR_POST = 16;
+  LINE_TYPE_PARKING_CAR = 17;
+  LINE_TYPE_UNKNOWN_RAISED = 18;
+  LINE_TYPE_FISHBONE_SOLID = 19;
+  LINE_TYPE_UNKNOWN = 20;
+  LINE_TYPE_DIVERSION_INSIDE = 21;
+  LINE_TYPE_DIVERSION_OUTSIDE = 22;
+  LINE_TYPE_WIDE_DASHED = 23;
+  LINE_TYPE_FISHBONE_DASHED = 24;
+}
+
+enum TrafficSignType {
+  TRAFFIC_SIGN_NONE = 0;
+  TRAFFIC_SIGN_SPEED_LIMIT = 1;
+  TRAFFIC_SIGN_SPEED_LIMIT_CANCEL = 2;
+  TRAFFIC_SIGN_PROHIBITION = 3;
+  TRAFFIC_SIGN_TRUN_LEFT = 4;
+  TRAFFIC_SIGN_TURN_RIGHT = 5;
+  TRAFFIC_SIGN_STRAIGHT = 6;
+  TRAFFIC_SIGN_CONFLUENCE = 7;
+  TRAFFIC_SIGN_RAMP = 8;
+  TRAFFIC_SIGN_CONSTURCTION = 9;
+  TRAFFIC_SIGN_SCHOOL = 10;
+  TRAFFIC_SIGN_HOSPITAL = 11;
+  TRAFFIC_SIGN_TRAFFIC_JAM = 12;
+}
+
+enum GroundTrafficSignType {
+  GROUND_SIGN_NO_DETECT = 0;
+  GROUND_SIGN_FORWARD = 1;
+  GROUND_SIGN_LEFT = 2;
+  GROUND_SIGN_RIGHT = 3;
+  GROUND_SIGN_TURN_ROUND_TO_LEFT = 4;
+  GROUND_SIGN_TURN_ROUND_TO_RIGHT = 5;
+  GROUND_SIGN_FORWARD_LEFT = 6;
+  GROUND_SIGN_FORWARD_RIGHT = 7;
+  GROUND_SIGN_FORWARD_TURNRDTOLEFT = 8;
+  GROUND_SIGN_FORWARD_TURNRDTORIGHT = 9;
+  GROUND_SIGN_TURNRD_TO_LEFT_OR_RIGHT = 10;
+  GROUND_SIGN_LEFT_TURNRD_TO_LEFT = 11;
+  GROUND_SIGN_RIGHT_TURNRD_TO_RIGHT = 12;
+  GROUND_SIGN_LEFT_TURNRD_TO_RIGHT = 13;
+  GROUND_SIGN_RIGHT_TURNRD_TO_LEFT = 14;
+  GROUND_SIGN_LEFT_FORWARD_RIGHT = 15;
+  GROUND_SIGN_LEFT_FORWARD_TURNRD_TO_RIGHT = 16;
+  GROUND_SIGN_RIGHT_FORWARD_TURNRD_TO_LEFT = 17;
+  GROUND_SIGN_TURNRD_TO_RT_FORWARD_TURNRD_TO_LT = 18;
+  GROUND_SIGN_RESERVED = 19;
+}
+
+enum TrafficLightColor {
+  LIGHT_NO_DETECTED = 0;
+  LIGHT_COLOR_RED = 1;
+  LIGHT_COLOR_GREEN = 2;
+  LIGHT_COLOR_YELLOW = 3;
+  LIGHT_OFF = 4;
+  LIGHT_OTHER = 5;
+  LIGHT_RESERVED = 6;
+  LIGHT_INVALID = 7;
+}
+
+enum TrafficLightDirection {
+  LIGHT_DIRECTION_NO_DISPLAY = 0;
+  LIGHT_DIRECTION_FORWARD = 1;
+  LIGHT_DIRECTION_LEFT = 2;
+  LIGHT_DIRECTION_FORWARD_AND_LEFT = 3;
+  LIGHT_DIRECTION_RIGHT = 4;
+  LIGHT_DIRECTION_FORWARD_AND_RIGHT = 5;
+  LIGHT_DIRECTION_RIGHT_AND_LEFT = 6;
+  LIGHT_DIRECTION_LEFT_AND_FORWARD_AND_RIGHT = 7;
+  LIGHT_DIRECTION_RESERVED = 8;
+}
+
+enum SensorFlag {
+  SENSOR_FLAG_UNKNOWN = 0;
+  SENSOR_LONG_RANGE_CAMERA = 1;
+  SENSOR_MIDDLE_RANGE_CAMERA = 2;
+  SENSOR_SHORT_RANGE_CAMERA = 3;
+  SENSOR_AROUND_CAMERA = 4;
+  SENSOR_SURROUND_CAMERA = 5;
+  SENSOR_STEREO_CAMERA = 6;
+  SENSOR_FRONT_RADAR = 7;
+  SENSOR_FRONT_CORNER_RADAR = 8;
+  SENSOR_REAR_CORNER_RADAR = 9;
+  SENSOR_CORNER_RADAR = 10;
+  SENSOR_FRONT_LIDAR = 11;
+  SENSOR_CORNER_LIDAR = 12;
+  SENSOR_ULTRASONIC = 13;
+  SENSOR_VEHICLE = 14;
+  SENSOR_FLAG_NUM = 15;
+  sENsor_froNT_cAmErA = 16;
+}
+
+enum CoordinateSystem {
+  COORDINATE_SYSTEM_UNDEFINED = 0;
+  COORDINATE_SYSTEM_VEHICLE_BASE = 1;
+  COORDINATE_SYSTEM_SENSOR = 2;
+  COORDINATE_SYSTEM_WORLD = 3;
+}
+
+enum CommunicationFailure {
+  COMMUNICATION_FAIL_NO = 0;
+  COMMUNICATION_FAIL_CRC = 1;
+  COMMUNICATION_FAIL_ROLLCOUNTER = 2;
+  COMMUNICATION_FAIL_TIMEOUT = 3;
+}
+
+enum SensorStateFailure {
+  SENSOR_FAIL_NO = 0;
+  SENSOR_FAIL_BLIND = 1;
+  SENSOR_FAIL_ALIGN = 2;
+  SENSOR_FAIL_REVERSIBLE = 3;
+  SENSOR_FAIL_IRREVERSIBLE = 4;
+}
+
+enum FusionStateFailure {
+  FUSION_FAIL_NO = 0;
+  FUSION_FAIL_YES = 1;
+}
+
+enum SensorFailType {
+  Sensorsts_Norm = 0;
+  Sensorsts_CRCFail = 1;
+  Sensorsts_RollCounterFail = 2;
+  Sensorsts_TimeOutFail = 3;
+  Sensorsts_DSIFail = 4;
+  Sensorsts_TempFail = 5;
+  Sensorsts_VoltFail = 6;
+  Sensorsts_InFail = 7;
+  Sensorsts_SurfaceFail = 8;
+}
+
+enum CamFailType {
+  Camsts_Norm = 0;
+  Camsts_CRCFail = 1;
+  Camsts_RollCounterFail = 2;
+  Camsts_TimeOutFail = 3;
+  Camsts_DSIFail = 4;
+  Camsts_SignalFail = 5;
+  Camsts_PoseFail = 6;
+}
+
+enum RaderFailType {
+  Radersts_Norm = 0;
+  Radersts_CRCFail = 1;
+  Radersts_RollCounterFail = 2;
+  Radersts_TimeOutFail = 3;
+  Radersts_DSIFail = 4;
+}
+
+enum TrafficLightClassficationType {
+  TYPE_NO_DETECED = 0;
+  CIRCLE = 1;
+  ARROW = 2;
+  X_TYPE = 3;
+  TURN_ROUND = 4;
+  ARROW_AND_TURN_ROUND = 5;
+  OTHER = 6;
+  INVALID = 7;
+}
+
+enum TrafficLightBlindingStatus {
+  STATUS_NO_DETECED = 0;
+  LIGHT = 1;
+  FLASHING = 2;
+  OFF = 3;
+}
+
+message SensorRawFailure {
+  uint32 sns_flm = 1;
+  uint32 sns_flo = 2;
+  uint32 sns_frm = 3;
+  uint32 sns_fro = 4;
+  uint32 sns_frs = 5;
+  uint32 sns_fls = 6;
+  uint32 sns_rls = 7;
+  uint32 sns_rrs = 8;
+  uint32 sns_rro = 9;
+  uint32 sns_rrm = 10;
+  uint32 sns_rlm = 11;
+  uint32 sns_rlo = 12;
+  uint32 sns_frontcamera = 13;
+  uint32 sns_rearcamera = 14;
+  uint32 sns_leftcamera = 15;
+  uint32 sns_rightcamera = 16;
+  uint32 rlr = 17;
+  uint32 rrr = 18;
+  uint32 flr = 19;
+  uint32 frr = 20;
+  uint32 fc = 21;
+  uint32 ecu = 22;
+  uint32 avm_sys = 23;
+  uint32 soc_sys = 24;
+  uint32 mk_read = 25;
+  uint32 ck_read = 26;
+  uint32 trip_sys = 27;
+  uint32 dcan_sys = 28;
+  uint32 acan_sys = 29;
+  uint32 rcan_sys = 30;
+  uint32 ecan_sys = 31;
+  uint32 fcan_sys = 32;
+  uint32 ccan_sys = 33;
+  uint32 bcan_sys = 34;
+  uint32 bodycan_sys = 35;
+  uint32 ican_sys = 36;
+  uint32 eps2_sys = 37;
+  uint32 pmu_sys = 38;
+  uint32 esp_sys = 39;
+  uint32 whlspd = 40;
+  uint32 rbmepb_sys = 41;
+  uint32 rbmesp_sys = 42;
+  uint32 rbm_whlspd = 43;
+  uint32 eps_sys = 44;
+  uint32 rcan_sas = 45;
+  uint32 fr = 46;
+  uint32 lvsm = 47;
+  uint32 vcu_sys = 48;
+  uint32 ca_sys = 49;
+  uint32 ca_apa_sys = 50;
+  uint32 svdc_sys = 51;
+  double time_stamp = 52;
+}
+
+message PixelPoint {
+  int32 u = 1;
+  int32 v = 2;
+}
+
+message EulerAngle {
+  double yoll = 1;
+  double pitch = 2;
+  double yaw = 3;
+}
+
+message TranslationVector {
+  double deta_x = 1;
+  double deta_y = 2;
+  double deta_z = 3;
+}
+
+message SensorParameters {
+  .CommonProto.SensorFlag sensor_flag = 1;
+  repeated float external_parameter = 2;
+  repeated float internal_parameter = 3;
+  .CommonProto.EulerAngle sensor_rotation_angle = 4;
+  .CommonProto.TranslationVector sensor_translation_vector = 5;
+}
+
+message Point2DPosition {
+  double longitudinal_distance = 1;
+  double lateral_distance = 2;
+}
+
+message Point3DPosition {
+  double longitudinal_distance = 1;
+  double lateral_distance = 2;
+  double vertical_distance = 3;
+}
+
+message Rect {
+  .CommonProto.PixelPoint left_top = 1;
+  .CommonProto.PixelPoint right_bottom = 2;
+}
+
+message Cube {
+  repeated .CommonProto.PixelPoint top = 1;
+  repeated .CommonProto.PixelPoint bottom = 2;
+}
+
+message FrameClue {
+  double time_stamp = 1;
+  string channel_name = 2;
+  int32 frame_index = 3;
+}
+

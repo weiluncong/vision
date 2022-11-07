@@ -1,0 +1,146 @@
+syntax = "proto3";
+
+package BushusetProto;
+
+message BusHuAdsFunSet {
+  uint32 hu_csla_enable = 1;
+  uint32 hu_hwa_enable = 2;
+  uint32 hu_iacc_enable = 3;
+  uint32 hu_irlc_enable = 4;
+  uint32 hu_overspeed_sound_war_enable = 5;
+  uint32 hu_overspeed_warning_enable = 6;
+  int32 hu_overspeed_warning_offset = 7;
+  uint32 hu_tjp_enable = 8;
+  uint32 hu_tla_enable = 9;
+  uint32 hu_udlc_enable = 10;
+  uint32 hu_nda_enable = 11;
+  uint32 hu_nda_audio_war_enable = 12;
+  uint32 hu_nda_nav_enable = 13;
+  uint32 hu_ads_safe_voice_enable = 14;
+  uint32 hu_ads_lane_change_voice_enable = 15;
+  uint32 hu_ads_road_voice_enable = 16;
+  uint32 hu_nda_set_spd_mode = 17;
+  double time_stamp = 18;
+}
+
+message BusHuApaSet {
+  uint32 hu_apa_mode_select = 1;
+  uint32 hu_apa_remote_disp_sts = 2;
+  uint32 hu_asp_mode_select = 3;
+  uint32 hu_asp_remind_enable = 4;
+  uint32 hu_asp_switch = 5;
+  uint32 hu_cross_parking_mode_set = 6;
+  uint32 hu_interface_change_singnal = 7;
+  uint32 hu_laeb_enable = 8;
+  uint32 hu_obstacle_safe_distance_set = 9;
+  uint32 hu_pac_mode_select = 10;
+  uint32 hu_parking_confirm = 11;
+  uint32 hu_parking_mode_select = 12;
+  uint32 hu_parking_resume = 13;
+  uint32 hu_park_voice_int_set_status = 14;
+  uint32 hu_remote_distance_set = 15;
+  uint32 hu_slot_user_selected = 16;
+  uint32 hu_slot_voice_select = 17;
+  uint32 hu_uls_bsd_activation = 18;
+  uint32 hu_uls_fkp_activation = 19;
+  uint32 hu_rads_switch = 20;
+  uint32 hu_apa_on_off = 21;
+  double time_stamp = 22;
+  uint32 dcm_hu_aparecomendres = 24;
+  double dcm_hu_apaactive2 = 25;
+}
+
+message BusHuAvmSet {
+  uint32 hu_360_av_mdetection_request = 1;
+  uint32 hu_3_davm_req = 2;
+  uint32 hu_3_d_hor_angle_req = 3;
+  uint32 hu_avm_calibration_confirm = 4;
+  uint32 hu_avm_calibration_switch = 5;
+  uint32 hu_avmdvr_replay_mode_req = 6;
+  uint32 hu_av_mswitch = 7;
+  uint32 hu_body_colour_set = 8;
+  uint32 hu_license_number = 9;
+  uint32 hu_license_number_set = 10;
+  uint32 hu_mod_enable = 11;
+  uint32 hu_radar_avm_switch = 12;
+  uint32 hu_recordingcycle_setting = 13;
+  uint32 hu_top_look_down_switch = 14;
+  uint32 hu_transparent_car_switch = 15;
+  uint32 hu_turn_light_avm_switch = 16;
+  uint32 hu_vision_angle_req = 17;
+  uint32 hu_wheel_hub_set = 18;
+  uint32 hu_license_number_check_sum = 19;
+  uint32 hu_full_speed_panoramic_select = 20;
+  uint32 hu_avm_triggermethod = 21;
+  double time_stamp = 22;
+}
+
+message BusHuDaFunSet {
+  uint32 hu_ads_rescue_confirm = 1;
+  uint32 hu_audio_warning_enable = 2;
+  uint32 hu_auto_brake_enable = 3;
+  uint32 hu_bsdlca_setting = 4;
+  uint32 hu_elk_enable = 5;
+  uint32 hu_ess_enable = 6;
+  uint32 hu_fcta_enable = 7;
+  uint32 hu_fctb_enable = 8;
+  uint32 hu_fcw_setting = 9;
+  uint32 hu_front_radar_active = 10;
+  uint32 hu_hma_enable = 11;
+  uint32 hu_las_mode_selection = 12;
+  uint32 hu_las_warning_mode_selection = 13;
+  uint32 hu_ldw_shake_lev = 14;
+  uint32 hu_lock_ctrl_enable = 15;
+  uint32 hu_rcta_enable = 16;
+  uint32 hu_rctb_enable = 17;
+  uint32 hu_rcw_enable = 18;
+  uint32 hu_tsr_switch = 19;
+  uint32 hu_sea_enable = 20;
+  double time_stamp = 21;
+}
+
+message BusHuDvrSet {
+  uint32 hu_dvr_browse_command = 1;
+  uint32 hu_dvr_display_vision = 2;
+  uint32 hu_dvr_distort_correct_switch = 3;
+  uint32 hu_dvr_edit_selected = 4;
+  uint32 hu_dvr_emergency_record = 5;
+  uint32 hu_dvr_enable_set = 6;
+  uint32 hu_dvr_format_req = 7;
+  uint32 hu_dvr_mode = 8;
+  uint32 hu_dvr_print_screen = 9;
+  uint32 hu_dvr_replay_command = 10;
+  uint32 hu_dvr_replay_mode = 11;
+  uint32 hu_dvr_replay_speed = 12;
+  uint32 hu_dvr_vedio_seek = 13;
+  uint32 hu_dvr_video_play_user_time = 14;
+  uint32 hu_ext_remote_detect_upload_status = 15;
+  uint32 hu_language_set = 16;
+  uint32 hu_real_time_req = 17;
+  uint32 hu_rebroadcast_req = 18;
+  uint32 hu_remote_disp_sts = 19;
+  uint32 hu_sd_capacity = 20;
+  uint32 hu_shoot_control = 21;
+  double time_stamp = 22;
+}
+
+message BusHuScreenOper {
+  uint32 hu_screen_operate_status = 1;
+  uint32 hu_xlevel = 2;
+  uint32 hu_ylevel = 3;
+  double time_stamp = 4;
+}
+
+message BusHuScreenSet {
+  uint32 hu_language_sync = 1;
+  double time_stamp = 2;
+}
+
+message BusHuVcReq {
+  uint32 hu_lane_change_req = 1;
+  uint32 hu_vc_cruise_control = 2;
+  uint32 hu_vc_cruise_set_distance = 3;
+  uint32 hu_vc_cruise_set_speed = 4;
+  double time_stamp = 5;
+}
+

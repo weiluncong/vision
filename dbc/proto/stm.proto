@@ -1,0 +1,435 @@
+syntax = "proto3";
+
+package StmProto;
+
+message FromSTM {
+  .StmProto.SysStateMng sys_state_mng = 1;
+  .StmProto.SafetyStrategyMng safety_strategy_mng = 2;
+  .StmProto.PdStsMng pd_sts_mng = 3;
+  .StmProto.DebugSTM debug_stm = 4;
+  .StmProto.Odc odc = 5;
+  .StmProto.STMDiagnosisInfo stm_diagnosis_info = 6;
+  .StmProto.STMHeartBeats stm_heartbeats = 7;
+}
+
+message DebugSTM {
+  uint32 stm_versionnumber = 1;
+  uint32 prewarn_roadword = 2;
+  uint32 handsoff_warn1_reason = 3;
+  uint32 tor_ihbacclat_reason = 4;
+  uint32 tor_ihbacclng_reason = 5;
+  uint32 eyesoff_warn1_reason = 6;
+  uint32 eyesoff_warn2_reason = 7;
+  uint32 brk_sys_err = 8;
+  uint32 tor_declng_reason = 9;
+  uint32 tor_declat_reason = 10;
+  uint32 quit_lat_reason = 11;
+  uint32 quit_lng_reason = 12;
+  uint32 handsoff_warn2_reason = 13;
+  uint32 handover_lat = 14;
+  uint32 handover_lng = 15;
+  uint32 lng_available_word = 16;
+  uint32 lng_active_to_standby_word = 17;
+  uint32 lat_available_word = 18;
+  uint32 lat_suspend_cond_sts_word = 19;
+  uint32 lat_active_to_standby_word = 20;
+  uint32 lat_err = 21;
+  uint32 lat_alarm1_reason = 22;
+  uint32 lat_alarm2_reason = 23;
+  uint32 lng_alarm1_reason = 24;
+  uint32 lng_alarm2_reason = 25;
+  uint32 lng_err = 26;
+  uint32 veh_body_word = 27;
+  uint32 envir_degard_word = 28;
+  uint32 warn_quit = 29;
+  uint32 req_driver_err_sta_reason = 30;
+  uint32 turn_sys_err_word = 31;
+  uint32 lat_othercond_word = 32;
+  uint32 lng_othercond_word = 33;
+  bool epb_pull_finish = 34;
+  bool hand_over_ability = 35;
+  uint32 prohibit_flag_word = 36;
+}
+
+message Odc {
+  .StmProto.Odc397Textinh odc_397_textinh = 1;
+  .StmProto.Odc397Stsinh odc_397_stsinh = 2;
+  .StmProto.Odc397Onequit odc_397_onequit = 3;
+  .StmProto.Odc397Twoquit odc_397_twoquit = 4;
+  .StmProto.Odc397threequit odc_397_threequit = 5;
+  .StmProto.Odc397Fourquit odc_397_fourquit = 6;
+  .StmProto.Odc397Fivequit odc_397_fivequit = 7;
+  .StmProto.Odc397Sixquit odc_397_sixquit = 8;
+  .StmProto.Odc821Textinh odc_821_textinh = 9;
+  .StmProto.Odc821Stsinh odc_821_stsinh = 10;
+  .StmProto.Odc821Onequit odc_821_onequit = 11;
+  .StmProto.Odc821Twoquit odc_821_twoquit = 12;
+  .StmProto.Odc821Threequit odc_821_threequit = 13;
+  .StmProto.Odc397Sevenquit odc_397_sevenquit = 14;
+}
+
+message Odc397Fivequit {
+  uint32 odc_fatigue_tc3 = 1;
+  uint32 odc_distraction_tc3 = 2;
+  uint32 odc_stillbrk_tc3 = 3;
+  uint32 odc_driversts_undetective_tc3 = 4;
+  uint32 odc_doorsclose_non_tc3 = 5;
+  uint32 odc_seatbeltwear_non_tc3 = 6;
+  uint32 odc_vehiclestart_non_tc3 = 7;
+  uint32 odc_espstart_non_tc3 = 8;
+  uint32 odc_iacc_nostart_tc3 = 9;
+  uint32 odc_udlc_nostart_tc3 = 10;
+  uint32 odc_nda_nostart_tc3 = 11;
+  uint32 odc_naviinfo_no_tc3 = 12;
+  uint32 odc_drivermoment_limit_tc3 = 13;
+  uint32 odc_cruisesped_over_tc3 = 14;
+  uint32 odc_accsped_over_tc3 = 15;
+  uint32 odc_lccsped_over_tc3 = 16;
+  uint32 odc_iaccsped_over_tc3 = 17;
+  uint32 odc_ndasped_over_tc3 = 18;
+  uint32 odc_lfdoor_unclosed_tc3 = 19;
+  uint32 odc_forward_geer_tc3 = 20;
+}
+
+message Odc397Fourquit {
+  uint32 odc_vsm_unsigned_tc3 = 1;
+  uint32 odc_4v_illumination_tc3 = 2;
+  uint32 odc_continuedriving_limit_tc3 = 3;
+  uint32 odc_tyre_abnormal_tc3 = 4;
+  uint32 odc_tyrests_uncertain_tc3 = 5;
+  uint32 odc_brkoverdisc_temp_tc3 = 6;
+  uint32 odc_heavyrain_tc3 = 7;
+  uint32 odc_road_dian_tc3 = 8;
+  uint32 odc_fr_cover_tc3 = 9;
+  uint32 odc_flradar_cover_tc3 = 10;
+  uint32 odc_frradar_cover_tc3 = 11;
+  uint32 odc_rlradar_cover_tc3 = 12;
+  uint32 odc_rrradar_cover_tc3 = 13;
+  uint32 odc_road_wet_tc3 = 14;
+  uint32 odc_aec_actionin_tc3 = 15;
+  uint32 odc_fc_cover_tc3 = 16;
+  uint32 odc_vsm_cover_tc3 = 17;
+  uint32 odc_4v_cover_tc3 = 18;
+  uint32 odc_ims_cover_tc3 = 19;
+  uint32 odc_driver_undetective_tc3 = 20;
+}
+
+message Odc397Onequit {
+  uint32 odc_powerchip_failure_tc3 = 1;
+  uint32 odc_dcancom_failure_tc3 = 2;
+  uint32 odc_rcancom_failure_tc3 = 3;
+  uint32 odc_corradarcom_failure_tc3 = 4;
+  uint32 odc_ecancom_failure_tc3 = 5;
+  uint32 odc_fcancom_failure_tc3 = 6;
+  uint32 odc_fcethcom_failure_tc3 = 7;
+  uint32 odc_vsmethcom_failure_tc3 = 8;
+  uint32 odc_fr_failure_tc3 = 9;
+  uint32 odc_flradar_failure_tc3 = 10;
+  uint32 odc_frradar_failure_tc3 = 11;
+  uint32 odc_rlradar_failure_tc3 = 12;
+  uint32 odc_rrradar_failure_tc3 = 13;
+  uint32 odc_front12u_failure_tc3 = 14;
+  uint32 odc_back12u_failure_tc3 = 15;
+  uint32 odc_frontcam_failure_tc3 = 16;
+  uint32 odc_vsm_failure_tc3 = 17;
+  uint32 odc_4vfrontcam_failure_tc3 = 18;
+  uint32 odc_posisensor_failure_tc3 = 19;
+  uint32 odc_wheelbutton_failure_tc3 = 20;
+}
+
+message Odc397Sevenquit {
+  uint32 odc_airbag_failure_tc3 = 1;
+  uint32 odc_fcw_warning_tc3 = 2;
+  uint32 odc_vehicle_unstable_tc3 = 3;
+  uint32 odc_crash_tc3 = 4;
+  uint32 odc_midrain_tc3 = 5;
+  uint32 odc_tepm_over_tc3 = 6;
+  uint32 odc_foward_slip_tc3 = 7;
+  uint32 odc_back_slip_tc3 = 8;
+  uint32 odc_tjp_nostart_tc3 = 9;
+  uint32 odc_tjpsped_over_tc3 = 10;
+  uint32 odc_infocan_failure_tc3 = 11;
+  uint32 odc_bodycan_failure_tc3 = 12;
+  uint32 odc_accel_big_tc3 = 13;
+  uint32 odc_sof_lower_tc3 = 14;
+  uint32 odc_lvsmlfcam_failure_tc3 = 15;
+  uint32 odc_lvsmrmcam_failure_tc3 = 16;
+  uint32 odc_lvsmrrcam_failure_tc3 = 17;
+  uint32 odc_lvsmrfcam_failure_tc3 = 18;
+  uint32 odc_lvsmlrcam_failure_tc3 = 19;
+  uint32 odc_accwheelangle_big_tc3 = 20;
+  uint32 odc_iaccwheelangle_big_tc3 = 21;
+  uint32 odc_ndawheelangle_big_tc3 = 22;
+  uint32 odc_tjpwheelangle_big_tc3 = 23;
+  uint32 odc_ddsawheelangle_big_tc3 = 24;
+  uint32 odc_accwheelrate_big_tc3 = 25;
+  uint32 odc_iaccwheelrate_big_tc3 = 26;
+  uint32 odc_ndawheelrate_big_tc3 = 27;
+  uint32 odc_tjpwheelrate_big_tc3 = 28;
+  uint32 odc_ddsawheelrate_big_tc3 = 29;
+  uint32 odc_alcsped_over_tc3 = 30;
+  uint32 odc_udlcsped_over_tc3 = 31;
+  uint32 odc_fidasped_over_tc3 = 32;
+  uint32 odc_frworkmode_nofit_tc3 = 33;
+  uint32 odc_fccogmode_nofit_tc3 = 34;
+  uint32 odc_rearradarworkmode_nofit_tc3 = 35;
+  uint32 odc_accogmodec3 = 36;
+  uint32 odc_frontradarworkmode_nofit_tc3 = 37;
+}
+
+message Odc397Sixquit {
+  uint32 odc_hudisplay_failure_tc3 = 1;
+  uint32 odc_epbrealse_non_tc3 = 2;
+  uint32 odc_nonbrake_atrest_tc3 = 3;
+  uint32 odc_brake_atmove_tc3 = 4;
+  uint32 odc_cancelbutton_norealse_tc3 = 5;
+  bool odc_cruise_featurequitcond1sts = 6;
+  bool odc_acc_funquitcond1sts = 7;
+  bool odc_lcc_featurequitcond1sts = 8;
+  bool odc_iacc_funquitcond1sts = 9;
+  bool odc_alc_featurequitcond1sts = 10;
+  bool odc_udlc_featurequitcond1sts = 11;
+  bool odc_fida_featurequitcond1sts = 12;
+  bool odc_nda_funquitcond1sts = 13;
+  uint32 odc_821_a72_failure_tc3 = 14;
+  uint32 odc_821_a5f_failure_tc3 = 15;
+  uint32 odc_397_failure_tc3 = 16;
+  uint32 odc_8155_failure_tc3 = 17;
+  uint32 odc_4vrearcam_failure_tc3 = 18;
+  uint32 odc_4vsidecam_failure_tc3 = 19;
+  uint32 odc_lfdoor_uncertain_tc3 = 20;
+  bool odc_drivernotdriver_funquitcond1sts = 21;
+  bool odc_tjp_funquitcond1sts = 22;
+  bool odc_heart_beat = 23;
+  uint32 odc_cond1debug1 = 24;
+  uint32 odc_cond1debug2 = 25;
+  uint32 odc_cond1debug3 = 26;
+  uint32 odc_cond1debug4 = 27;
+  uint32 odc_cond1debug5 = 28;
+}
+
+message Odc397Stsinh {
+  bool odc_cruise_featurerescond1sts = 1;
+  bool odc_lcc_featurerescond1sts = 2;
+  bool odc_alc_featurerescond1sts = 3;
+  bool odc_udlc_featurerescond1sts = 4;
+  bool odc_fida_featurerescond1sts = 5;
+  bool odc_nda_funrescond1sts = 6;
+  bool odc_acc_funrescond1sts = 7;
+  bool odc_iacc_funrescond1sts = 8;
+  bool odc_drivernotdriver_funrescond1sts = 9;
+  bool odc_tjp_funrescond1sts = 10;
+}
+
+message Odc397Textinh {
+  uint32 odc_cruise_featurerescond1text = 1;
+  uint32 odc_lcc_featurerescond1text = 2;
+  uint32 odc_alc_featurerescond1text = 3;
+  uint32 odc_udlc_featurerescond1text = 4;
+  uint32 odc_fida_featurerescond1text = 5;
+  uint32 odc_nda_funrescond1text = 6;
+  uint32 odc_acc_funrescond1text = 7;
+  uint32 odc_iacc_iaccrescond1text = 8;
+  uint32 odc_drivernotdriver_funrescond1text = 9;
+  uint32 odc_tjp_funrescond1text = 10;
+}
+
+message Odc397Twoquit {
+  uint32 odc_wheelbuttoncruise_failure_tc3 = 1;
+  uint32 odc_dispalysys_failure_tc3 = 2;
+  uint32 odc_mainsteeringsys_failure_tc3 = 3;
+  uint32 odc_mainsteersys_failure_tc3 = 4;
+  uint32 odc_2ndsteeringsys_failure_tc3 = 5;
+  uint32 odc_2ndsteersys_failure_tc3 = 6;
+  uint32 odc_mainbrakesysreduce_failure_tc3 = 7;
+  uint32 odc_mainbrakesysaeb_failure_tc3 = 8;
+  uint32 odc_mainbrakesysfun_failure_tc3 = 9;
+  uint32 odc_mainbrakesys_failure_tc3 = 10;
+  uint32 odc_2ndbrakesys_failure_tc3 = 11;
+  uint32 odc_2ndbrakesysfun_failure_tc3 = 12;
+  uint32 odc_powersys_failure_tc3 = 13;
+  uint32 odc_mainepb_failure_tc3 = 14;
+  uint32 odc_2ndepb_failure_tc3 = 15;
+  uint32 odc_2ndsas_failure_tc3 = 16;
+  uint32 odc_mainsas_failure_tc3 = 17;
+  uint32 odc_2ndspdsensor_failure_tc3 = 18;
+  uint32 odc_mainspdsensor_failure_tc3 = 19;
+  uint32 odc_hod_failure_tc3 = 20;
+}
+
+message Odc397threequit {
+  uint32 odc_ims_sts_tc3 = 1;
+  uint32 odc_doorssts_uncertain_tc3 = 2;
+  uint32 odc_steeringlight_failure_tc3 = 3;
+  uint32 odc_lightsys_failure_tc3 = 4;
+  uint32 odc_cruisecofig_unopen_tc3 = 5;
+  uint32 odc_acccofig_unopen_tc3 = 6;
+  uint32 odc_lcccofig_unopen_tc3 = 7;
+  uint32 odc_iacccofig_unopen_tc3 = 8;
+  uint32 odc_alccofig_unopen_tc3 = 9;
+  uint32 odc_udlccofig_unopen_tc3 = 10;
+  uint32 odc_fidacofig_unopen_tc3 = 11;
+  uint32 odc_ddsacofig_unopen_tc3 = 12;
+  uint32 odc_ndacofig_unopen_tc3 = 13;
+  uint32 odc_aeb_trigger_tc3 = 14;
+  uint32 odc_fr_unsigned_tc3 = 15;
+  uint32 odc_flradar_unsigned_tc3 = 16;
+  uint32 odc_frradar_unsigned_tc3 = 17;
+  uint32 odc_rlradar_unsigned_tc3 = 18;
+  uint32 odc_rrradar_unsigned_tc3 = 19;
+  uint32 odc_fc_unsigned_tc3 = 20;
+}
+
+message Odc821Onequit {
+  uint32 odc_map_nouse_tc8 = 1;
+  uint32 odc_obstacle_tc8 = 2;
+  uint32 odc_posi_abnormal_tc8 = 3;
+  uint32 odc_odd_end_tc8 = 4;
+  uint32 odc_alcfida_nonadaptive_tc8 = 5;
+  uint32 odc_udlc_nonadaptive_tc8 = 6;
+  uint32 odc_iacc_nonadaptive_tc8 = 7;
+  uint32 odc_oddcurve_lowest_tc8 = 8;
+  uint32 odc_fence_notin_tc8 = 9;
+  uint32 odc_steepslope_tc8 = 10;
+}
+
+message Odc821Stsinh {
+  bool odc_cruise_featurerescond2sts = 1;
+  bool odc_acc_funrescond2sts = 2;
+  bool odc_lcc_featurerescond2sts = 3;
+  bool odc_iacc_funrescond2sts = 4;
+  bool odc_alc_featurerescond2sts = 5;
+  bool odc_udlc_featurerescond2sts = 6;
+  bool odc_fida_featurerescond2sts = 7;
+  bool odc_nda_funrescond2sts = 8;
+  bool odc_drivernotdriver_funrescond2sts = 9;
+  bool odc_tjp_funrescond2sts = 10;
+}
+
+message Odc821Textinh {
+  uint32 odc_cruise_featurerescond2text = 1;
+  uint32 odc_acc_funrescond2text = 2;
+  uint32 odc_lcc_featurerescond2text = 3;
+  uint32 odc_iacc_iaccrescond2text = 4;
+  uint32 odc_alc_featurerescond2text = 5;
+  uint32 odc_udlc_featurerescond2text = 6;
+  uint32 odc_fida_featurerescond2text = 7;
+  uint32 odc_nda_funrescond2text = 8;
+  uint32 odc_drivernotdriver_funrescond2text = 9;
+  uint32 odc_tjp_funrescond2text = 10;
+}
+
+message Odc821Threequit {
+  uint32 odc_vehicleoverspd_tc8 = 1;
+  bool odc_cruise_featurequitcond2sts = 2;
+  bool odc_acc_funquitcond2sts = 3;
+  bool odc_lcc_featurequitcond2sts = 4;
+  bool odc_iacc_funquitcond2sts = 5;
+  bool odc_alc_featurequitcond2sts = 6;
+  bool odc_udlc_featurequitcond2sts = 7;
+  bool odc_fida_featurequitcond2sts = 8;
+  bool odc_nda_funquitcond2sts = 9;
+  uint32 odc_apaactived_tc8 = 10;
+  bool odc_drivernotdriver_funquitcond2sts = 11;
+  uint32 odc_peoplewalk_tc8 = 12;
+  uint32 odc_headingangle_tc8 = 13;
+  bool odc_tjp_funquitcond2sts = 14;
+  uint32 odc_tjp_nonadaptive_tc8 = 15;
+  uint32 odc_vehicleonline_tc8 = 16;
+  uint32 odc_nidmap_nouse_tc8 = 17;
+  uint32 odc_tjpmap_nouse_tc8 = 18;
+  uint32 odc_staticfence_notin_tc8 = 19;
+  uint32 odc_awaystaticfence_notin_tc8 = 20;
+  uint32 odc_currentroad_nouse_tc8 = 21;
+  uint32 odc_fowardroad_nouse_tc8 = 22;
+  uint32 odc_rampmerge_narrow_tc8 = 23;
+  uint32 odc_cond2debug = 24;
+}
+
+message Odc821Twoquit {
+  uint32 odc_sharp_tc8 = 1;
+  uint32 odc_lane_dislocation_tc8 = 2;
+  uint32 odc_constructionarea_tc8 = 3;
+  uint32 odc_accidentarea_tc8 = 4;
+  uint32 odc_ramparea_tc8 = 5;
+  uint32 odc_tollarea_tc8 = 6;
+  uint32 odc_nondrivable_lane_tc8 = 7;
+  uint32 odc_roadcongestion_tc8 = 8;
+  uint32 odc_laneline_unstable_tc8 = 9;
+  uint32 odc_lanewidth_unfit_tc8 = 10;
+}
+
+message PdStsMng {
+  uint32 pd_status = 1;
+  uint32 pd_acc_status = 2;
+  uint32 pd_iacc_status = 3;
+  uint32 pd_nda_status = 4;
+  uint32 pd_tjp_status = 5;
+  uint32 pd_ddsa_status = 6;
+  uint32 hmi_acc_accmode = 7;
+  uint32 hmi_acc_iacchwamode = 8;
+  uint32 hmi_ads_autodrivestate = 9;
+  uint32 hmi_ads_emostatus = 10;
+  uint32 hmi_ads_ndastatus = 11;
+  bool hmi_pd_tjp_quitawaitflag = 12;
+  uint32 pd_notice = 13;
+  uint32 pd_acc_odometer = 14;
+  uint32 pd_acc_runtime_odometer = 15;
+  uint32 pd_iacc_odometer = 16;
+  uint32 pd_iacc_runtime_odometer = 17;
+  uint32 pd_nda_odometer = 18;
+  uint32 pd_nda_runtime_odometer = 19;
+  uint32 pd_tjp_odometer = 20;
+  uint32 pd_tjp_runtime_odometer = 21;
+  uint32 pd_auto_driver_mode = 22;
+  bool stm_heart_beat = 23;
+}
+
+message STMDiagnosisInfo {
+  uint32 time_stamp = 1;
+  uint32 front_module_fail = 2;
+  uint32 input_signal_invalid = 3;
+  uint32 module_running_error = 4;
+  uint32 is_dtc = 5;
+  uint32 reserved = 6;
+}
+
+message STMHeartBeats {
+  uint32 heart_beats = 1;
+}
+
+message SafetyStrategyMng {
+  uint32 ads_safestop_sts = 1;
+  uint32 ads_ddsa_safestop_call_req = 2;
+  uint32 safestop_sts = 3;
+  bool tjp_inh_active_cond = 4;
+  bool lng_ctrl_dec_request = 5;
+  uint32 driver_lostability_request = 6;
+  bool module_status = 7;
+  uint32 warning_level = 8;
+  uint32 takeover_alarm_lat_level = 9;
+  uint32 takeover_alarm_lng_level = 10;
+  uint32 strategy_lat_ctrl = 11;
+  uint32 strategy_lng_ctrl = 12;
+  uint32 safestop_request = 13;
+  uint32 driver_status_need_notice = 14;
+  uint32 event_notice = 15;
+  bool acc_inh_active_cond = 16;
+  bool iacc_inh_active_cond = 17;
+  bool nda_inh_active_cond = 18;
+  uint32 block_active_status = 19;
+  bool stand_wait_req = 20;
+  bool dtc_heart_beat_err = 21;
+  uint32 handsoff_quit_reason = 22;
+  uint32 iacc_suspend_reason = 23;
+}
+
+message SysStateMng {
+  uint32 sys_lngstate = 1;
+  uint32 sys_latstate = 2;
+  uint32 sys_lnginactivetext = 3;
+  uint32 sys_latinactivetext = 4;
+  uint32 stm_lat_prohib_sts = 5;
+  uint32 stm_lat_prohib_count_down = 6;
+}
+

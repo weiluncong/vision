@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package insdataerc;
+
+message InsDataErc {
+  double utc = 1;
+  int32 position_type = 2;
+  uint32 numsv = 3;
+  uint32 ins_status = 4;
+  double latitude = 5;
+  double longitude = 6;
+  double heading = 7;
+  double x_acc = 8;
+  double y_acc = 9;
+  double z_acc = 10;
+  double latitude_std = 11;
+  double longitude_std = 12;
+  double heading_std = 13;
+}
+

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package LidarFreeSpaceProto;
+
+message FreeSpacePoint {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+  double theta = 4;
+  double radius = 5;
+  double gridConf = 6;
+}
+
+message FreeSpaceData {
+  double timeStamp = 1;
+  repeated .LidarFreeSpaceProto.FreeSpacePoint freeSpace = 2;
+}
+

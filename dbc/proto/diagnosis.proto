@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package localization;
+
+enum LocStatus {
+  kInvalid = 0;
+  kUninitialized = 1;
+  kFailure = 2;
+  kSuccess = 3;
+}
+
+message Diagnosis {
+  uint32 sensor_input_fault = 1;
+  bool time_syn_fault = 2;
+  .localization.LocStatus output_status = 3;
+}
+

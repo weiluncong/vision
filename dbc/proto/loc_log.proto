@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "loc_trigger.proto";
+package localization;
+
+message Log {
+  .localization.LocTrigger adrtrigger = 1;
+  string logs = 2;
+}
+

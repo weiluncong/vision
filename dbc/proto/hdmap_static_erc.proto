@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+import "hdmap_enum.proto";
+package hdmaperc;
+
+message Gnss {
+  double lng = 1;
+  double lat = 2;
+}
+
+message Link {
+  uint64 link_id = 1;
+  double link_length = 2;
+  .hdmap.RoadType type = 3;
+  uint32 lane_num = 4;
+  repeated .hdmaperc.LaneAttribute lane_attributelists = 5;
+  repeated .hdmaperc.Line lines = 6;
+  uint32 line_num = 7;
+  .hdmap.RoadGrade grade = 8;
+}
+
+message LineMarking {
+  .hdmap.LineMarkingType type = 1;
+  .hdmap.Color color = 2;
+  double dis = 3;
+}
+
+message Line {
+  uint32 index = 1;
+  .hdmap.LineType line_type = 2;
+  .hdmaperc.LineMarking markings = 3;
+  repeated .hdmaperc.Gnss line_points = 4;
+  uint32 line_points_num = 5;
+}
+
+message LaneWidthCurvature {
+  double dis = 1;
+  double value = 2;
+}
+
+message LaneConnectivityInfo {
+  uint64 link_id = 1;
+  uint32 lane_num = 2;
+}
+
+message SpeedLimit {
+  uint32 value = 1;
+  .hdmap.SpeedLimitType type = 2;
+}
+
+message LaneAttribute {
+  uint32 index = 1;
+  .hdmap.LaneType type = 2;
+  .hdmaperc.SpeedLimit speed_limit = 3;
+  uint32 left_index = 4;
+  uint32 center_index = 5;
+  uint32 right_index = 6;
+  repeated .hdmaperc.Gnss lane_cline_points = 7;
+  repeated .hdmaperc.LaneWidthCurvature lane_curvature_list = 8;
+  repeated .hdmaperc.LaneConnectivityInfo lane_connectivity_list = 9;
+  uint32 curvature_num = 10;
+  double lane_width = 11;
+  uint32 cline_points_num = 12;
+}
+
+message HDMapStatus {
+  bool map_status = 1;
+  bool update_status = 2;
+  uint32 cross_reference = 3;
+  double same_of_cr = 4;
+}
+
+message StaticHDMapErc {
+  uint32 link_num = 1;
+  .hdmaperc.HDMapStatus hdmap_status = 2;
+  repeated .hdmaperc.Link links = 3;
+  double time_to_send = 4;
+}
+
