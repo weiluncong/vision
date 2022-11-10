@@ -59,12 +59,12 @@ endforeach()
 qt5_add_resources(QRC_SOURCES  ${CMAKE_CURRENT_SOURCE_DIR}/icon.qrc)
 
 list(APPEND includePath
-	        ${CMAKE_SOURCE_DIR}/third_party
+	    ${CMAKE_SOURCE_DIR}/third_party
             ${CMAKE_SOURCE_DIR}/third_party/yaml
             ${CMAKE_SOURCE_DIR}/third_party/Qt/include
             ${CMAKE_SOURCE_DIR}/third_party/OpenCV/include
             ${CMAKE_SOURCE_DIR}/third_party/eigen3
-	        ${CMAKE_SOURCE_DIR}/third_party/mdf4
+	    ${CMAKE_SOURCE_DIR}/third_party/mdf4
             ${CMAKE_SOURCE_DIR}/third_party/pack
             ${CMAKE_SOURCE_DIR}/third_party/Ogre
             ${CMAKE_SOURCE_DIR}/third_party/Ogre/OGRE
@@ -72,7 +72,8 @@ list(APPEND includePath
             ${CMAKE_SOURCE_DIR}/third_party/Boost
             ${CMAKE_SOURCE_DIR}/third_party/pcan
             ${CMAKE_SOURCE_DIR}/third_party/python3.7m/include
-	        ${CMAKE_SOURCE_DIR}/third_party/capilot/include
+	    ${CMAKE_SOURCE_DIR}/third_party/capilot/include
+	    ${CMAKE_SOURCE_DIR}/third_party/ffmpeg
 )
 
 link_directories(
@@ -88,11 +89,13 @@ link_directories(
     ${CMAKE_SOURCE_DIR}/third_party/pcan
     ${CMAKE_SOURCE_DIR}/third_party/python3.7m/lib
     ${CMAKE_SOURCE_DIR}/third_party/capilot/lib
+    ${CMAKE_SOURCE_DIR}/third_party/ffmpeg
 )
 
 include_directories(${includePath})
 list(APPEND mlibs caframework common protobuf gflags glog kpb zmq_cm zmq pthread yaml-cpp OgreOverlay OgreMain pcanbasic)
 list(APPEND mlibs boost_filesystem boost_program_options boost_system boost_thread)# boost
+list(APPEND mlibs avutil swresample postproc swscale avcodec avformat avfilter)# ffmpeg
 
 add_subdirectory(src/common)
 add_subdirectory(src/data_center)

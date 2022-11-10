@@ -3,27 +3,6 @@
 file_name=$(basename $0) # 文件名
 app_name=${file_name%\.*} # 文件名无后缀名
 
-lib_root_path="/opt/${app_name}/third_party"
-lib_path_list="${lib_root_path} 
-            ${lib_root_path}/Qt/lib 
-	    	${lib_root_path}/OpenCV/lib 
-	    	${lib_root_path}/yaml 
-            ${lib_root_path}/mdf4 
-	    	${lib_root_path}/pack 
-	    	${lib_root_path}/Qt/plugins 
-	    	${lib_root_path}/Boost 
-	    	${lib_root_path}/Ogre
-	    	${lib_root_path}/pcan
-			${lib_root_path}/python3.7m/lib
-			${lib_root_path}/capilot/lib"
-		
-for lib_path in $lib_path_list
-do
-	export LD_LIBRARY_PATH=${lib_path}:$LD_LIBRARY_PATH
-done
-
-export LD_LIBRARY_PATH="$(dirname "$PWD")/third_party/capilot/lib":$LD_LIBRARY_PATH
-
 help_str="
 参数说明:
         -h, --help:             打印帮助信息
@@ -58,16 +37,37 @@ then
 		./${app_name}_ --version
 		exit 0 ;;
 		-t|--test)
+		lib_root_path="$(dirname "$PWD")/third_party"
 		cd ../
-		./${app_name}_
-		exit 0 ;;
-	--)	shift ;;
-	*)
+		shift ;;
+		--)
+		lib_root_path="/opt/${app_name}/third_party"
+		cd /opt/${app_name}/
+		shift ;;
+		*)
 		echo "$(basename $0): '$1' 不是有效命令. 查看 '$(basename $0) --help'."
 		exit 0 ;;
         esac
         shift
 fi
 
-cd /opt/${app_name}/
+lib_path_list="${lib_root_path} 
+            ${lib_root_path}/Qt/lib 
+	    	${lib_root_path}/OpenCV/lib 
+	    	${lib_root_path}/yaml 
+            ${lib_root_path}/mdf4 
+	    	${lib_root_path}/pack 
+	    	${lib_root_path}/Qt/plugins
+	    	${lib_root_path}/Boost 
+	    	${lib_root_path}/Ogre
+	    	${lib_root_path}/pcan
+			${lib_root_path}/python3.7m/lib
+			${lib_root_path}/capilot/lib
+			${lib_root_path}/ffmpeg"
+
+for lib_path in $lib_path_list
+do
+	export LD_LIBRARY_PATH=${lib_path}:$LD_LIBRARY_PATH
+done
+
 ./${app_name}_
