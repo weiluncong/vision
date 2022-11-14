@@ -2,7 +2,7 @@ cavision_
 CMakeLists.txt.user
 src/version.h
 build/
-dbc/proto/
+/dbc/proto/
 *.so
 .vscode/
 setting.ini
