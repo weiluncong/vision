@@ -26,7 +26,7 @@ void CameraParser::ParseCamera(const QString &msg_name, const std::string &data,
             CImageData image;
             image.img.resize(image_data.size());
             memcpy(image.img.data(), image_data.data(), image_data.size());
-            data_center_->img_datas_->Insert(msg_name, time, image);
+            data_center_->InsertValue(msg_name, time, image);
         }
     }
     else if (cameraDataFlag)
@@ -34,7 +34,7 @@ void CameraParser::ParseCamera(const QString &msg_name, const std::string &data,
         std::vector<unsigned char> d(data.begin(), data.end());
         CImageData image;
         image.img = d;
-        data_center_->img_datas_->Insert(msg_name, time, image);
+        data_center_->InsertValue(msg_name, time, image);
     }
     ParseFinished("camera", time);
 }

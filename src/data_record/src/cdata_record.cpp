@@ -62,7 +62,7 @@ void CDataRecord::Record(const std::string &data)
             throw std::runtime_error("write data met error!!");
         }
 
-        memcpy(&data_write_buf_[0], &data[left_len], left_len);
+        memcpy(&data_write_buf_[0], &data[copy_len], left_len);
         data_buf_cur_size_ = left_len;
     }
 }

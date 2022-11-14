@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-package IdrawContent;
-
-message ProtoFileContent {
-    map<string,string> content=1;
-}

@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package localization;
-
-message LocTrigger {
-  bool is_trigger_adr = 1;
-  uint32 diagnostic_code = 2;
-}
-

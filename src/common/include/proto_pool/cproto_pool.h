@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <QDebug>
+#include "cglobal_param.h"
 #include "google/protobuf/descriptor_database.h"
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/compiler/importer.h"

@@ -69,15 +69,16 @@ void CDataScheduler::ClearSchedulers()
 void CDataScheduler::PlayData()
 {
     read_switch_ = true;
-    if (!data_center_->img_datas_->IsEmpty())
+    auto img_data_ptr = data_center_->GetDataPtr<CImageData>();
+    if (!img_data_ptr->IsEmpty())
     {
-        QString img_name = data_center_->img_datas_->FirstKey();
+        QString img_name = img_data_ptr->FirstKey();
         double last_timestamp = 0;
-        img_iterator_ = data_center_->img_datas_->Begin(img_name);
+        img_iterator_ = img_data_ptr->Begin(img_name);
         while (!is_exited_)
         {
             int sleep_time = 100; //线程睡眠时间
-            if (read_switch_ && img_iterator_ != data_center_->img_datas_->End(img_name))
+            if (read_switch_ && img_iterator_ != img_data_ptr->End(img_name))
             {
                 std::lock_guard<std::mutex> it_lock(iterator_mutex_);
                 last_timestamp = img_iterator_.key();
@@ -106,6 +107,7 @@ void CDataScheduler::HandleParserFinished(const QString &type, double timestamp)
 void CDataScheduler::HandleSliderMoved(int timestamp)
 {
     std::lock_guard<std::mutex> it_lock(iterator_mutex_);
-    img_iterator_ = data_center_->img_datas_->LowerBound(data_center_->img_datas_->FirstKey(), timestamp / 100.0);
+    auto img_data_ptr = data_center_->GetDataPtr<CImageData>();
+    img_iterator_ = img_data_ptr->LowerBound(img_data_ptr->FirstKey(), timestamp / 100.0);
     emit signal_manager_->SigSyncData(timestamp / 100.0);
 }

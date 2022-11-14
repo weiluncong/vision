@@ -16,8 +16,7 @@ enum LocStatus {
   kUninitialized = 1;
   kFailure = 2;
   kGnssFilter = 3;
-  kFusionFilterLat = 4;
-  kFusionFilter = 5;
+  kFusionFilter = 4;
 }
 
 message CaAppendix {

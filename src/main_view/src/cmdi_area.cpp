@@ -52,7 +52,8 @@ void CMdiArea::CreateMenus()
 
 void CMdiArea::HandleActAddCamera()
 {
-    QStringList cameraList = data_center_->img_datas_->Keys();
+    auto img_data_ptr = data_center_->GetDataPtr<CImageData>();
+    QStringList cameraList = img_data_ptr->Keys();
 
     CCameraWidget *camera = new CCameraWidget(this);
     camera->SetCameraList(cameraList);

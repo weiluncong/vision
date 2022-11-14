@@ -33,8 +33,8 @@ void CReceiveData::InitReceive()
         DeliverData();
         break;
     case 1:
-        ReceiveData(FLAGS_v_data_address_soc1, FLAGS_v_data_address_soc1);
-        ReceiveCameraData();
+        ReceiveData(FLAGS_v_data_address_soc1, FLAGS_v_proto_address_soc1);
+        // ReceiveCameraData();
         DeliverData();
         break;
     case 2:
@@ -66,8 +66,34 @@ void CReceiveData::ReceiveData(const std::string &data_address, const std::strin
                                 proto_pool_->UpdateProtoContent(proto_address);
                                 proto_flag = false;
                             }
-                            socket->recv(msg);
-                            this->msgs_queue_.Enqueue(msg.to_string());
+                            if(FLAGS_v_capilot_version >= 3.2)
+                            {
+                                socket->recv(msg);
+                                this->msgs_queue_.Enqueue(msg.to_string());
+                            }
+                            else
+                            {
+                                
+                                socket->recv(msg);
+                                char topic_name[100];
+                                memcpy(topic_name, msg.to_string().c_str(), msg.to_string().size());
+                                socket->recv(msg);
+                                double timestamp;
+                                std::istringstream is(msg.to_string());
+                                is >> timestamp;
+                                size_t batch = 1;
+                                std::cout << "origin: " << topic_name << "----" << std::fixed << timestamp << std::endl;
+                                socket->recv(msg);
+                                std::string msg_data = msg.to_string();
+
+                                std::string msg_str;
+                                msg_str.resize(kTopicNameMaxLen + kTimestampLen + kBatchLen + msg_data.size());
+                                memcpy(&msg_str[0], &topic_name, kTopicNameMaxLen);
+                                memcpy(&msg_str[kTopicNameMaxLen], &timestamp, kTimestampLen);
+                                memcpy(&msg_str[kTopicNameMaxLen + kTimestampLen], &batch, kBatchLen);
+                                memcpy(&msg_str[kTopicNameMaxLen + kTimestampLen + kBatchLen], msg_data.c_str(), msg_data.size());
+                                this->msgs_queue_.Enqueue(msg_str);    
+                            }
                             this->condition_var_.notify_one();
                         }
                         else
@@ -101,7 +127,8 @@ void CReceiveData::DeliverData()
                             if(FLAGS_v_parser)
                             {
                                 this->SplitRecvData(msg.data(), msg.size(), topic_name, timestamp, batch, msg_data);
-                                this->parser_manager_->Parser(timestamp, topic_name, msg_data);
+                                // std::cout << "split: " << topic_name << ">>>" << std::fixed  << timestamp << ">>>" << batch << std::endl;
+                                // this->parser_manager_->Parser(timestamp, topic_name, msg_data);
                             }
                             /** @brief save data for record*/
                             if(FLAGS_v_total_record || FLAGS_v_point_record)

@@ -14,24 +14,85 @@ class CDataCenter : public QObject
 {
     Q_OBJECT
 private:
-    explicit CDataCenter() { InitDataMap(); }
+    explicit CDataCenter() {}
     ~CDataCenter() {}
     CDataCenter(const CDataCenter &) = delete;
     CDataCenter &operator=(const CDataCenter &) = delete;
-    void InitDataMap();
 
 private:
     static CDataCenter *data_center_;
+    QMap<QString, void *> data_ptr_map_;
 
 public:
     static CDataCenter *GetCDataCenter();
     static void Destory();
     void ClearAllData();
 
-public:
-    CDataMap<CImageData> *img_datas_;
-    CDataMap<google::protobuf::Message *> *middle_datas_;
+    template<class T>
+    void InsertValue(const QString &topic_name, double time, const T &data)
+    {
+        QString class_name = TOQSTR(typeid(T).name());
+        if(!data_ptr_map_.contains(class_name))
+        {
+            CDataMap<T> *map = new CDataMap<T>();
+            data_ptr_map_[class_name] = map;
+        }
 
+        CDataMap<T> *map_ptr = static_cast<CDataMap<T> *>(data_ptr_map_[class_name]);
+        if(!map_ptr)
+            map_ptr->Insert(topic_name, time, data);
+    }
+
+     template<class T>
+    void AppendValue(const QString &topic_name, double time, const T &data)
+    {
+        QString class_name = TOQSTR(typeid(T).name());
+        if(!data_ptr_map_.contains(class_name))
+        {
+            CDataMap<T> *map = new CDataMap<T>();
+            data_ptr_map_[class_name] = map;
+        }
+
+        CDataMap<T> *map_ptr = static_cast<CDataMap<T> *>(data_ptr_map_[class_name]);
+        if(!map_ptr)
+            map_ptr->Append(topic_name, time, data);
+    }
+
+    template<class T>
+    CDataMap<T> *GetDataPtr()
+    {
+        QString class_name = TOQSTR(typeid(T).name());
+        if(data_ptr_map_.contains(class_name))
+        {
+            return static_cast<CDataMap<T> *>(data_ptr_map_[class_name]);
+        }
+        return nullptr;
+    }
+
+    template<class T>
+    T GetValue(const QString &topic_name, double &time)
+    {
+        QString class_name = TOQSTR(typeid(T).name());
+        CDataMap<T> *map_ptr = static_cast<CDataMap<T> *>(data_ptr_map_[class_name]);
+        if(!map_ptr)
+        {
+            return T();
+        }
+        else
+        {
+            if(FLAGS_v_online)
+                return map_ptr->Pop(topic_name, time);
+            else
+            {
+                auto it = map_ptr->LowerBound(topic_name, time);
+                time = it.key();
+                return it.value();
+            }
+        }
+    }
+
+
+public:
     // data record
     std::mutex record_mutex_;
     std::multimap<double, std::string> data_buf_;

@@ -5,6 +5,7 @@
 #include "cabstract_scheduler.h"
 #include "ccamera_widget.h"
 #include "cdata_center.h"
+#include "cglobal_param.h"
 
 class CCameraScheduler : public CAbstractScheduler
 {

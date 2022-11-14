@@ -5,11 +5,11 @@ package localization;
 
 message WheelData {
   .localization.Header header = 1;
-  double fl_wheel_vel = 2;
-  double fr_wheel_vel = 3;
-  double rl_wheel_vel = 4;
-  double rr_wheel_vel = 5;
-  double l_wheel_factor = 6;
-  double r_wheel_factor = 7;
+  double FL_wheel_vel = 2;
+  double FR_wheel_vel = 3;
+  double RL_wheel_vel = 4;
+  double RR_wheel_vel = 5;
+  double L_wheel_factor = 6;
+  double R_wheel_factor = 7;
 }
 

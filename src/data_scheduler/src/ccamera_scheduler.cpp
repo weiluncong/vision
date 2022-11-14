@@ -13,30 +13,19 @@ void CCameraScheduler::AddCameraWidget(CCameraWidget *camera)
 
 void CCameraScheduler::SyncData(double timestamp)
 {
+    auto img_data_ptr = data_center_->GetDataPtr<CImageData>();
     if (camera_widget_vec_.isEmpty())
         return;
 
     for (auto camera : camera_widget_vec_)
     {
         QString camera_name = camera->Name();
-        if (data_center_->img_datas_->Keys().contains(camera_name))
+        if (img_data_ptr->Keys().contains(camera_name))
         {
             double time = 0;
             std::vector<unsigned char> img;
-            if (FLAGS_v_online)
-            {
-                time = timestamp;
-                img = data_center_->img_datas_->Pop(camera_name, timestamp).img;
-            }
-            else
-            {
-                auto img_iterator = data_center_->img_datas_->LowerBound(camera_name, timestamp);
-                if (img_iterator != data_center_->img_datas_->End(camera_name))
-                {
-                    time = img_iterator.key();
-                    img = img_iterator.value().img;
-                }
-            }
+            time = timestamp;
+            img = data_center_->GetValue<CImageData>(camera_name, time).img;
             if (img.size() > 0)
             {
                 QString time_str = QDateTime::fromMSecsSinceEpoch(time * 1000).toString("yyyy-MM-dd hh:mm:ss.zzz");

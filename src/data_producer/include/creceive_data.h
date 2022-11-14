@@ -2,6 +2,8 @@
 #define CRECEIVEDATA_H
 
 #include <iostream>
+#include <sstream>
+#include <fstream>
 #include <thread>
 #include <functional>
 #include <memory>

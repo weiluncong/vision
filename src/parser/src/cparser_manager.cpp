@@ -79,7 +79,7 @@ void CParserManager::HandleMetaData(double timestamp, const QString &topic_name,
             google::protobuf::Message *msg = proto_pool_->GetProtoMessage(TOSTR(topic_name), TOSTR(package_msg_name), data);
             if (!msg)
                 return;
-            data_center_->middle_datas_->Insert(topic_name, time, msg);
+            data_center_->InsertValue(topic_name, time, msg);
         }
     }
     else
@@ -93,7 +93,7 @@ void CParserManager::HandleMetaData(double timestamp, const QString &topic_name,
         google::protobuf::Message *msg = proto_pool_->GetProtoMessage(TOSTR(topic_name), TOSTR(package_msg_name), data);
         if (!msg)
             return;
-        data_center_->middle_datas_->Insert(topic_name, time, msg);
+        data_center_->InsertValue(topic_name, time, msg);
     }
 }
 

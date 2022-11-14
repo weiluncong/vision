@@ -11,8 +11,6 @@ message Gnss {
 message HDMapStatus {
   bool map_status = 1;
   bool update_status = 2;
-  uint32 cross_reference = 3;
-  double same_of_cr = 4;
 }
 
 message Link {
@@ -44,7 +42,7 @@ message LineMarking {
   .hdmap.LineMarkingType type = 1;
   .hdmap.Color color = 2;
   double dis = 3;
-  uint32 is_abnormal = 4;
+  bool is_abnormal = 4;
 }
 
 message Line {

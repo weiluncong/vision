@@ -16,17 +16,13 @@ void CDataCenter::Destory()
     SAFE_DELETE(data_center_);
 }
 
-void CDataCenter::InitDataMap()
-{
-    img_datas_ = new CDataMap<CImageData>();
-    middle_datas_ = new CDataMap<google::protobuf::Message *>();
-}
-
 void CDataCenter::ClearAllData()
 {
-    SAFE_DELETE(img_datas_);
-    SAFE_DELETE(middle_datas_);
+    for(auto i : data_ptr_map_.values())
+    {
+        SAFE_DELETE(i);
+    }
+    SafeClear(data_ptr_map_);
     data_start_time_ = 0;
     data_end_time_ = 0;
-    InitDataMap();
 }
