@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     gflags::SetVersionString(os.str());
     gflags::ParseCommandLineFlags(&argc, &argv, true);
 #if 1
-    qSetMessagePattern("[%{time yyyy-MM-dd h:mm:ss.zzz} %{file}:%{line}] : %{message}");
+    qSetMessagePattern("[%{time yyyy-MM-dd h:mm:ss} %{file}:%{line}] : %{message}");
 #endif
     CMainWindow w;
     w.show();

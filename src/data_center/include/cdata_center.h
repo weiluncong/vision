@@ -5,8 +5,8 @@
 #include <google/protobuf/dynamic_message.h>
 #include "cglobal_param.h"
 #include "cdata_map.h"
-#include "camera_struct.h"
-#include "dat_struct.h"
+#include "ccamera_struct.h"
+#include "cdat_struct.h"
 
 using namespace cav;
 
@@ -28,59 +28,59 @@ public:
     static void Destory();
     void ClearAllData();
 
-    template<class T>
+    template <class T>
     void InsertValue(const QString &topic_name, double time, const T &data)
     {
         QString class_name = TOQSTR(typeid(T).name());
-        if(!data_ptr_map_.contains(class_name))
+        if (!data_ptr_map_.contains(class_name))
         {
             CDataMap<T> *map = new CDataMap<T>();
             data_ptr_map_[class_name] = map;
         }
 
         CDataMap<T> *map_ptr = static_cast<CDataMap<T> *>(data_ptr_map_[class_name]);
-        if(!map_ptr)
+        if (map_ptr)
             map_ptr->Insert(topic_name, time, data);
     }
 
-     template<class T>
+    template <class T>
     void AppendValue(const QString &topic_name, double time, const T &data)
     {
         QString class_name = TOQSTR(typeid(T).name());
-        if(!data_ptr_map_.contains(class_name))
+        if (!data_ptr_map_.contains(class_name))
         {
             CDataMap<T> *map = new CDataMap<T>();
             data_ptr_map_[class_name] = map;
         }
 
         CDataMap<T> *map_ptr = static_cast<CDataMap<T> *>(data_ptr_map_[class_name]);
-        if(!map_ptr)
+        if (map_ptr)
             map_ptr->Append(topic_name, time, data);
     }
 
-    template<class T>
+    template <class T>
     CDataMap<T> *GetDataPtr()
     {
         QString class_name = TOQSTR(typeid(T).name());
-        if(data_ptr_map_.contains(class_name))
+        if (data_ptr_map_.contains(class_name))
         {
             return static_cast<CDataMap<T> *>(data_ptr_map_[class_name]);
         }
         return nullptr;
     }
 
-    template<class T>
+    template <class T>
     T GetValue(const QString &topic_name, double &time)
     {
         QString class_name = TOQSTR(typeid(T).name());
         CDataMap<T> *map_ptr = static_cast<CDataMap<T> *>(data_ptr_map_[class_name]);
-        if(!map_ptr)
+        if (!map_ptr)
         {
             return T();
         }
         else
         {
-            if(FLAGS_v_online)
+            if (FLAGS_v_online)
                 return map_ptr->Pop(topic_name, time);
             else
             {
@@ -90,7 +90,6 @@ public:
             }
         }
     }
-
 
 public:
     // data record

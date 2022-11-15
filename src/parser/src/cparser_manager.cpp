@@ -38,7 +38,7 @@ void CParserManager::Parser(const QList<cReplayData> &list)
 
 void CParserManager::Parser(double timestamp, const std::string &topic_name, const std::string &data)
 {
-    if(!TOQSTR(topic_name).contains("capilot") && !TOQSTR(topic_name).contains("ProcessStatus"))
+    if (!TOQSTR(topic_name).contains("capilot") && !TOQSTR(topic_name).contains("ProcessStatus"))
         HandleMetaData(timestamp, TOQSTR(topic_name), data);
 }
 

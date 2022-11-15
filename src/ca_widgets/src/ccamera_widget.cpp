@@ -70,6 +70,6 @@ void CCameraWidget::UpdateView(const std::vector<unsigned char> &img_data, const
     camera_->UpdateView(img_data, time_str, time);
     if (!FLAGS_v_online)
     {
-        slider_->setValue((int)time * 100);
+        slider_->setValue((int)(time * 100));
     }
 }

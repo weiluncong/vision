@@ -19,7 +19,7 @@ private:
     /** @brief 创建主界面的action、menu和Bar*/
     void CreateActions();
     void CreateStatusBar();
-    void CreateMenu();
+    void CreateMenus();
     void CreateToolBar();
 
 public:

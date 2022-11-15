@@ -6,7 +6,7 @@ CSlider::CSlider(QWidget *parent)
     signal_manager_ = CSignalManager::GetCSignalManager();
     setOrientation(Qt::Horizontal);
     setFocusPolicy(Qt::StrongFocus);
-    setSingleStep(2);
+    setSingleStep(10);
 }
 
 void CSlider::mousePressEvent(QMouseEvent *event)
@@ -21,6 +21,18 @@ void CSlider::mousePressEvent(QMouseEvent *event)
             setValue((int)pos);
             emit signal_manager_->SigSliderMoved(pos);
         }
+    }
+}
+
+void CSlider::mouseMoveEvent(QMouseEvent *event)
+{
+    QSlider::mouseMoveEvent(event);
+    int duration = maximum() - minimum();
+    double pos = minimum() + duration * (event->pos().x() * 1.0 / width());
+    if (pos != value())
+    {
+        setValue((int)pos);
+        emit signal_manager_->SigSliderMoved(pos);
     }
 }
 

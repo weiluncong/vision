@@ -109,5 +109,5 @@ void CDataScheduler::HandleSliderMoved(int timestamp)
     std::lock_guard<std::mutex> it_lock(iterator_mutex_);
     auto img_data_ptr = data_center_->GetDataPtr<CImageData>();
     img_iterator_ = img_data_ptr->LowerBound(img_data_ptr->FirstKey(), timestamp / 100.0);
-    emit signal_manager_->SigSyncData(timestamp / 100.0);
+    emit signal_manager_->SigSyncData(img_iterator_.key());
 }

@@ -25,6 +25,10 @@ message BusEpbFunInfo {
   uint32 epb_switch_position = 10;
   uint32 epb_switch_position_valid = 11;
   double time_stamp = 12;
+  uint32 dcm_epbfctlamp = 13;
+  uint32 dcm_epb1fctlamp = 14;
+  uint32 dcm_epbfailrlamp = 15;
+  uint32 dcm_epb1failrlamp = 16;
 }
 
 message BusEspFbSts {
@@ -41,6 +45,7 @@ message BusEspFbSts {
   uint32 ibcu_full_func_avail = 11;
   uint32 ibcu_reduce_func_avail = 12;
   double time_stamp = 13;
+  double dcm_esp_brakedischightempwarning = 14;
 }
 
 message BusEspFbStsforAPA {

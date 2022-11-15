@@ -29,9 +29,9 @@ void CWindowManager::HandleActModel()
         main_window_->act_mode_->setIcon(QIcon(":/icon/offline.png"));
         main_window_->act_open_file_->setEnabled(true);
         main_window_->act_switch_->setEnabled(false);
-        if(FLAGS_v_total_record)
-            HandleActDataTotalRecord(); 
-        if(FLAGS_v_point_record)
+        if (FLAGS_v_total_record)
+            HandleActDataTotalRecord();
+        if (FLAGS_v_point_record)
             HandleActDataPointRecord();
         main_window_->act_total_record_->setEnabled(false);
         main_window_->act_point_record_->setEnabled(false);
@@ -157,7 +157,7 @@ void CWindowManager::HandleActDataPointRecord()
                 this, &CWindowManager::HandleActOnceDataPointRecord);
         QString record_file_path = QFileDialog::getExistingDirectory(main_window_, "select file path", point_record_address_,
                                                                      QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly);
-        
+
         if (!record_file_path.isEmpty())
         {
             /** @brief create dir to save .dat*/

@@ -46,7 +46,7 @@ void CCameraScheduler::ClearWidgets()
 
 void CCameraScheduler::HandleActCameraClose()
 {
-    CCameraWidget *w = qobject_cast<CCameraWidget*>(sender());
+    CCameraWidget *w = qobject_cast<CCameraWidget *>(sender());
     for (int i = 0; i < camera_widget_vec_.size(); ++i)
     {
         if (camera_widget_vec_[i] == w)

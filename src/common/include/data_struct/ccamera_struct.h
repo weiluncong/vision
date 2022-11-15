@@ -13,6 +13,6 @@ namespace cav
         ~CImageData() {}
         std::vector<unsigned char> img;
     };
-}
+} // namespace cav
 
 #endif // CAMERASTRUCT_H

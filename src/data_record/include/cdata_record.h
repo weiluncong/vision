@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "cglobal_param.h"
-#include "dat_struct.h"
+#include "cdat_struct.h"
 
 class CDataRecord
 {

@@ -49,8 +49,7 @@ void CReceiveData::InitReceive()
 
 void CReceiveData::ReceiveData(const std::string &data_address, const std::string &proto_address)
 {
-    std::thread t([&]
-                  {
+    std::thread t([&] {
                     bool proto_flag = true;
                     zmq::message_t msg;
                     zmq::context_t *context = new zmq::context_t();
@@ -107,8 +106,7 @@ void CReceiveData::ReceiveData(const std::string &data_address, const std::strin
 
 void CReceiveData::DeliverData()
 {
-    std::thread t([this]
-                  {
+    std::thread t([this] {
                       std::string msg;
                       std::string topic_name;
                       double timestamp;
@@ -188,8 +186,7 @@ void CReceiveData::ReceiveCameraData()
         qDebug() << "create camera capture failed, no usb camera!!";
         return;
     }
-    std::thread t([=]
-                  {
+    std::thread t([=] {
         while (receive_flag_)
         {
             if (switch_flag_)

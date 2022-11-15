@@ -4,6 +4,7 @@
 #include <QSlider>
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <QDebug>
 #include "csignal_manager.h"
 
 class CSlider : public QSlider
@@ -14,6 +15,7 @@ public:
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
 
 private:

@@ -11,6 +11,7 @@ message BusBcmDoorSts {
   uint32 bcm_tr_door_sts = 6;
   uint32 bcm_hood_status = 7;
   double time_stamp = 8;
+  uint32 bcm_pass_door_lck_sts = 9;
 }
 
 message BusBcmDsmSts {
@@ -117,5 +118,6 @@ message BusSRS {
   uint32 srs_pass_buc_swt_sts = 3;
   uint32 srs_crash_out_cedr = 4;
   double time_stamp = 5;
+  uint32 dcm_srscrashoutpstschks = 6;
 }
 

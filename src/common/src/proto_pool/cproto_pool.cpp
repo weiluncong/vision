@@ -5,8 +5,10 @@ CProtoPool *CProtoPool::proto_pool_ = GetCProtoPool();
 //第二次 映射，将框架proto加入impoter中
 void CProtoPool::LoadProtoContent(const std::string &content)
 {
-    if(content.empty()){
-        std::cout << "Proto Contnet is Empty, Data can not to Parser, Please Check the data!!" << std::endl;;
+    if (content.empty())
+    {
+        std::cout << "Proto Contnet is Empty, Data can not to Parser, Please Check the data!!" << std::endl;
+        ;
         return;
     }
 
@@ -47,9 +49,7 @@ void CProtoPool::LoadProtoContent(const std::string &content)
         {
             std::cout << "import file " << i << " error" << std::endl;
             continue;
-        } 
-
-        std::cout << "import file " << i << " sucess" << std::endl;
+        }
     }
 }
 
@@ -60,7 +60,7 @@ google::protobuf::Message *CProtoPool::GetProtoMessage(const std::string &topic_
     if (it == msgs_.end())
     {
         google::protobuf::Message *msg = CreateMessage(package_msg_name);
-        if(!msg)
+        if (!msg)
             return nullptr;
 
         msgs_[package_msg_name] = msg;
@@ -115,7 +115,7 @@ google::protobuf::Message *CProtoPool::CreateMessage(const std::string &package_
 
 void CProtoPool::UpdateProtoContent(const std::string &serviceAddress)
 {
-    if(FLAGS_v_capilot_version >= 3.2)
+    if (FLAGS_v_capilot_version >= 3.2)
     {
         KZmq socket;
         socket.open(zmq::socket_type::req);
@@ -130,7 +130,7 @@ void CProtoPool::UpdateProtoContent(const std::string &serviceAddress)
             if (reply.res())
             {
                 for (auto it = reply.all_content().contents().cbegin();
-                    it != reply.all_content().contents().cend(); ++it)
+                     it != reply.all_content().contents().cend(); ++it)
                 {
                     std::lock_guard<std::mutex> proto_lock(proto_mutex_);
                     proto_content_ += it->second.SerializeAsString();

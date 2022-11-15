@@ -18,15 +18,15 @@ CMainWindow::CMainWindow(QWidget *parent)
 
     setCentralWidget(central_widget);
     CreateActions();
-    CreateMenu();
+    CreateMenus();
     CreateToolBar();
     CreateStatusBar();
 }
 
 CMainWindow::~CMainWindow()
 {
-    delete main_widget_;
-    delete window_manager_;
+    SAFE_DELETE(main_widget_);
+    SAFE_DELETE(window_manager_);
 }
 
 /** @brief 定义actions*/
@@ -114,7 +114,7 @@ void CMainWindow::CreateActions()
 }
 
 /** @brief 定义menu*/
-void CMainWindow::CreateMenu()
+void CMainWindow::CreateMenus()
 {
     /** @brief 定义file_menu*/
     file_menu_ = menuBar()->addMenu(tr("&File"));
