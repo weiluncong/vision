@@ -58,6 +58,8 @@ void CWindowManager::HandleActOpenFile()
                                                 file_path_, "DAT Files (*.dat)");
     if (!path.isEmpty())
     {
+        if (main_window_->act_switch_->text().contains("stop"))
+            HandleActSwitch();
         main_window_->act_open_file_->setEnabled(false);
         main_window_->act_mode_->setEnabled(false);
         data_producer_->OpenFile(path);

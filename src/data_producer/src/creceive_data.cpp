@@ -122,11 +122,11 @@ void CReceiveData::DeliverData()
                         if(this->msgs_queue_.Dequeue(msg))
                         {
                             /** @brief parse data*/
+                            this->SplitRecvData(msg.data(), msg.size(), topic_name, timestamp, batch, msg_data);
                             if(FLAGS_v_parser)
                             {
-                                this->SplitRecvData(msg.data(), msg.size(), topic_name, timestamp, batch, msg_data);
                                 // std::cout << "split: " << topic_name << ">>>" << std::fixed  << timestamp << ">>>" << batch << std::endl;
-                                // this->parser_manager_->Parser(timestamp, topic_name, msg_data);
+                                this->parser_manager_->Parser(timestamp, topic_name, msg_data);
                             }
                             /** @brief save data for record*/
                             if(FLAGS_v_total_record || FLAGS_v_point_record)

@@ -3,7 +3,7 @@
 
 namespace cav
 {
-    enum kVehicleDataType
+    enum cVehicleDataType
     {
         NONE,      // NONE
         SPEED,     // 速度
@@ -19,7 +19,7 @@ namespace cav
 
     public:
         double value_ = 0;
-        kVehicleDataType type_ = kVehicleDataType::NONE;
+        cVehicleDataType type_ = cVehicleDataType::NONE;
     };
 } // namespace cav
 

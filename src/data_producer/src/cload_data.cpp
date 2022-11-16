@@ -20,6 +20,7 @@ void CLoadData::Dat2Replay()
     ReplayGetData("ParseFilter");
     parser_manager_->Parser(data2parse_);
     SafeClear(data2parse_);
+    malloc_trim(0);
 }
 
 void CLoadData::ReplayGetData(const QString &filter)
@@ -69,6 +70,7 @@ void CLoadData::ReplayGetData(const QString &filter)
             data2parse_.push_back(replay_data);
         }
     }
+    ifs_.close();
 }
 
 void CLoadData::Dat2Csv()

@@ -90,10 +90,10 @@ void CParserManager::HandleMetaData(double timestamp, const QString &topic_name,
             camera_parser_->ParseCamera(topic_name, data, time);
             return;
         }
-        google::protobuf::Message *msg = proto_pool_->GetProtoMessage(TOSTR(topic_name), TOSTR(package_msg_name), data);
-        if (!msg)
-            return;
-        data_center_->InsertValue(topic_name, time, msg);
+        // google::protobuf::Message *msg = proto_pool_->GetProtoMessage(TOSTR(topic_name), TOSTR(package_msg_name), data);
+        // if (!msg)
+        //     return;
+        // data_center_->InsertValue(topic_name, time, msg);
     }
 }
 
