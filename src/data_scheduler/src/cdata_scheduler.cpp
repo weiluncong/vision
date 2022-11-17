@@ -40,6 +40,7 @@ void CDataScheduler::StartPlay()
     if (is_first_start_)
     {
         is_first_start_ = false;
+        is_exited_ = false;
         //开启线程，自动播放视频，视频时间轴作为主要时间轴
         std::thread t1(&CDataScheduler::PlayData, this);
         t1.detach();

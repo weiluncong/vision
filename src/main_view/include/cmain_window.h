@@ -34,9 +34,6 @@ public:
     QAction *act_open_file_;
     QAction *act_switch_;
     QAction *act_hide_explorer_;
-    QAction *act_zoom_x_;
-    QAction *act_zoom_y_;
-    QAction *act_zoom_xy_;
     QAction *act_add_cursor_;
     QAction *act_add_double_cursors_;
     QAction *act_help_;

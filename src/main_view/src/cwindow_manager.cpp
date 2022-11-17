@@ -102,20 +102,9 @@ void CWindowManager::HandleActSwitch()
     }
 }
 
-void CWindowManager::HandleActZoomX()
-{
-}
-
-void CWindowManager::HandleActZoomY()
-{
-}
-
-void CWindowManager::HandleActZoomXY()
-{
-}
-
 void CWindowManager::HandleDataLoadFinish()
 {
+    data_scheduler_->StopPlay(true);
     main_window_->main_widget_->mdi_area_->closeAllSubWindows();
     main_window_->act_mode_->setEnabled(true);
     main_window_->act_switch_->setEnabled(true);

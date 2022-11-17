@@ -22,9 +22,6 @@ public slots:
     void HandleActModel();
     void HandleActOpenFile();
     void HandleActSwitch();
-    void HandleActZoomX();
-    void HandleActZoomY();
-    void HandleActZoomXY();
     void HandleDataLoadFinish();
     void HandleActDataTotalRecord();
     void HandleActDataPointRecord();

@@ -44,6 +44,10 @@ void CGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         last_point_ = event->scenePos();
         is_press_ = true;
     }
+    else if (event->button() == Qt::RightButton)
+    {
+        menu_->exec(QCursor::pos());
+    }
     QGraphicsScene::mousePressEvent(event);
 }
 

@@ -54,16 +54,6 @@ void CMainWindow::CreateActions()
     act_hide_explorer_ = new QAction(tr("&hide"), this);
     act_hide_explorer_->setShortcut(QKeySequence("Ctrl+return"));
     act_hide_explorer_->setStatusTip(tr("hide explorerBox"));
-    /** @brief 选择图表放大轴方向的指令*/
-    act_zoom_x_ = new QAction(QIcon(":/icon/x.png"), tr("&zoomX"), this);
-    act_zoom_x_->setShortcut(QKeySequence("ctrl+x"));
-    connect(act_zoom_x_, &QAction::triggered, window_manager_, &CWindowManager::HandleActZoomX);
-    act_zoom_y_ = new QAction(QIcon(":/icon/Y.png"), tr("&zoomY"), this);
-    act_zoom_y_->setShortcut(QKeySequence("ctrl+y"));
-    connect(act_zoom_y_, &QAction::triggered, window_manager_, &CWindowManager::HandleActZoomY);
-    act_zoom_xy_ = new QAction(QIcon(":/icon/XY.png"), tr("&zoom"), this);
-    act_zoom_xy_->setShortcut(QKeySequence("ctrl+z"));
-    connect(act_zoom_xy_, &QAction::triggered, window_manager_, &CWindowManager::HandleActZoomXY);
     /** @brief 添加游标指令*/
     act_add_cursor_ = new QAction(QIcon(":/icon/cursor.png"), tr("&cursor"), this);
     act_add_cursor_->setStatusTip("show the measurement cursor");
@@ -128,9 +118,6 @@ void CMainWindow::CreateMenus()
     tool_menu_->addAction(act_add_double_cursors_);
     QMenu *short_cut_menu = tool_menu_->addMenu(tr("&ShortCut"));
     short_cut_menu->addAction(act_hide_explorer_);
-    short_cut_menu->addAction(act_zoom_x_);
-    short_cut_menu->addAction(act_zoom_y_);
-    short_cut_menu->addAction(act_zoom_xy_);
     short_cut_menu->addAction(act_speed1_);
     short_cut_menu->addAction(act_speed2_);
     short_cut_menu->addAction(act_speed3_);
