@@ -15,6 +15,11 @@
 #include "opencv2/opencv.hpp"
 #include "ktime.h"
 #include "raw_data.h"
+#include "DDSData.h"
+#include "dds/dds.h"
+#include "dds/ddsrt/environ.h"
+
+#define MAX_SAMPLES 1
 
 const size_t kTopicNameMaxLen = 100;
 const size_t kTimestampLen = sizeof(double);
@@ -40,6 +45,10 @@ private:
     /** @brief usb摄像头数据接收*/
     void ReceiveCameraData();
     bool CreateCameraCapture();
+    /** @brief dds数据接收*/
+    void ReceiveDDSData(const std::string &config_path = "./dbc/dds-config.xml", const std::string &topic_name = "C2_SOC_TO_MCU");
+    void DDSMsgToString(DDSData_Msg *src_data, std::string &desc_data);
+
     /** @brief 实时接收到的数据处理*/
     void DeliverData();
 

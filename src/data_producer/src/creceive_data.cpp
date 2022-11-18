@@ -262,3 +262,106 @@ bool CReceiveData::CreateCameraCapture()
 
     return camera_captures_.empty();
 }
+
+void CReceiveData::ReceiveDDSData(const std::string &config_path, const std::string &topic_name)
+{
+    std::thread t([=] {
+                      ddsrt_setenv("AUTOCOREDDS_URI", config_path.data());
+                      dds_entity_t participant;
+                      dds_entity_t topic;
+                      dds_entity_t reader;
+                      DDSData_Msg *msg;
+                      void *samples[MAX_SAMPLES];
+                      dds_sample_info_t infos[MAX_SAMPLES];
+                      dds_return_t rc;
+                      dds_qos_t *qos;
+
+                      participant = dds_create_participant(DDS_DOMAIN_DEFAULT, NULL, NULL);
+                      if (participant < 0)
+                      {
+                          std::cout << "dds创建Participant失败, 错误: " << dds_strretcode(-participant) << std::endl;
+                          return;
+                      }
+
+                      topic = dds_create_topic(participant, &DDSData_Msg_desc,
+                                               topic_name.c_str(), NULL, NULL);
+                      if (topic < 0)
+                      {
+                          std::cout << "dds_create_topic:" << dds_strretcode(-topic) << std::endl;
+                          return;
+                      }
+
+                      qos = dds_create_qos();
+                      dds_qset_reliability(qos, DDS_RELIABILITY_RELIABLE, DDS_SECS(10));
+                      reader = dds_create_reader(participant, topic, qos, NULL);
+                      if (reader < 0)
+                      {
+                          std::cout << "dds_create_reader:" << dds_strretcode(-reader) << std::endl;
+                          return;
+                      }
+                      dds_delete_qos(qos);
+
+                      samples[0] = DDSData_Msg__alloc();
+                      std::string data;
+
+                      while (receive_flag_)
+                      {
+                          if (!switch_flag_)
+                          {
+                              std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                              continue;
+                          }
+
+                          rc = dds_read(reader, samples, infos, MAX_SAMPLES, MAX_SAMPLES);
+                          if (rc < 0)
+                          {
+                              std::cout << "dds_read:" << dds_strretcode(-rc) << std::endl;
+                              dds_sleepfor(DDS_MSECS(20));
+                              continue;
+                          }
+
+                          if (infos[0].valid_data)
+                          {
+                            msg = static_cast<DDSData_Msg *>(samples[0]);
+#if 0
+                            std::cout << "=== [Subscriber] Received : \n" << std::endl;
+                            std::cout << "topic:" << msg->topic << std::endl;
+                            std::cout << "time:" << msg->timestamp << std::endl;
+                            std::cout << "data max size:" << msg->payload._maximum << std::endl;
+                            std::cout << "data size:" << msg->payload._length << std::endl;
+                            std::cout << "Message:" << msg->payload._buffer << std::endl;
+#endif
+                            if(msg)
+                            {
+                                DDSMsgToString(msg, data);
+                                msgs_queue_.Enqueue(data);
+                                condition_var_.notify_one();
+                            }
+                          }
+                          else
+                          {
+                            dds_sleepfor(DDS_MSECS(20));
+                          }
+                      }
+                      DDSData_Msg_free(samples[0], DDS_FREE_ALL);
+                      rc = dds_delete(participant);
+                      if (rc != DDS_RETCODE_OK)
+                          std::cout << "dds_delete:" << dds_strretcode(-rc) << std::endl; });
+    t.detach();
+}
+
+void CReceiveData::DDSMsgToString(DDSData_Msg *msg, std::string &desc_data)
+{
+    desc_data.resize(kTopicNameMaxLen + kTimestampLen + kBatchLen + msg->payload._length);
+    char topic_name[kTopicNameMaxLen];
+    memset(topic_name, 0, kTopicNameMaxLen);
+    memcpy(&topic_name, msg->topic, std::string(msg->topic).size());
+    memcpy(&desc_data[0], &topic_name, kTopicNameMaxLen);
+    memcpy(&desc_data[kTopicNameMaxLen], &msg->timestamp, kTimestampLen);
+
+    size_t batch = 1;
+    memcpy(&desc_data[kTopicNameMaxLen + kTimestampLen], &batch, kBatchLen);
+
+    memcpy(&desc_data[kTopicNameMaxLen + kTimestampLen + kBatchLen],
+           msg->payload._buffer, msg->payload._length);
+}

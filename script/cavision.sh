@@ -63,7 +63,8 @@ lib_path_list="${lib_root_path}
 	    	${lib_root_path}/pcan
 			${lib_root_path}/python3.7m/lib
 			${lib_root_path}/capilot/lib
-			${lib_root_path}/ffmpeg"
+			${lib_root_path}/ffmpeg
+			${lib_root_path}/DDS/lib"
 
 for lib_path in $lib_path_list
 do
