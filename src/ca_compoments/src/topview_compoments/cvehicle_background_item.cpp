@@ -13,8 +13,8 @@ void CVehicleBackGroundItem::paint(QPainter *painter, const QStyleOptionGraphics
     Q_UNUSED(option);
     Q_UNUSED(widget);
     painter->setPen(QPen(Qt::darkGray, 2));
-    painter->drawLine(PointSceneInItem(QPointF(x_axis_min_, 0)), PointSceneInItem(QPointF(x_axis_max_, 0)));
-    painter->drawLine(PointSceneInItem(QPointF(0, y_axis_min_)), PointSceneInItem(QPointF(0, y_axis_max_)));
+    painter->drawLine(PointItemInScene(QPointF(x_axis_min_, 0)), PointItemInScene(QPointF(x_axis_max_, 0)));
+    painter->drawLine(PointItemInScene(QPointF(0, y_axis_min_)), PointItemInScene(QPointF(0, y_axis_max_)));
     painter->setPen(QPen(Qt::black, 2));
     painter->drawRect(boundingRect());
     /** @brief 绘制x轴*/
@@ -43,7 +43,7 @@ void CVehicleBackGroundItem::paint(QPainter *painter, const QStyleOptionGraphics
 
     /** @brief 绘制y轴*/
     int y_interval = ((y_axis_max_ - y_axis_min_) / 18.0) > 5 ? (y_axis_max_ - y_axis_min_) / 18.0 : 5;
-    for (double i = y_axis_max_; i >= y_axis_min_; i += y_interval)
+    for (double i = y_axis_max_; i >= y_axis_min_; i -= y_interval)
     {
         i = int(i);
         painter->setPen(QPen(Qt::black, 2));

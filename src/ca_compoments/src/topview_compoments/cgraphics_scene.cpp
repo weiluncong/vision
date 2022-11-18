@@ -13,8 +13,8 @@ void CGraphicsScene::CreateActions()
     act_origin_ = new QAction("&x=8, y=120");
     act_origin_->setObjectName("1");
     connect(act_origin_, &QAction::triggered, this, &CGraphicsScene::HandleActSetAxis);
-    act_one2one_ = new QAction("&x=8m y=8");
-    act_origin_->setObjectName("2");
+    act_one2one_ = new QAction("&x=8, y=8");
+    act_one2one_->setObjectName("2");
     connect(act_one2one_, &QAction::triggered, this, &CGraphicsScene::HandleActSetAxis);
 }
 
