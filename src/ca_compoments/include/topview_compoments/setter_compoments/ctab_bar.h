@@ -15,7 +15,7 @@ public:
     }
 
 protected:
-    void paintEvent(QPaintEvent *event)
+    void paintEvent(QPaintEvent *event) override
     {
         Q_UNUSED(event);
         QStylePainter painter(this);
@@ -35,7 +35,7 @@ protected:
 
             QPoint c = tabRect(i).center();
             painter.translate(c);
-            painter.rotate(90);
+            painter.rotate(-90);
             painter.translate(-c);
             painter.drawControl(QStyle::CE_TabBarTabLabel, opt);
             painter.restore();

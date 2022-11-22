@@ -2,6 +2,8 @@
 #define CGLOBAL_PARM_H
 
 #include <QtWidgets>
+#include <sstream>
+#include <iostream>
 #include <gflags/gflags.h>
 
 #define TOQSTR(x) QString::fromStdString(x)
@@ -21,6 +23,15 @@ void SafeClear(T &container)
 {
     T empty;
     empty.swap(container);
+}
+
+template <typename T>
+T StringToAny(const std::string &str)
+{
+    std::istringstream iss(str);
+    T num;
+    iss >> num;
+    return num;
 }
 
 DECLARE_bool(v_online);

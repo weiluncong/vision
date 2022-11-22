@@ -31,6 +31,8 @@ void CMdiArea::CreateActions()
 {
     act_add_camera_ = new QAction(tr("camera_widget"));
     connect(act_add_camera_, &QAction::triggered, this, &CMdiArea::HandleActAddCamera);
+    act_add_vehicle_topview_ = new QAction(tr("vehicle_topview"));
+    connect(act_add_vehicle_topview_, &QAction::triggered, this, &CMdiArea::HandleActAddVehicleTopView);
 }
 
 void CMdiArea::CreateMenus()
@@ -39,7 +41,7 @@ void CMdiArea::CreateMenus()
     QMenu *camera_view = new QMenu("&camera view");
     camera_view->addAction(act_add_camera_);
     QMenu *view_2d = new QMenu("&2d view");
-
+    view_2d->addAction(act_add_vehicle_topview_);
     QMenu *view_3d = new QMenu("&3d view");
 
     QMenu *info_view = new QMenu("&info view");
@@ -67,4 +69,19 @@ void CMdiArea::HandleActAddCamera()
     this->activeSubWindow()->setWindowIcon(QIcon(":/icon/vedio.png"));
     this->activeSubWindow()->resize(400, 300);
     this->activeSubWindow()->setMaximumSize(800, 600);
+}
+
+void CMdiArea::HandleActAddVehicleTopView()
+{
+    CTopViewScheduler *topview_scheduler = static_cast<CTopViewScheduler *>(data_scheduler_->widget_schedulers_["topview"]);
+    if (!topview_scheduler->GetVehicleWidgetStatus())
+    {
+        CVehicleTopViewWidget *topview_widget = new CVehicleTopViewWidget(this);
+        topview_scheduler->AddTopViewWidget(topview_widget);
+        topview_widget->setWindowTitle("vehicle_topview");
+        this->addSubWindow(topview_widget);
+        topview_widget->show();
+        this->activeSubWindow()->setWindowIcon(QIcon(":/icon/topview.png"));
+        this->activeSubWindow()->resize(topview_widget->size());
+    }
 }

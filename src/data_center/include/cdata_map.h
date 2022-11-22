@@ -63,7 +63,7 @@ public:
     typename QMap<double, T>::iterator LowerBound(const QString &key, const double &time)
     {
         auto iter = map_[key].lowerBound(time);
-        if(iter == map_[key].end())
+        if (iter == map_[key].end())
         {
             return --iter;
         }

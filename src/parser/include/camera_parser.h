@@ -10,9 +10,6 @@ public:
     CameraParser();
 
     void ParseCamera(const QString &msg_name, const std::string &data, double time);
-
-private:
-    CDataCenter *data_center_;
 };
 
 #endif // CAMERA_PARSER_H

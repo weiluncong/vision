@@ -44,21 +44,6 @@ public:
     }
 
     template <class T>
-    void AppendValue(const QString &topic_name, double time, const T &data)
-    {
-        QString class_name = TOQSTR(typeid(T).name());
-        if (!data_ptr_map_.contains(class_name))
-        {
-            CDataMap<T> *map = new CDataMap<T>();
-            data_ptr_map_[class_name] = map;
-        }
-
-        CDataMap<T> *map_ptr = static_cast<CDataMap<T> *>(data_ptr_map_[class_name]);
-        if (map_ptr)
-            map_ptr->Append(topic_name, time, data);
-    }
-
-    template <class T>
     CDataMap<T> *GetDataPtr()
     {
         QString class_name = TOQSTR(typeid(T).name());

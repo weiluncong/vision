@@ -6,6 +6,8 @@ CDataScheduler::CDataScheduler()
 {
     CAbstractScheduler *camera_scheduler = new CCameraScheduler();
     widget_schedulers_["camera"] = camera_scheduler;
+    CAbstractScheduler *topview_scheduler = new CTopViewScheduler();
+    widget_schedulers_["topview"] = topview_scheduler;
 
     data_center_ = CDataCenter::GetCDataCenter();
     signal_manager_ = CSignalManager::GetCSignalManager();
@@ -95,6 +97,7 @@ void CDataScheduler::PlayData()
 void CDataScheduler::SyncData(double timestamp)
 {
     widget_schedulers_["camera"]->SyncData(timestamp);
+    widget_schedulers_["topview"]->SyncData(timestamp);
 }
 
 void CDataScheduler::HandleParserFinished(const QString &type, double timestamp)

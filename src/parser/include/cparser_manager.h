@@ -8,6 +8,7 @@
 #include "cthread_pool.h"
 #include "cdata_center.h"
 #include "camera_parser.h"
+#include "cobject_parser.h"
 #include "csignal_manager.h"
 
 class CParserManager : public QObject
@@ -26,8 +27,9 @@ private:
                       const std::string &data, double time);
     void WaitForFinished();
     void InitParseFunc();
+
     template <typename _Func, typename... _Args>
-    void AddParserFun(const QString &key, _Func &&f, _Args &&...args)
+    void AddParserFun(const QString &key, _Func &&f, _Args &&... args)
     {
         parse_functions_.insert(key, std::bind(std::forward<_Func>(f), std::forward<_Args>(args)...,
                                                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
@@ -35,6 +37,7 @@ private:
 
 private:
     std::shared_ptr<CameraParser> camera_parser_ = nullptr;
+    std::shared_ptr<CObjectParser> cobject_parser_ = nullptr;
 
     CProtoPool *proto_pool_ = nullptr;
     CDataCenter *data_center_ = nullptr;

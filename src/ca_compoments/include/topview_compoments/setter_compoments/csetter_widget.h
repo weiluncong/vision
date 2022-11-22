@@ -43,9 +43,9 @@ private:
     int color_index_ = 0;
     QMap<QString, CSetterParam> params_map_;
     const QList<QColor> color_list_ = {
-        Qt::color0, Qt::color1, Qt::black, Qt::white, Qt::darkGray,
-        Qt::gray, Qt::lightGray, Qt::red, Qt::green, Qt::blue, Qt::cyan,
-        Qt::magenta, Qt::yellow, Qt::darkRed, Qt::darkGreen, Qt::darkBlue,
+        Qt::black, Qt::darkGray, Qt::gray, Qt::lightGray,
+        Qt::red, Qt::green, Qt::blue, Qt::cyan, Qt::magenta,
+        Qt::yellow, Qt::darkRed, Qt::darkGreen, Qt::darkBlue,
         Qt::darkCyan, Qt::darkMagenta, Qt::darkYellow};
 
 signals:

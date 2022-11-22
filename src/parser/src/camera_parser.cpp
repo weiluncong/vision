@@ -1,10 +1,7 @@
 #include "camera_parser.h"
 #include "raw_data.pb.h"
 
-CameraParser::CameraParser()
-{
-    data_center_ = CDataCenter::GetCDataCenter();
-}
+CameraParser::CameraParser() {}
 
 void CameraParser::ParseCamera(const QString &msg_name, const std::string &data, double time)
 {

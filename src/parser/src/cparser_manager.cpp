@@ -24,6 +24,11 @@ CParserManager::~CParserManager()
 void CParserManager::InitParseFunc()
 {
     camera_parser_ = std::shared_ptr<CameraParser>(new CameraParser());
+    cobject_parser_ = std::shared_ptr<CObjectParser>(new CObjectParser());
+
+    AddParserFun("FusionProto.FusObjects", &CObjectParser::ParseObjects, cobject_parser_);
+    AddParserFun("CameraProto.CamObjects", &CObjectParser::ParseObjects, cobject_parser_);
+    AddParserFun("RadarProto.RadarObjects", &CObjectParser::ParseObjects, cobject_parser_);
 }
 
 void CParserManager::Parser(const QList<cReplayData> &list)
@@ -69,9 +74,9 @@ void CParserManager::HandleMetaData(double timestamp, const QString &topic_name,
                                                  TOSTR(package_msg_name), data, time));
 
         bool parse_flag = false;
-        for (int i = 0; i < signal_parser_.size(); i++)
+        for (auto i : signal_parser_)
         {
-            parse_flag |= topic_name.contains(signal_parser_[i]);
+            parse_flag |= topic_name.contains(i);
         }
 
         if (parse_flag)

@@ -37,15 +37,15 @@ CVehicleTopViewWidget::~CVehicleTopViewWidget()
 {
     SAFE_DELETE(graphics_view_);
     SAFE_DELETE(graphics_scene_);
-    SAFE_DELETE(background_item_);
     SAFE_DELETE(setter_tab_widget_);
+    qDeleteAll(data_ptr_hash_);
 }
 
 /** @brief 定义发送事件，当窗口关闭时，可以重新创建*/
 void CVehicleTopViewWidget::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event);
-    emit SigTopViewClosed();
+    emit SigVehicleTopViewClosed();
 }
 
 void CVehicleTopViewWidget::CreateMenu()
@@ -68,11 +68,31 @@ void CVehicleTopViewWidget::CreateMenu()
 /** @brief 响应颜色变化时，更新图像颜色*/
 void CVehicleTopViewWidget::HandleActColorChanged(const QString &name, const QColor &color)
 {
+    if (name.contains("FusionProto.FusObjects") || name.contains("CameraProto.CamObjects") ||
+        name.contains("RadarProto.RadarObjects"))
+    {
+        auto hash = GetDataPtr<CObjectItem *>();
+        for (auto i : hash->hash_[name])
+        {
+            i->SetColor(color);
+        }
+    }
+    graphics_scene_->update();
 }
 
 /** @brief 响应复选框选择事件，更改item是否显示的状态*/
 void CVehicleTopViewWidget::HandleActCheckStatusChanged(const QString &name, bool status)
 {
+    if (name.contains("FusionProto.FusObjects") || name.contains("CameraProto.CamObjects") ||
+        name.contains("RadarProto.RadarObjects"))
+    {
+        auto hash = GetDataPtr<CObjectItem *>();
+        for (auto i : hash->hash_[name])
+        {
+            i->setVisible(status);
+        }
+    }
+    graphics_scene_->update();
 }
 
 void CVehicleTopViewWidget::HandleActBtnClicked()
@@ -108,4 +128,46 @@ void CVehicleTopViewWidget::HandleActZoom()
 void CVehicleTopViewWidget::AddSetterItem(const QString &name)
 {
     setter_tab_widget_->AddCompomentName(name);
+}
+
+void CVehicleTopViewWidget::UpdateObjectItemData(const QString &name, double delta_time, const QVector<CObjectData> &data, const QColor &color)
+{
+    if (delta_time <= 250)
+    {
+        QMap<int, CObjectData> object_track_ids;
+        for (auto i : data)
+        {
+            object_track_ids.insert(i.track_id_, i);
+        }
+        auto objs_hash = GetDataPtr<CObjectItem *>();
+        if (objs_hash && objs_hash->hash_[name].size() > 0)
+        {
+            auto &items = objs_hash->hash_[name];
+
+            for (auto iter = items.begin(); iter != items.end();)
+            {
+                int track_id = (*iter)->GetTrackId();
+                if (object_track_ids.keys().contains(track_id))
+                {
+                    (*iter)->SetData(object_track_ids[track_id]);
+                    object_track_ids.remove(track_id);
+                    ++iter;
+                }
+                else
+                {
+                    SAFE_DELETE(*iter);
+                    items.erase(iter);
+                }
+            }
+        }
+        for (auto i : object_track_ids.values())
+        {
+            CObjectItem *item = new CObjectItem(background_item_);
+            item->SetColor(color);
+            item->SetName(name);
+            item->SetData(i);
+            AppendValue<CObjectItem *>(name, item);
+        }
+        graphics_scene_->update();
+    }
 }

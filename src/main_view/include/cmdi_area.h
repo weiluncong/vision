@@ -23,11 +23,13 @@ private:
     void CreateActions();
 
     void HandleActAddCamera();
+    void HandleActAddVehicleTopView();
 
 private:
     QMenu *menu_;
 
     QAction *act_add_camera_;
+    QAction *act_add_vehicle_topview_;
     CDataCenter *data_center_;
     CDataScheduler *data_scheduler_;
 };
