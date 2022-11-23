@@ -16,7 +16,7 @@ CVehicleTopViewWidget::CVehicleTopViewWidget(QWidget *parent)
 
     setter_btn_ = new QToolButton(this);
     setter_btn_->setMaximumWidth(15);
-    setter_btn_->setArrowType(Qt::LeftArrow);
+    setter_btn_->setArrowType(Qt::RightArrow);
     connect(setter_btn_, &QToolButton::clicked, this, &CVehicleTopViewWidget::HandleActBtnClicked);
 
     setter_tab_widget_ = new CSetterTabWidget(this);
@@ -29,7 +29,7 @@ CVehicleTopViewWidget::CVehicleTopViewWidget(QWidget *parent)
     main_splitter_->addWidget(graphics_view_);
     main_splitter_->addWidget(setter_btn_);
     main_splitter_->addWidget(setter_tab_widget_);
-    main_splitter_->setSizes({600, 15, 200});
+    main_splitter_->setSizes({800, 15, 200});
     setCentralWidget(main_splitter_);
 }
 
@@ -87,9 +87,12 @@ void CVehicleTopViewWidget::HandleActCheckStatusChanged(const QString &name, boo
         name.contains("RadarProto.RadarObjects"))
     {
         auto hash = GetDataPtr<CObjectItem *>();
-        for (auto i : hash->hash_[name])
+        if (hash)
         {
-            i->setVisible(status);
+            for (auto i : hash->hash_[name])
+            {
+                i->setVisible(status);
+            }
         }
     }
     graphics_scene_->update();
@@ -100,12 +103,12 @@ void CVehicleTopViewWidget::HandleActBtnClicked()
     if (setter_tab_widget_->isVisible())
     {
         setter_tab_widget_->setVisible(false);
-        setter_btn_->setArrowType(Qt::RightArrow);
+        setter_btn_->setArrowType(Qt::LeftArrow);
     }
     else
     {
         setter_tab_widget_->setVisible(true);
-        setter_btn_->setArrowType(Qt::LeftArrow);
+        setter_btn_->setArrowType(Qt::RightArrow);
     }
 }
 
@@ -159,6 +162,7 @@ void CVehicleTopViewWidget::UpdateObjectItemData(const QString &name, double del
                     items.erase(iter);
                 }
             }
+            items.shrink_to_fit();
         }
         for (auto i : object_track_ids.values())
         {

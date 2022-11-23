@@ -7,6 +7,8 @@ using namespace std;
 
 std::string AbstractParser::FieldTypeConvert(const google::protobuf::Message &msg, const google::protobuf::FieldDescriptor *field)
 {
+    if (!field)
+        return "";
     ostringstream os;
     switch (field->cpp_type())
     {
@@ -124,6 +126,6 @@ void AbstractParser::ParseFinished(const QString &type, double timestamp)
 {
     if (FLAGS_v_online) //在线模式
     {
-        emit CSignalManager::GetCSignalManager()->SigParseFinished(type, timestamp); 
+        emit CSignalManager::GetCSignalManager()->SigParseFinished(type, timestamp);
     }
 }

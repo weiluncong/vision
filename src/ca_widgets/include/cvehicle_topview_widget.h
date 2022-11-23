@@ -2,6 +2,7 @@
 #define CVEHICLE_TOPVIEW_WIDGET_H
 
 #include <QtWidgets>
+#include <QDebug>
 #include "cgraphics_view.h"
 #include "cgraphics_scene.h"
 #include "cvehicle_background_item.h"

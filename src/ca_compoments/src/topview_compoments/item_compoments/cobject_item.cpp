@@ -63,8 +63,8 @@ void CObjectItem::UpdateObjectRect()
 {
     top_left_ = QPointF(obj_data_.pos_y_ + obj_data_.width_ / 2, obj_data_.pos_x_ + obj_data_.length_ / 2);
     top_right_ = QPointF(obj_data_.pos_y_ - obj_data_.width_ / 2, obj_data_.pos_x_ + obj_data_.length_ / 2);
-    bottom_left_ = QPointF(obj_data_.pos_y_ + obj_data_.width_ / 2, obj_data_.pos_y_ - obj_data_.length_ / 2);
-    bottom_right_ = QPointF(obj_data_.pos_y_ - obj_data_.width_ / 2, obj_data_.pos_y_ - obj_data_.length_ / 2);
+    bottom_left_ = QPointF(obj_data_.pos_y_ + obj_data_.width_ / 2, obj_data_.pos_x_ - obj_data_.length_ / 2);
+    bottom_right_ = QPointF(obj_data_.pos_y_ - obj_data_.width_ / 2, obj_data_.pos_x_ - obj_data_.length_ / 2);
     origin_point_ = QPointF(obj_data_.pos_y_, obj_data_.pos_x_);
     Rotation(obj_data_.heading_angle_);
     top_left_ = parent_item_->PointItemInScene(top_left_);

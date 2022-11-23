@@ -14,7 +14,7 @@ public:
     void SyncData(double timestamp) override;
 
     void ClearWidgets() override;
-    bool GetVehicleWidgetStatus() { return (vehicle_topview_widget_); }
+    bool GetVehicleWidgetStatus() { return (vehicle_topview_widget_ != nullptr); }
 
 private:
     void UpdateObjectItem(double timestamp);

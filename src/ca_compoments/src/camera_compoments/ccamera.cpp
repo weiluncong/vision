@@ -23,9 +23,7 @@ void CCamera::UpdateView(const std::vector<unsigned char> &img, const QString &t
 {
     if (img.empty())
         return;
-    qDebug() << "size: " << img.size();
     cv::Mat m = cv::imdecode(img, cv::IMREAD_COLOR);
-    qDebug() << m.rows << "  " << m.cols;
     if (!m.empty())
     {
         cv::Mat rgb_, dst;

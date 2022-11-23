@@ -47,6 +47,7 @@ void CWindowManager::HandleActModel()
         main_window_->act_point_record_->setEnabled(true);
         data_scheduler_->StopPlay(true);
         main_window_->main_widget_->mdi_area_->closeAllSubWindows();
+        main_window_->setWindowTitle("CaVision");
     }
     data_producer_->Switch();
 }
@@ -62,6 +63,7 @@ void CWindowManager::HandleActOpenFile()
             HandleActSwitch();
         main_window_->act_open_file_->setEnabled(false);
         main_window_->act_mode_->setEnabled(false);
+        main_window_->setWindowTitle(path.split("/").back());
         data_producer_->OpenFile(path);
     }
 }

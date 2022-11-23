@@ -71,4 +71,4 @@ do
 	export LD_LIBRARY_PATH=${lib_path}:$LD_LIBRARY_PATH
 done
 
-./${app_name}_
+gdb ./${app_name}_

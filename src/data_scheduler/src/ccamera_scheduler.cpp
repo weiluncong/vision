@@ -22,14 +22,12 @@ void CCameraScheduler::SyncData(double timestamp)
         QString camera_name = camera->Name();
         if (img_data_ptr->Keys().contains(camera_name))
         {
-            double time = 0;
             std::vector<unsigned char> img;
-            time = timestamp;
-            img = data_center_->GetValue<CImageData>(camera_name, time).img;
+            img = data_center_->GetValue<CImageData>(camera_name, timestamp).img;
             if (img.size() > 0)
             {
-                QString time_str = QDateTime::fromMSecsSinceEpoch(time * 1000).toString("yyyy-MM-dd hh:mm:ss.zzz");
-                camera->UpdateView(img, time_str, time);
+                QString time_str = QDateTime::fromMSecsSinceEpoch((timestamp + data_center_->data_start_time_) * 1000).toString("yyyy-MM-dd hh:mm:ss.zzz");
+                camera->UpdateView(img, time_str, timestamp);
             }
         }
     }
