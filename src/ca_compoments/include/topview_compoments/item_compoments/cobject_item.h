@@ -13,9 +13,6 @@ class CObjectItem : public QObject, public QGraphicsItem
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem);
 
-protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-
 public:
     explicit CObjectItem(CVehicleBackGroundItem *parent_item);
     ~CObjectItem() override;
@@ -35,7 +32,6 @@ private:
 
 private:
     CVehicleBackGroundItem *parent_item_;
-    QRectF bounding_rect_;
     CObjectData obj_data_;
     QColor color_;
     QString name_;

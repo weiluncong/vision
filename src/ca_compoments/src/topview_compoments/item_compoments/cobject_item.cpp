@@ -8,16 +8,9 @@ CObjectItem::CObjectItem(CVehicleBackGroundItem *parent_item)
 
 CObjectItem::~CObjectItem() {}
 
-void CObjectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    Q_UNUSED(event);
-    setFlag(QGraphicsItem::ItemIsFocusable);
-    setFocus();
-}
-
 QRectF CObjectItem::boundingRect() const
 {
-    return bounding_rect_;
+    return parent_item_->boundingRect();
 }
 
 void CObjectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -27,18 +20,14 @@ void CObjectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(QPen(color_, 3));
     UpdateObjectRect();
-    if (hasFocus())
-    {
-        painter->setBrush(QBrush(color_));
-    }
     if (obj_data_.pos_x_ != 0 || obj_data_.pos_y_ != 0)
     {
         if (obj_data_.width_ == 0 && obj_data_.length_ == 0 &&
             obj_data_.track_id_ != 0 && obj_data_.track_id_ != 255)
         {
             obj_data_.heading_angle_ = 0;
-            painter->drawEllipse(bounding_rect_.x(), bounding_rect_.y(), 6, 6);
-            painter->drawText(bounding_rect_.x(), bounding_rect_.y(), QString::number(obj_data_.track_id_));
+            painter->drawEllipse(origin_point_.x(), origin_point_.y(), 6, 6);
+            painter->drawText(origin_point_.x(), origin_point_.y(), QString::number(obj_data_.track_id_));
         }
         else
         {
@@ -56,7 +45,7 @@ void CObjectItem::PainterDrawQuadrangle(QPainter *painter)
     path.quadTo((bottom_left_ + top_left_) / 2, top_left_);
     painter->drawPath(path);
     painter->setPen(QPen(Qt::black, 4));
-    painter->drawText(bounding_rect_.center(), QString::number(obj_data_.track_id_));
+    painter->drawText(origin_point_.x() - 6, origin_point_.y() + 6, QString::number(obj_data_.track_id_));
 }
 
 void CObjectItem::UpdateObjectRect()
@@ -71,12 +60,7 @@ void CObjectItem::UpdateObjectRect()
     top_right_ = parent_item_->PointItemInScene(top_right_);
     bottom_left_ = parent_item_->PointItemInScene(bottom_left_);
     bottom_right_ = parent_item_->PointItemInScene(bottom_right_);
-    QPointF bounding_top_left = parent_item_->PointItemInScene(QPointF(obj_data_.pos_y_ + std::max(obj_data_.width_, obj_data_.length_) / 2,
-                                                                       obj_data_.pos_x_ + std::max(obj_data_.width_, obj_data_.length_) / 2));
-    QPointF bounding_bottom_right = parent_item_->PointItemInScene(QPointF(obj_data_.pos_y_ - std::max(obj_data_.width_, obj_data_.length_) / 2,
-                                                                           obj_data_.pos_x_ - std::max(obj_data_.width_, obj_data_.length_) / 2));
-    bounding_rect_ = QRect(bounding_top_left.x(), bounding_top_left.y(),
-                           bounding_bottom_right.x() - bounding_top_left.x() + 10, bounding_bottom_right.y() - bounding_top_left.y() + 10);
+    origin_point_ = parent_item_->PointItemInScene(origin_point_);
 }
 
 void CObjectItem::Rotation(double angle)
