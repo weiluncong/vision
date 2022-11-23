@@ -29,7 +29,7 @@ void CReceiveData::InitReceive()
     {
     case 0:
         ReceiveData(FLAGS_v_data_address_pc, FLAGS_v_proto_address_pc);
-        ReceiveCameraData();
+        // ReceiveCameraData();
         DeliverData();
         break;
     case 1:
@@ -72,16 +72,16 @@ void CReceiveData::ReceiveData(const std::string &data_address, const std::strin
                             }
                             else
                             {
-                                
                                 socket->recv(msg);
-                                char topic_name[100];
+                                char topic_name[kTopicNameMaxLen];
+                                memset(topic_name, 0, kTopicNameMaxLen);
                                 memcpy(topic_name, msg.to_string().c_str(), msg.to_string().size());
                                 socket->recv(msg);
                                 double timestamp;
                                 std::istringstream is(msg.to_string());
                                 is >> timestamp;
                                 size_t batch = 1;
-                                std::cout << "origin: " << topic_name << "----" << std::fixed << timestamp << std::endl;
+                                // std::cout << "origin: " << topic_name << "----" << std::fixed << timestamp << std::endl;
                                 socket->recv(msg);
                                 std::string msg_data = msg.to_string();
 

@@ -23,7 +23,7 @@ void CTopViewScheduler::AddTopViewWidget(CVehicleTopViewWidget *vehicle_widget)
 void CTopViewScheduler::UpdateObjectItem(double timestamp)
 {
     auto object_datas = data_center_->GetDataPtr<QVector<CObjectData>>();
-    if (!object_datas || object_datas->IsEmpty())
+    if (!object_datas)
         return;
 
     auto params_map = vehicle_topview_widget_->setter_tab_widget_->GetAllItemParam();
@@ -38,7 +38,8 @@ void CTopViewScheduler::UpdateObjectItem(double timestamp)
         {
             double t_temp = timestamp;
             auto objs = data_center_->GetValue<QVector<CObjectData>>(topic_name, t_temp);
-            vehicle_topview_widget_->UpdateObjectItemData(topic_name, abs(t_temp - timestamp), objs, params_map[topic_name].color_);
+            if (!objs.isEmpty())
+                vehicle_topview_widget_->UpdateObjectItemData(topic_name, abs(t_temp - timestamp), objs, params_map[topic_name].color_);
         }
     }
 }

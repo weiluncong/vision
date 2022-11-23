@@ -43,14 +43,21 @@ void CParserManager::Parser(const QList<cReplayData> &list)
 
 void CParserManager::Parser(double timestamp, const std::string &topic_name, const std::string &data)
 {
-    if (!TOQSTR(topic_name).contains("capilot") && !TOQSTR(topic_name).contains("ProcessStatus"))
+    if (!TOQSTR(topic_name).contains("capilot") && !TOQSTR(topic_name).contains("ProcessStatus") &&
+        !TOQSTR(topic_name).contains("topic"))
+    {
         HandleMetaData(timestamp, TOQSTR(topic_name), data);
+    }
 }
 
 void CParserManager::HandleMetaData(double timestamp, const QString &topic_name, const std::string &data)
 {
     if (start_time_ == 0)
+    {
         start_time_ = timestamp;
+        data_center_->data_start_time_ = start_time_;
+        // qDebug() << "time: " << data_center_->data_start_time_;
+    }
     end_time_ = timestamp;
     QString swc_name;
     QString package_msg_name;
@@ -148,9 +155,8 @@ void CParserManager::WaitForFinished()
 
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
-    data_center_->data_start_time_ = start_time_;
-    data_center_->data_end_time_ = end_time_;
 
+    data_center_->data_end_time_ = end_time_;
     parse_finish.clear();
     for (auto i : parse_pools_)
     {

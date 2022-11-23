@@ -26,8 +26,7 @@ void CProtoPool::LoadProtoContent(const std::string &content)
          proto_it != task_interface_content_.content().cend(); ++proto_it)
     {
         pcontent.push_back(proto_it->first);
-        proto_content_map_[QString::fromStdString(proto_it->first)] =
-            QString::fromStdString(proto_it->second);
+        proto_content_map_[TOQSTR(proto_it->first)] = TOQSTR(proto_it->second);
         ofs.clear();
         ofs.open("./dbc/proto/" + proto_it->first);
         if (!ofs.is_open())

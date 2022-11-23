@@ -4,6 +4,7 @@ CCameraWidget::CCameraWidget(QWidget *parent)
     : QWidget(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
+    setMinimumSize(300, 200);
     setMaximumSize(800, 600);
     InitUi();
 }
@@ -16,8 +17,9 @@ CCameraWidget::~CCameraWidget()
 
 void CCameraWidget::resizeEvent(QResizeEvent *event)
 {
-    Q_UNUSED(event);
-    camera_->UpdateView(last_img_data_, last_time_str_, last_time_);
+    QWidget::resizeEvent(event);
+    if (!FLAGS_v_online)
+        camera_->UpdateView(last_img_data_, last_time_str_, last_time_);
 }
 
 void CCameraWidget::contextMenuEvent(QContextMenuEvent *event)
@@ -38,9 +40,12 @@ void CCameraWidget::InitUi()
     widget_layout->setSpacing(0);
     widget_layout->setContentsMargins(0, 0, 0, 0);
     camera_ = new CCamera(this);
-    slider_ = new CSlider(this);
     widget_layout->addWidget(camera_);
-    widget_layout->addWidget(slider_);
+    if (!FLAGS_v_online)
+    {
+        slider_ = new CSlider(this);
+        widget_layout->addWidget(slider_);
+    }
     camera_menu_ = new QMenu(this);
 }
 
