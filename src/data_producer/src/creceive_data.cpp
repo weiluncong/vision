@@ -129,24 +129,7 @@ void CReceiveData::DeliverData()
                                 this->parser_manager_->Parser(timestamp, topic_name, msg_data);
                             }
                             /** @brief save data for record*/
-                            if(FLAGS_v_total_record || FLAGS_v_point_record)
-                            {
-                                RawData rdata(topic_name, timestamp, msg_data);
-                                {
-                                    std::lock_guard<std::mutex> save_lg(this->data_center_->record_mutex_);
-                                    this->data_center_->data_buf_.insert({timestamp, rdata.rawData()});
-                                }
-                                if(FLAGS_v_point_record)
-                                {
-                                    emit this->signal_manager_->SigUpdateDataBufSize();
-                                    if(this->data_center_->data_buf_.size() >= FLAGS_v_point_record_size)
-                                    {
-                                        auto it = this->data_center_->data_buf_.begin();
-                                        this->data_center_->data_buf_.erase(it);
-                                    }
-                                }
-                            }
-                            
+                            this->RecordData(topic_name, timestamp, msg_data);
                         }
                       } });
     t.detach();
@@ -176,6 +159,31 @@ void CReceiveData::SplitRecvData(const char *data, size_t size,
     auto ptr = &data[kTopicNameMaxLen + kTimestampLen + kBatchLen];
     size_t len = size - kTopicNameMaxLen - kTimestampLen - kBatchLen;
     msg_data = std::string(ptr, len);
+}
+
+void CReceiveData::RecordData(const std::string &topic_name, double timestamp, const std::string &msg_data)
+{
+    if (FLAGS_v_total_record || FLAGS_v_point_record)
+    {
+        if (!FLAGS_v_record_lidar && lidar_list_.contains(TOQSTR(topic_name)))
+        {
+            return;
+        }
+        RawData rdata(topic_name, timestamp, msg_data);
+        {
+            std::lock_guard<std::mutex> save_lg(this->data_center_->record_mutex_);
+            this->data_center_->data_buf_.insert({timestamp, rdata.rawData()});
+        }
+        if (FLAGS_v_point_record)
+        {
+            emit this->signal_manager_->SigUpdateDataBufSize();
+            if (this->data_center_->data_buf_.size() >= FLAGS_v_point_record_size)
+            {
+                auto it = this->data_center_->data_buf_.begin();
+                this->data_center_->data_buf_.erase(it);
+            }
+        }
+    }
 }
 
 /***************************************camera data receive*********************/

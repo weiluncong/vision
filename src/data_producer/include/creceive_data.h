@@ -24,6 +24,20 @@
 const size_t kTopicNameMaxLen = 100;
 const size_t kTimestampLen = sizeof(double);
 const size_t kBatchLen = sizeof(size_t);
+const QStringList lidar_list_ = {"lidar_service-Struct.string-left",
+                                 "lidar_service-Struct.string-right",
+                                 "lidar_perception-Struct.string-origin_points",
+                                 "lidar_perception-Struct.string-seg_points",
+                                 "lidar_perception-Struct.string-map_points",
+                                 "lidar_perception-Struct.string-ground_points",
+                                 "lidar_perception-Struct.string-non_ground_points",
+                                 "lidar_perception-LidarObjectProto.Objects-Ai",
+                                 "lidar_perception-LidarObjectProto.Objects-Seg",
+                                 "lidar_perception-LidarObjectProto.Objects-Fus",
+                                 "lidar_perception-LidarObjectProto.Objects-Tracked",
+                                 "lidar_perception-LidarFreeSpaceProto.FreeSpaceData",
+                                 "sab-CameraProto.CamLines-fc_selected",
+                                 "sab-CameraProto.CamLines-curb"};
 
 class CReceiveData : public QObject
 {
@@ -42,6 +56,8 @@ private:
     void SplitRecvData(const char *data, size_t size,
                        std::string &topic_name, double &timestamp,
                        size_t &batch, std::string &msg_data);
+    /** @brief 数据记录*/
+    void RecordData(const std::string &topic_name, double timestamp, const std::string &msg_data);
     /** @brief usb摄像头数据接收*/
     void ReceiveCameraData();
     bool CreateCameraCapture();
