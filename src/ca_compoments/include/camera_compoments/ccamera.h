@@ -14,7 +14,7 @@ public:
     virtual ~CCamera() {}
 
 public:
-    virtual void UpdateView(const std::vector<unsigned char> &img, const QString &time_str, double timestamp);
+    void UpdateView(const std::vector<unsigned char> &img, const QString &time_str, double timestamp);
 
 private:
     void InitCamera();

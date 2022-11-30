@@ -133,9 +133,10 @@ void CVehicleTopViewWidget::AddSetterItem(const QString &name)
     setter_tab_widget_->AddCompomentName(name);
 }
 
-void CVehicleTopViewWidget::UpdateObjectItemData(const QString &name, double delta_time, const QVector<CObjectData> &data, const QColor &color)
+void CVehicleTopViewWidget::UpdateItemData(const QString &name, double delta_time,
+                                           const QVector<CObjectData> &data, const QColor &color)
 {
-    if (delta_time <= 250)
+    if (delta_time * 1000.0 <= 250)
     {
         QMap<int, CObjectData> object_track_ids;
         for (auto i : data)
@@ -172,6 +173,56 @@ void CVehicleTopViewWidget::UpdateObjectItemData(const QString &name, double del
             item->SetData(i);
             AppendValue<CObjectItem *>(name, item);
         }
+        graphics_scene_->update();
+    }
+}
+
+void CVehicleTopViewWidget::UpdateItemData(const QString &name, double delta_time,
+                                           const QVector<CLineData> &data, const QColor &color)
+{
+    if (delta_time * 1000.0 <= 250)
+    {
+        auto lines_hash = GetDataPtr<CLineItem *>();
+        if (lines_hash && lines_hash->hash_[name].size() > 0)
+        {
+            auto &items = lines_hash->hash_[name];
+            qDeleteAll(items);
+            items.clear();
+        }
+        for (auto i : data)
+        {
+            CLineItem *item = new CLineItem(background_item_);
+            item->SetColor(color);
+            item->SetData(i);
+            AppendValue<CLineItem *>(name, item);
+        }
+        graphics_scene_->update();
+    }
+}
+
+void CVehicleTopViewWidget::UpdateItemData(const QString &name, double delta_time,
+                                           const QVector<CPointData> &data, const QColor &color)
+{
+    if (delta_time * 1000.0 <= 250)
+    {
+        QVector<CPointData> points;
+        for (auto point : data)
+        {
+            if (point.x_ == 0.0 && point.y_ == 0.0 && point.z_ == 0.0)
+                continue;
+            points.push_back(point);
+        }
+        auto points_hash = GetDataPtr<CPointSetItem *>();
+        if (points_hash && points_hash->hash_[name].size() > 0)
+        {
+            auto &items = points_hash->hash_[name];
+            qDeleteAll(items);
+            items.clear();
+        }
+        CPointSetItem *item = new CPointSetItem(background_item_);
+        item->SetData(points);
+        item->SetColor(color);
+        AppendValue<CPointSetItem *>(name, item);
         graphics_scene_->update();
     }
 }

@@ -42,7 +42,6 @@ bool CSignalFilter::IsPassed(const QString &signal_name, const QString &filter_n
     {
         if (filter_name == "ConsoleFilter" || filter_name == "SignalFilter")
             return false;
-
         return true;
     }
 

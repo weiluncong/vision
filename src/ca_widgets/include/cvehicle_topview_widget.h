@@ -9,6 +9,8 @@
 #include "csetter_tab_widget.h"
 #include "cglobal_param.h"
 #include "cobject_item.h"
+#include "cline_item.h"
+#include "cpoint_set_item.h"
 
 using namespace cav;
 template <class T>
@@ -31,33 +33,18 @@ public:
     ~CVehicleTopViewWidget() override;
 
     void AddSetterItem(const QString &name);
-    void UpdateObjectItemData(const QString &name, double delta_time,
-                              const QVector<CObjectData> &data, const QColor &color);
+    void UpdateItemData(const QString &name, double delta_time,
+                        const QVector<CObjectData> &data, const QColor &color);
+    void UpdateItemData(const QString &name, double delta_time,
+                        const QVector<CLineData> &data, const QColor &color);
+    void UpdateItemData(const QString &name, double delta_time,
+                        const QVector<CPointData> &data, const QColor &color);
 
     template <class T>
-    void AppendValue(const QString &name, const T &data)
-    {
-        QString class_name = TOQSTR(typeid(T).name());
-        if (!data_ptr_hash_.contains(class_name))
-        {
-            CDataHash<T> *hash = new CDataHash<T>();
-            data_ptr_hash_[class_name] = hash;
-        }
-        CDataHash<T> *hash_ptr = static_cast<CDataHash<T> *>(data_ptr_hash_[class_name]);
-        if (hash_ptr)
-            hash_ptr->hash_[name].push_back(data);
-    }
+    void AppendValue(const QString &name, const T &data);
 
     template <class T>
-    CDataHash<T> *GetDataPtr()
-    {
-        QString class_name = TOQSTR(typeid(T).name());
-        if (data_ptr_hash_.contains(class_name))
-        {
-            return static_cast<CDataHash<T> *>(data_ptr_hash_[class_name]);
-        }
-        return nullptr;
-    }
+    CDataHash<T> *GetDataPtr();
 
 public:
     CGraphicsView *graphics_view_ = nullptr;
@@ -82,5 +69,30 @@ private:
 signals:
     void SigVehicleTopViewClosed();
 };
+
+template <class T>
+void CVehicleTopViewWidget::AppendValue(const QString &name, const T &data)
+{
+    QString class_name = TOQSTR(typeid(T).name());
+    if (!data_ptr_hash_.contains(class_name))
+    {
+        CDataHash<T> *hash = new CDataHash<T>();
+        data_ptr_hash_[class_name] = hash;
+    }
+    CDataHash<T> *hash_ptr = static_cast<CDataHash<T> *>(data_ptr_hash_[class_name]);
+    if (hash_ptr)
+        hash_ptr->hash_[name].push_back(data);
+}
+
+template <class T>
+CDataHash<T> *CVehicleTopViewWidget::GetDataPtr()
+{
+    QString class_name = TOQSTR(typeid(T).name());
+    if (data_ptr_hash_.contains(class_name))
+    {
+        return static_cast<CDataHash<T> *>(data_ptr_hash_[class_name]);
+    }
+    return nullptr;
+}
 
 #endif // CVEHICLE_TOPVIEW_WIDGET_H

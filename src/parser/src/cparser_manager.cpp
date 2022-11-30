@@ -25,10 +25,17 @@ void CParserManager::InitParseFunc()
 {
     camera_parser_ = std::shared_ptr<CameraParser>(new CameraParser());
     cobject_parser_ = std::shared_ptr<CObjectParser>(new CObjectParser());
+    camline_parser_ = std::shared_ptr<CCamLineParser>(new CCamLineParser());
+    cpoint_set_parser_ = std::shared_ptr<CPointSetParser>(new CPointSetParser());
 
     AddParserFun("FusionProto.FusObjects", &CObjectParser::ParseObjects, cobject_parser_);
     AddParserFun("CameraProto.CamObjects", &CObjectParser::ParseObjects, cobject_parser_);
     AddParserFun("RadarProto.RadarObjects", &CObjectParser::ParseObjects, cobject_parser_);
+    AddParserFun("CameraProto.CamLines", &CCamLineParser::ParseCamLines, camline_parser_);
+    AddParserFun("FusionProto.FusFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
+    AddParserFun("FusionProto.RadarFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
+    AddParserFun("FusionProto.VisionFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
+    AddParserFun("CameraProto.CamFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
 }
 
 void CParserManager::Parser(const QList<cReplayData> &list)

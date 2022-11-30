@@ -1,14 +1,14 @@
-#ifndef CLANE_STRUCT_H
-#define CLANE_sTRUCT_H
+#ifndef CLINE_STRUCT_H
+#define CLINE_STRUCT_H
 
 namespace cav
 {
     // 车道线结构体
-    class CLaneData
+    class CLineData
     {
     public:
-        CLaneData() {}
-        ~CLaneData() {}
+        CLineData() {}
+        ~CLineData() {}
 
     public:
         double a0_ = 0;    // 三阶曲线参数常数项

@@ -158,5 +158,6 @@ void CProtoPool::UpdateProtoContent(const std::string &serviceAddress)
         proto_content_ += msg.to_string();
         std::cout << "proto content size: " << proto_content_.size() << std::endl;
     }
+    std::lock_guard<std::mutex> proto_lock(proto_mutex_);
     LoadProtoContent(proto_content_);
 }
