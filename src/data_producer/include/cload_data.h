@@ -25,6 +25,7 @@ public:
     ~CLoadData();
 
     void Dat2Replay();
+    void SetFilePath(const QString &file_path) { file_path_ = file_path; }
 
 private:
     void ReplayGetData(const QString &filter);

@@ -60,9 +60,13 @@ void CWindowManager::HandleActOpenFile()
     if (!path.isEmpty())
     {
         if (main_window_->act_switch_->text().contains("stop"))
+        {
             HandleActSwitch();
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
         main_window_->act_open_file_->setEnabled(false);
         main_window_->act_mode_->setEnabled(false);
+        main_window_->act_switch_->setEnabled(false);
         main_window_->setWindowTitle(path.split("/").back());
         data_producer_->OpenFile(path);
     }

@@ -6,7 +6,7 @@ void CObjectParser::ParseObjects(const QString &package_msg_name, const google::
         return;
 
     QVector<CObjectData> obj_vector;
-    QVector<const google::protobuf::Message *> objs_msg;
+    // QVector<const google::protobuf::Message *> objs_msg;
     auto reflection = msg.GetReflection();
     auto descriptor = msg.GetDescriptor();
     double timestamp = 0;
@@ -19,11 +19,11 @@ void CObjectParser::ParseObjects(const QString &package_msg_name, const google::
         CObjectData obj;
         const auto &nmsg = reflection->GetRepeatedMessage(msg, objs_field, n);
         ParseObject(nmsg, timestamp, obj);
-        objs_msg.push_back(&nmsg);
+        // objs_msg.push_back(&nmsg);
         obj_vector.push_back(obj);
     }
     data_center_->InsertValue<QVector<CObjectData>>(package_msg_name, time, obj_vector);
-    data_center_->InsertValue<QVector<const google::protobuf::Message *>>(package_msg_name, time, objs_msg);
+    // data_center_->InsertValue<QVector<const google::protobuf::Message *>>(package_msg_name, time, objs_msg);
     ParseFinished("topview", time);
 }
 

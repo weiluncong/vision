@@ -33,7 +33,13 @@ void CDataProducer::OpenFile(const QString &file_path)
 {
     data_center_->ClearAllData();
     if (load_data_ == nullptr)
+    {
         load_data_ = new CLoadData(file_path);
+    }
+    else
+    {
+        load_data_->SetFilePath(file_path);
+    }
 
     std::thread t(&CLoadData::Dat2Replay, load_data_);
     t.detach();

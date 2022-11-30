@@ -59,11 +59,10 @@ void CParserManager::Parser(double timestamp, const std::string &topic_name, con
 
 void CParserManager::HandleMetaData(double timestamp, const QString &topic_name, const std::string &data)
 {
-    if (start_time_ == 0)
+    if (data_center_->data_start_time_ == 0)
     {
         start_time_ = timestamp;
         data_center_->data_start_time_ = start_time_;
-        // qDebug() << "time: " << data_center_->data_start_time_;
     }
     end_time_ = timestamp;
     QString swc_name;
