@@ -1,4 +1,20 @@
 #include "creceive_data.h"
+#include "yaml/cyaml_handler.h"
+
+#include <QVector>
+
+QMap<dds_entity_t, CReceiveData *> CReceiveData::readers_;
+QMap<QString, QString> CReceiveData::topic_map_;
+
+
+QString CReceiveData::DDS2SourceTopic(const QString &dds_topic)
+{
+    if(!topic_map_.contains(dds_topic))
+        return  dds_topic;
+
+    return topic_map_[dds_topic];
+}
+
 
 CReceiveData::CReceiveData()
 {
@@ -6,6 +22,7 @@ CReceiveData::CReceiveData()
     proto_pool_ = CProtoPool::GetCProtoPool();
     data_center_ = CDataCenter::GetCDataCenter();
     signal_manager_ = CSignalManager::GetCSignalManager();
+    participant_ = -1;
     InitReceive();
 }
 
@@ -20,24 +37,70 @@ CReceiveData::~CReceiveData()
     }
     SafeClear(camera_captures_);
     SAFE_DELETE(parser_manager_);
+
+
+    dds_return_t rc = dds_delete(participant_);
+    if (rc != DDS_RETCODE_OK)
+        std::cout << "dds_delete:" << dds_strretcode(-rc);
+}
+
+void CReceiveData::DDSMsgToQueue(DDSData_Msg *msg)
+{
+    std::string data;
+    DDSMsgToString(msg, data);
+    msgs_queue_.Enqueue(data);
+    condition_var_.notify_one();
+}
+
+bool CReceiveData::IsContainsReader(dds_entity_t reader)
+{
+    return  readers_.contains(reader);
+}
+
+void CReceiveData::DDSMsgToQueue(dds_entity_t reader, DDSData_Msg *src_data)
+{
+    if(!CReceiveData::readers_[reader] || nullptr == src_data)
+        return;
+
+    CReceiveData::readers_[reader]->DDSMsgToQueue(src_data);
 }
 
 /*************************************zmq data receive*********************************/
 void CReceiveData::InitReceive()
 {
+    /// DDS
+    QStringList topics;
+    {
+        std::shared_ptr<CYamlHandler> yaml = std::shared_ptr<CYamlHandler>(new CYamlHandler("./dbc/config.yaml"));
+        if (nullptr == yaml)
+        {
+            qDebug() << "not found ./dbc/config.yaml!";
+            return ;
+        }
+
+        std::string dds_topics = yaml->GetScalarItem<std::string>("DDS Receive Topic");
+        if(dds_topics.empty())
+            return;
+
+         topics = QString::fromStdString(dds_topics).split(",");
+    }
+
     switch (FLAGS_v_model_setting)
     {
     case 0:
+        ReceiveDdsData("./dbc/dds-config.xml", topics);
         ReceiveData(FLAGS_v_data_address_pc, FLAGS_v_proto_address_pc);
         // ReceiveCameraData();
         DeliverData();
         break;
     case 1:
+        ReceiveDdsData("./dbc/dds-config.xml", topics);
         ReceiveData(FLAGS_v_data_address_soc1, FLAGS_v_proto_address_soc1);
         // ReceiveCameraData();
         DeliverData();
         break;
     case 2:
+        ReceiveDdsData("./dbc/dds-config.xml", topics);
         ReceiveData(FLAGS_v_data_address_soc1, FLAGS_v_proto_address_soc1);
         ReceiveData(FLAGS_v_data_address_soc2, FLAGS_v_proto_address_soc2);
         DeliverData();
@@ -271,105 +334,213 @@ bool CReceiveData::CreateCameraCapture()
     return camera_captures_.empty();
 }
 
-void CReceiveData::ReceiveDDSData(const std::string &config_path, const std::string &topic_name)
-{
-    std::thread t([=] {
-                      ddsrt_setenv("AUTOCOREDDS_URI", config_path.data());
-                      dds_entity_t participant;
-                      dds_entity_t topic;
-                      dds_entity_t reader;
-                      DDSData_Msg *msg;
-                      void *samples[MAX_SAMPLES];
-                      dds_sample_info_t infos[MAX_SAMPLES];
-                      dds_return_t rc;
-                      dds_qos_t *qos;
-
-                      participant = dds_create_participant(DDS_DOMAIN_DEFAULT, NULL, NULL);
-                      if (participant < 0)
-                      {
-                          std::cout << "dds创建Participant失败, 错误: " << dds_strretcode(-participant) << std::endl;
-                          return;
-                      }
-
-                      topic = dds_create_topic(participant, &DDSData_Msg_desc,
-                                               topic_name.c_str(), NULL, NULL);
-                      if (topic < 0)
-                      {
-                          std::cout << "dds_create_topic:" << dds_strretcode(-topic) << std::endl;
-                          return;
-                      }
-
-                      qos = dds_create_qos();
-                      dds_qset_reliability(qos, DDS_RELIABILITY_RELIABLE, DDS_SECS(10));
-                      reader = dds_create_reader(participant, topic, qos, NULL);
-                      if (reader < 0)
-                      {
-                          std::cout << "dds_create_reader:" << dds_strretcode(-reader) << std::endl;
-                          return;
-                      }
-                      dds_delete_qos(qos);
-
-                      samples[0] = DDSData_Msg__alloc();
-                      std::string data;
-
-                      while (receive_flag_)
-                      {
-                          if (!switch_flag_)
-                          {
-                              std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                              continue;
-                          }
-
-                          rc = dds_read(reader, samples, infos, MAX_SAMPLES, MAX_SAMPLES);
-                          if (rc < 0)
-                          {
-                              std::cout << "dds_read:" << dds_strretcode(-rc) << std::endl;
-                              dds_sleepfor(DDS_MSECS(20));
-                              continue;
-                          }
-
-                          if (infos[0].valid_data)
-                          {
-                            msg = static_cast<DDSData_Msg *>(samples[0]);
-#if 0
-                            std::cout << "=== [Subscriber] Received : \n" << std::endl;
-                            std::cout << "topic:" << msg->topic << std::endl;
-                            std::cout << "time:" << msg->timestamp << std::endl;
-                            std::cout << "data max size:" << msg->payload._maximum << std::endl;
-                            std::cout << "data size:" << msg->payload._length << std::endl;
-                            std::cout << "Message:" << msg->payload._buffer << std::endl;
-#endif
-                            if(msg)
-                            {
-                                DDSMsgToString(msg, data);
-                                msgs_queue_.Enqueue(data);
-                                condition_var_.notify_one();
-                            }
-                          }
-                          else
-                          {
-                            dds_sleepfor(DDS_MSECS(20));
-                          }
-                      }
-                      DDSData_Msg_free(samples[0], DDS_FREE_ALL);
-                      rc = dds_delete(participant);
-                      if (rc != DDS_RETCODE_OK)
-                          std::cout << "dds_delete:" << dds_strretcode(-rc) << std::endl; });
-    t.detach();
-}
-
 void CReceiveData::DDSMsgToString(DDSData_Msg *msg, std::string &desc_data)
 {
     desc_data.resize(kTopicNameMaxLen + kTimestampLen + kBatchLen + msg->payload._length);
     char topic_name[kTopicNameMaxLen];
     memset(topic_name, 0, kTopicNameMaxLen);
     memcpy(&topic_name, msg->topic, std::string(msg->topic).size());
+
+    QString tmp_topic = DDS2SourceTopic(topic_name);
+    memset(&topic_name, 0, kTopicNameMaxLen);
+    memcpy(&topic_name, tmp_topic.toStdString().data(), tmp_topic.size());
+
     memcpy(&desc_data[0], &topic_name, kTopicNameMaxLen);
     memcpy(&desc_data[kTopicNameMaxLen], &msg->timestamp, kTimestampLen);
 
     size_t batch = 1;
     memcpy(&desc_data[kTopicNameMaxLen + kTimestampLen], &batch, kBatchLen);
-
     memcpy(&desc_data[kTopicNameMaxLen + kTimestampLen + kBatchLen],
-           msg->payload._buffer, msg->payload._length);
+            msg->payload._buffer, msg->payload._length);
 }
+
+void CReceiveData::ReceiveDdsData(const std::string &config_path, const QStringList &topics)
+{
+    if(topics.empty())
+        return;
+
+    if(!CreateDDSParticiPant(DDS_DOMAIN_DEFAULT))
+        return;
+
+    QString deal_src_topic;
+    dds_entity_t topic;
+    dds_entity_t reader;
+    dds_listener_t *listener = nullptr;
+
+    for(QString src_topic : topics)
+    {
+        deal_src_topic = src_topic;
+        deal_src_topic = deal_src_topic.replace(".", "_").replace("-", "__");
+        topic_map_[deal_src_topic] = src_topic;
+
+        if(!CreateDDSLister(&listener))
+        {
+            continue;
+        }
+
+        if(!CreateDDSTopic(participant_, deal_src_topic.toStdString(), &topic))
+        {
+            dds_delete_listener(listener);
+            continue;
+        }
+
+        if(!CreateDDSReader(participant_, topic, &reader, listener))
+        {
+            dds_delete_listener(listener);
+            continue;
+        }
+
+        readers_[reader] = this;
+    }
+
+//    /// loop
+//    std::thread t([=] {
+//        ddsrt_setenv("AUTOCOREDDS_URI", config_path.data());
+//        DDSData_Msg *msg;
+//        void *samples[MAX_SAMPLES];
+//        dds_sample_info_t infos[MAX_SAMPLES];
+//        dds_return_t rc;
+
+//        samples[0] = DDSData_Msg__alloc();
+//        std::string data;
+
+//        while (receive_flag_)
+//        {
+//            if (!switch_flag_)
+//            {
+//                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+//                continue;
+//            }
+
+//            for(dds_entity_t reader : readers_.keys())
+//            {
+//                rc = dds_read(reader, samples, infos, MAX_SAMPLES, MAX_SAMPLES);
+//                if (rc < 0)
+//                {
+//                    std::cout << "dds_read:" << dds_strretcode(-rc) << std::endl;
+//                    continue;
+//                }
+
+//                if (infos[0].valid_data)
+//                {
+//                    msg = static_cast<DDSData_Msg *>(samples[0]);
+
+//                    std::cout << "=== [Subscriber] Received : \n" << std::endl;
+//                    std::cout << "topic:" << msg->topic << std::endl;
+//                    std::cout << "time:" << msg->timestamp << std::endl;
+//                    std::cout << "data max size:" << msg->payload._maximum << std::endl;
+//                    std::cout << "data size:" << msg->payload._length << std::endl;
+//                    std::cout << "Message:" << msg->payload._buffer << std::endl;
+
+//                    if(msg)
+//                    {
+//                        DDSMsgToString(msg, data);
+//                        msgs_queue_.Enqueue(data);
+//                        condition_var_.notify_one();
+//                    }
+//                }
+//            }
+
+//            dds_sleepfor(DDS_MSECS(1));
+//        }
+
+//        DDSData_Msg_free(samples[0], DDS_FREE_ALL);
+//    });
+
+//    t.detach();
+}
+
+
+bool CReceiveData::CreateDDSTopic(dds_entity_t participant, const std::string &topic,
+                                  dds_entity_t *res_topic)
+{
+    if(topic.empty() || nullptr == res_topic)
+        return false;
+
+    *res_topic = dds_create_topic(participant, &DDSData_Msg_desc,
+                             topic.c_str(), NULL, NULL);
+    if ( *res_topic >= 0)
+        return true;
+
+    std::cout << "dds_create_topic:" << dds_strretcode(-*res_topic) << std::endl;
+    return false;
+}
+
+bool CReceiveData::CreateDDSReader(dds_entity_t participant, dds_entity_t dds_topic,
+                                   dds_entity_t *res_reader, dds_listener_t *listener)
+{
+    if(nullptr == res_reader)
+        return false;
+
+    dds_qos_t *qos = dds_create_qos();
+    dds_qset_reliability(qos, DDS_RELIABILITY_RELIABLE,DDS_MSECS(200));
+    dds_qset_history(qos, DDS_HISTORY_KEEP_ALL, 5);
+    *res_reader = dds_create_reader(participant, dds_topic, qos, listener);
+    if (*res_reader >= 0){
+        dds_delete_qos(qos);
+        return true;
+    }
+
+    std::cout << "dds_create_reader:" << dds_strretcode(-*res_reader) << std::endl;
+    return false;
+}
+
+bool CReceiveData::CreateDDSParticiPant(const dds_domainid_t domain)
+{
+    participant_ = dds_create_participant(domain, NULL, NULL);
+    if (participant_ < 0)
+    {
+        std::cout << "dds创建Participant失败, 错误: " << dds_strretcode(-participant_) << std::endl;
+        return false;
+    }
+
+    return  true;
+}
+
+void DataAvailable(dds_entity_t reader, void *arg)
+{
+    if(!CReceiveData::IsContainsReader(reader))
+        return;
+
+    int i = 0;
+    void *ptrs[MAX_SAMPLES] = {0};
+    dds_sample_info_t info[sizeof(ptrs) / sizeof(ptrs[0])];
+    DDSData_Msg *msg;
+    std::string data;
+    int n;
+    n = dds_take(reader, ptrs, info, sizeof(ptrs) / sizeof(ptrs[0]),
+                 sizeof(ptrs) / sizeof(ptrs[0]));  // 从队列中获取数据
+
+    for (i = 0; i < n; i++)
+    {
+        if (info[i].valid_data)
+        {
+            msg = (DDSData_Msg *)ptrs[i];  // 数据已获取
+            std::cout << "=== [Subscriber] Received : \n" << std::endl;
+            std::cout << "topic:" << msg->topic << std::endl;
+            std::cout << "time:" << msg->timestamp << std::endl;
+            std::cout << "data max size:" << msg->payload._maximum << std::endl;
+            std::cout << "data size:" << msg->payload._length << std::endl;
+            std::cout << "Message:" << msg->payload._buffer << std::endl;
+
+            CReceiveData::DDSMsgToQueue(reader, msg);
+        }
+    }
+
+
+    dds_return_loan(reader, ptrs, n);
+}
+
+bool CReceiveData::CreateDDSLister(dds_listener_t **listener)
+{
+    if(nullptr == listener)
+        return false;
+
+    *listener = dds_create_listener(nullptr);
+    if(*listener == nullptr)
+        return false;
+
+    dds_lset_data_available(*listener, DataAvailable);
+    return true;
+}
+

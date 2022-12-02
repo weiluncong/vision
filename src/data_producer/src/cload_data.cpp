@@ -64,7 +64,8 @@ void CLoadData::ReplayGetData(const QString &filter)
         }
         replay_data.mdata.resize(size);
         ifs_.read(&replay_data.mdata[0], size);
-        if (signal_filter->IsPassed(replay_data.head.name, filter) && !QString(replay_data.head.name).contains("topic"))
+        if (signal_filter->IsPassed(replay_data.head.name, filter) &&
+            !QString(replay_data.head.name).contains("topic"))
         {
             data2parse_.push_back(replay_data);
         }

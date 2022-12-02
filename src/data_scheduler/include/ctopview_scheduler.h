@@ -17,36 +17,23 @@ public:
     bool GetVehicleWidgetStatus() { return (vehicle_topview_widget_ != nullptr); }
 
 private:
-    template <typename T>
-    inline void UpdateItem(double timestamp);
+    void UpdateObjectItem(double timestamp);
+    void UpdatePointItem(double timestamp);
 
-private:
+    void UpadtePredictionItem(double timestamp);
+
+    void UpdateMapItem(double timestamp);
+
+    void UpdateRNPEnvOut(double timestamp);
+
+    void UpdateModeLane(const QString &topic, QVector<CSDAModeLane> mode_lane);
+
+    void UpdateMapLine(const QString &topic, QVector<CMapLine> map_line);
+
     CVehicleTopViewWidget *vehicle_topview_widget_ = nullptr;
+
+    QMap<QString, QVector<CSDAModeLane>> current_mode_lane_;
+    QMap<QString, QMap<int, QVector<CMapLine>>> current_maps_;
 };
-
-template <typename T>
-inline void CTopViewScheduler::UpdateItem(double timestamp)
-{
-    auto datas = data_center_->GetDataPtr<T>();
-    if (!datas)
-        return;
-
-    auto params_map = vehicle_topview_widget_->setter_tab_widget_->GetAllItemParam();
-    for (auto topic_name : datas->Keys())
-    {
-        if (!params_map.contains(topic_name))
-        {
-            vehicle_topview_widget_->AddSetterItem(topic_name);
-            params_map = vehicle_topview_widget_->setter_tab_widget_->GetAllItemParam();
-        }
-        if (params_map[topic_name].check_status_)
-        {
-            double t_temp = timestamp;
-            auto item_data = data_center_->GetValue<T>(topic_name, t_temp);
-            if (!item_data.isEmpty())
-                vehicle_topview_widget_->UpdateItemData(topic_name, abs(t_temp - timestamp), item_data, params_map[topic_name].color_);
-        }
-    }
-}
 
 #endif

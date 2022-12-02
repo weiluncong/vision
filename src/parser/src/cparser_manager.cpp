@@ -24,18 +24,32 @@ CParserManager::~CParserManager()
 void CParserManager::InitParseFunc()
 {
     camera_parser_ = std::shared_ptr<CameraParser>(new CameraParser());
+    csda_parser_   = std::shared_ptr<CSdaParser>(new CSdaParser());
+    cvision_parser_ = std::shared_ptr<CSdaVisionParser>(new CSdaVisionParser());
     cobject_parser_ = std::shared_ptr<CObjectParser>(new CObjectParser());
-    camline_parser_ = std::shared_ptr<CCamLineParser>(new CCamLineParser());
-    cpoint_set_parser_ = std::shared_ptr<CPointSetParser>(new CPointSetParser());
+    csda_parser = std::shared_ptr<CSdaParser>(new CSdaParser());
 
     AddParserFun("FusionProto.FusObjects", &CObjectParser::ParseObjects, cobject_parser_);
+    AddParserFun("VpCameraProto.CamObjects", &CObjectParser::ParseObjects, cobject_parser_);
     AddParserFun("CameraProto.CamObjects", &CObjectParser::ParseObjects, cobject_parser_);
     AddParserFun("RadarProto.RadarObjects", &CObjectParser::ParseObjects, cobject_parser_);
-    AddParserFun("CameraProto.CamLines", &CCamLineParser::ParseCamLines, camline_parser_);
-    AddParserFun("FusionProto.FusFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
-    AddParserFun("FusionProto.RadarFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
-    AddParserFun("FusionProto.VisionFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
-    AddParserFun("CameraProto.CamFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
+
+    //lidar parser
+    AddParserFun("LidarObjectProto.Objects", &CSdaParser::ParseLidarObjects, csda_parser_);
+    AddParserFun("LidarFreeSpaceProto.FreeSpaceData", &CSdaParser::ParseLidarFreeSpace, csda_parser_);
+
+    //vision parser
+    AddParserFun("VpCameraProto.CamFreeSpace", &CSdaVisionParser::ParserVisionFreespace, cvision_parser_);
+
+    //sda env parser
+    AddParserFun("localization.InsData", &CSdaParser::ParseIns, csda_parser);
+    AddParserFun("hdmap.StaticHDMapInfo", &CSdaParser::ParseHDMap, csda_parser);
+    AddParserFun("idmap.StaticIDMapInfo", &CSdaParser::ParseIdmapStatic, csda_parser);
+    AddParserFun("prediction.RNPEnvOut", &CSdaParser::ParseRNPEnvOut, csda_parser);
+
+    //sda prediction parser
+    AddParserFun("prediction.RNPObjectOut", &CSdaParser::ParsePredictions, csda_parser);
+    AddParserFun("prediction.RNPObjectDebugOut", &CSdaParser::ParsePredictObjectDebug, csda_parser);
 }
 
 void CParserManager::Parser(const QList<cReplayData> &list)
@@ -63,10 +77,13 @@ void CParserManager::HandleMetaData(double timestamp, const QString &topic_name,
     {
         start_time_ = timestamp;
         data_center_->data_start_time_ = start_time_;
+        // qDebug() << "time: " << data_center_->data_start_time_;
     }
     end_time_ = timestamp;
     QString swc_name;
     QString package_msg_name;
+    if (topic_name.split("-").empty())
+        return;
     SplitTopicName(topic_name, swc_name, package_msg_name);
     double time = end_time_ - start_time_;
 
@@ -86,32 +103,33 @@ void CParserManager::HandleMetaData(double timestamp, const QString &topic_name,
         parse_pools_[swc_name]->submit(std::bind(&CParserManager::ParseMessage, this, TOSTR(topic_name),
                                                  TOSTR(package_msg_name), data, time));
 
-        bool parse_flag = false;
-        for (auto i : signal_parser_)
-        {
-            parse_flag |= topic_name.contains(i);
-        }
+//        bool parse_flag = false;
+//        for (auto i : signal_parser_)
+//        {
+//            parse_flag |= topic_name.contains(i);
+//        }
 
-        if (parse_flag)
-        {
-            google::protobuf::Message *msg = proto_pool_->GetProtoMessage(TOSTR(topic_name), TOSTR(package_msg_name), data);
-            if (!msg)
-                return;
-            data_center_->InsertValue(topic_name, time, msg);
-        }
+//        if (parse_flag)
+//        {
+//            google::protobuf::Message *msg = proto_pool_->GetProtoMessage(TOSTR(topic_name), TOSTR(package_msg_name), data);
+//            if (!msg)
+//                return;
+//            data_center_->InsertValue(topic_name, time, msg);
+//        }
     }
     else
     {
         if (topic_name.contains("_usb") || topic_name.contains("-usb") ||
-            topic_name.contains("RawData-fc") || topic_name.contains("RawData_fc"))
+            topic_name.contains("RawData-fc") || topic_name.contains("RawData_fc") ||
+            topic_name.contains("RawImage-fc"))
         {
             camera_parser_->ParseCamera(topic_name, data, time);
             return;
         }
-        // google::protobuf::Message *msg = proto_pool_->GetProtoMessage(TOSTR(topic_name), TOSTR(package_msg_name), data);
-        // if (!msg)
-        //     return;
-        // data_center_->InsertValue(topic_name, time, msg);
+        else if (topic_name.contains("ParsingImage-fc") )
+        {
+            cvision_parser_->ParseSematic(topic_name, data, time);
+        }
     }
 }
 

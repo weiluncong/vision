@@ -8,10 +8,11 @@
 #include "cthread_pool.h"
 #include "cdata_center.h"
 #include "camera_parser.h"
+#include "csda_vision_parser.h"
+#include "csda_parser.h"
 #include "cobject_parser.h"
-#include "ccamline_parser.h"
-#include "cpoint_set_parser.h"
 #include "csignal_manager.h"
+#include "csda_parser.h"
 
 class CParserManager : public QObject
 {
@@ -39,9 +40,10 @@ private:
 
 private:
     std::shared_ptr<CameraParser> camera_parser_ = nullptr;
+    std::shared_ptr<CSdaParser> csda_parser_ = nullptr;
+    std::shared_ptr<CSdaVisionParser> cvision_parser_ = nullptr;
     std::shared_ptr<CObjectParser> cobject_parser_ = nullptr;
-    std::shared_ptr<CCamLineParser> camline_parser_ = nullptr;
-    std::shared_ptr<CPointSetParser> cpoint_set_parser_ = nullptr;
+    std::shared_ptr<CSdaParser> csda_parser = nullptr;
 
     CProtoPool *proto_pool_ = nullptr;
     CDataCenter *data_center_ = nullptr;

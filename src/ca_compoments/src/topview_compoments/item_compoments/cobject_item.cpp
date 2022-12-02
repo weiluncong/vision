@@ -20,8 +20,26 @@ void CObjectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(QPen(color_, 3));
     UpdateObjectRect();
+
+    QString obj_info = QString::number(obj_data_.track_id_);
+    if (obj_data_.move_status_ != 0)
+    {
+        obj_info += "_";
+        obj_info += QString::number(obj_data_.move_status_) ;
+    }
+    if (obj_data_.algorithm_type_ != 0)
+    {
+        if (obj_data_.move_status_ != 0)
+            obj_info += "_";
+        else
+            obj_info += "_0_";
+        obj_info += QString::number(obj_data_.algorithm_type_) ;
+    }
+
+    //1,2,3,7 car;  4 person; 5 bicycle; 11 cone;
     if (obj_data_.pos_x_ != 0 || obj_data_.pos_y_ != 0)
     {
+        int type = obj_data_.classification_;
         if (obj_data_.width_ == 0 && obj_data_.length_ == 0 &&
             obj_data_.track_id_ != 0 && obj_data_.track_id_ != 255)
         {
@@ -29,9 +47,34 @@ void CObjectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             painter->drawEllipse(origin_point_.x(), origin_point_.y(), 6, 6);
             painter->drawText(origin_point_.x(), origin_point_.y(), QString::number(obj_data_.track_id_));
         }
+        else if (type == 4)
+        {
+            painter->drawEllipse(origin_point_.x(), origin_point_.y(), 6, 6);
+            painter->setPen(QPen(Qt::black, 4));
+            painter->drawText(origin_point_.x(), origin_point_.y(), obj_info);
+        }
+        else if (type == 5)
+        {
+            QPolygon bicycle;
+            bicycle.setPoints(3, (top_left_.x() + top_right_.x()) / 2, (top_left_.y() + top_right_.y()) / 2,
+                              bottom_left_.x(), bottom_left_.y(), bottom_right_.x(), bottom_right_.y());
+            painter->drawPolygon(bicycle);
+            painter->drawPoint(origin_point_);
+            painter->setPen(QPen(Qt::black, 4));
+            painter->drawText(origin_point_.x() - 6, origin_point_.y() + 6, obj_info);
+        }
+        else if (type == 11)
+        {
+            painter->setBrush(color_);
+            painter->drawEllipse(origin_point_.x(), origin_point_.y(), 6, 6);
+            painter->setPen(QPen(Qt::black, 4));
+            painter->drawText(origin_point_.x() - 6, origin_point_.y() + 6, obj_info);
+        }
         else
         {
             PainterDrawQuadrangle(painter);
+            painter->setPen(QPen(Qt::black, 4));
+            painter->drawText(origin_point_.x() - 6, origin_point_.y() + 6, obj_info);
         }
     }
 }
@@ -44,8 +87,6 @@ void CObjectItem::PainterDrawQuadrangle(QPainter *painter)
     path.quadTo((bottom_right_ + bottom_left_) / 2, bottom_left_);
     path.quadTo((bottom_left_ + top_left_) / 2, top_left_);
     painter->drawPath(path);
-    painter->setPen(QPen(Qt::black, 4));
-    painter->drawText(origin_point_.x() - 6, origin_point_.y() + 6, QString::number(obj_data_.track_id_));
 }
 
 void CObjectItem::UpdateObjectRect()

@@ -132,5 +132,13 @@
         <file>icon/car1.png</file>
         <file>icon/point_record.png</file>
         <file>icon/point_record_.png</file>
+        <file>icon/Semantic.png</file>
+        <file>icon/Semantic_.png</file>
+        <file>icon/LaneLine.png</file>
+        <file>icon/LaneLine_.png</file>
+        <file>icon/LaneSemantic.png</file>
+        <file>icon/LaneSemantic_.png</file>
+        <file>icon/VisionObject.png</file>
+        <file>icon/VisionObject_.png</file>
     </qresource>
 </RCC>

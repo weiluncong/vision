@@ -2,6 +2,7 @@
 #define COBJ_STRUCT_H
 
 #include <QtWidgets>
+#include <cpoint_struct.h>
 
 namespace cav
 {
@@ -21,6 +22,19 @@ namespace cav
         double length_ = 0;        // 目标长度
         double heading_angle_ = 0; // 航向角
         double timestamp_ = 0;
+
+        //lidar use
+        double abs_velocity_x_ = 0;     //纵向绝对速度
+        double abs_velocity_y_ = 0;     //横向绝对速度
+        double rel_velocity_x_ = 0;     //纵向相对速度
+        double rel_velocity_y_ = 0;     //横向相对速度
+        double rel_acceleration_x_ = 0; //纵向相对加速度
+        double rel_acceleration_y_ = 0; //横向相对加速度
+
+        //prediction use
+        int move_status_ = 0;           //目标运动状态 0
+        int algorithm_type_ = 0;        //预测算法类型
+        // float prob_ = 0;                //目标预测轨迹对应的概率
     };
 
     class CExObjectData

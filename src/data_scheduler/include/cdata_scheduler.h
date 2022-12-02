@@ -9,6 +9,7 @@
 #include "csignal_manager.h"
 #include "cabstract_scheduler.h"
 #include "ccamera_scheduler.h"
+#include "cvision_scheduler.h"
 #include "ctopview_scheduler.h"
 
 class CDataScheduler : public QObject

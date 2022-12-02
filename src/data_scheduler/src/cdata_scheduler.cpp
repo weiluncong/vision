@@ -8,6 +8,9 @@ CDataScheduler::CDataScheduler()
     widget_schedulers_["camera"] = camera_scheduler;
     CAbstractScheduler *topview_scheduler = new CTopViewScheduler();
     widget_schedulers_["topview"] = topview_scheduler;
+    CAbstractScheduler *sda_vision_scheduler = new CVisionScheduler();
+    widget_schedulers_["cvision"] = sda_vision_scheduler;
+
 
     data_center_ = CDataCenter::GetCDataCenter();
     signal_manager_ = CSignalManager::GetCSignalManager();
@@ -73,7 +76,7 @@ void CDataScheduler::PlayData()
 {
     read_switch_ = true;
     auto img_data_ptr = data_center_->GetDataPtr<CImageData>();
-    if (!img_data_ptr->IsEmpty())
+    if (img_data_ptr && !img_data_ptr->IsEmpty())
     {
         QString img_name = img_data_ptr->FirstKey();
         double last_timestamp = 0;
@@ -98,6 +101,7 @@ void CDataScheduler::SyncData(double timestamp)
 {
     widget_schedulers_["camera"]->SyncData(timestamp);
     widget_schedulers_["topview"]->SyncData(timestamp);
+    widget_schedulers_["cvision"]->SyncData(timestamp);
 }
 
 void CDataScheduler::HandleParserFinished(const QString &type, double timestamp)

@@ -23,7 +23,7 @@ void CCameraScheduler::SyncData(double timestamp)
         if (img_data_ptr->Keys().contains(camera_name))
         {
             std::vector<unsigned char> img;
-            img = data_center_->GetValue<CImageData>(camera_name, timestamp).img;
+            img = data_center_->GetValue<CImageData>(camera_name, timestamp).img_;
             if (img.size() > 0)
             {
                 QString time_str = QDateTime::fromMSecsSinceEpoch((timestamp + data_center_->data_start_time_) * 1000).toString("yyyy-MM-dd hh:mm:ss.zzz");

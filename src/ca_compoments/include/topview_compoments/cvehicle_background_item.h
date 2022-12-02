@@ -34,6 +34,7 @@ public:
 
 public:
     QRectF rectf_;
+    bool btn_press_ = false;
     double x_axis_min_ = -8;
     double x_axis_max_ = 8;
     double y_axis_min_ = -60;

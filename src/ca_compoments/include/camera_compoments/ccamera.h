@@ -5,6 +5,7 @@
 #include <QLayout>
 #include <QLabel>
 #include <iostream>
+#include "opencv2/opencv.hpp"
 
 class CCamera : public QWidget
 {
@@ -15,6 +16,7 @@ public:
 
 public:
     void UpdateView(const std::vector<unsigned char> &img, const QString &time_str, double timestamp);
+    void UpdateView(const cv::Mat &img, const QString &time_str, double timestamp);
 
 private:
     void InitCamera();

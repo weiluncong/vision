@@ -88,6 +88,8 @@ void CGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
         last_point_ = event->scenePos();
         is_press_ = true;
+        CVehicleBackGroundItem *back_item = static_cast<CVehicleBackGroundItem *>(this->items().back());
+        back_item->btn_press_ = !back_item->btn_press_;
     }
     else if (event->button() == Qt::RightButton)
     {

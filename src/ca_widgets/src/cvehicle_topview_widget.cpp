@@ -69,12 +69,41 @@ void CVehicleTopViewWidget::CreateMenu()
 void CVehicleTopViewWidget::HandleActColorChanged(const QString &name, const QColor &color)
 {
     if (name.contains("FusionProto.FusObjects") || name.contains("CameraProto.CamObjects") ||
-        name.contains("RadarProto.RadarObjects"))
+        name.contains("RadarProto.RadarObjects") || name.contains("LidarObjectProto.Objects") ||
+        name.contains("prediction.RNPObjectOut"))
     {
         auto hash = GetDataPtr<CObjectItem *>();
+        if(nullptr == hash)
+            return;
+
         for (auto i : hash->hash_[name])
         {
             i->SetColor(color);
+        }
+    }
+    else if (name.contains("Detections") || name.contains("FreeSpace") || name.contains("LidarFreeSpaceProto.FreeSpaceData"))
+    {
+        if (!point_item_map_.isEmpty())
+        {
+
+            for (auto i : point_item_map_[name])
+            {
+                i->SetColor(color);
+            }
+        }
+    }
+
+    if (name.contains("StaticHDMapInfo") || name.contains("StaticIDMapInfo") || 
+        name.contains("RNPEnvOut") || name.contains("RNPObjectDebugOut") ||
+        name.contains("history_trajectory") || name.contains("predict_trajectory"))
+    {
+        auto hash = GetDataPtr<CPointItem *>();
+        if (hash)
+        {
+            for (auto i : hash->hash_[name])
+            {
+                i->SetColor(color);
+            }
         }
     }
     graphics_scene_->update();
@@ -84,9 +113,36 @@ void CVehicleTopViewWidget::HandleActColorChanged(const QString &name, const QCo
 void CVehicleTopViewWidget::HandleActCheckStatusChanged(const QString &name, bool status)
 {
     if (name.contains("FusionProto.FusObjects") || name.contains("CameraProto.CamObjects") ||
-        name.contains("RadarProto.RadarObjects"))
+        name.contains("RadarProto.RadarObjects") || name.contains("LidarObjectProto.Objects") ||
+        name.contains("prediction.RNPObjectOut"))
     {
         auto hash = GetDataPtr<CObjectItem *>();
+        if (hash)
+        {
+            for (auto i : hash->hash_[name])
+            {
+                i->setVisible(status);
+            }
+        }
+    }
+    else if (name.contains("Detections") || name.contains("FreeSpace") || name.contains("LidarFreeSpaceProto.FreeSpaceData"))
+    {
+        if (!point_item_map_.isEmpty())
+        {
+            for (auto i : point_item_map_[name])
+            {
+                i->setVisible(status);
+            }
+        }
+        else
+            qDebug() << "point_item_map_.empty";
+    }
+
+    if (name.contains("StaticHDMapInfo") || name.contains("StaticIDMapInfo") || 
+        name.contains("RNPEnvOut") || name.contains("RNPObjectDebugOut") ||
+        name.contains("history_trajectory") || name.contains("predict_trajectory"))
+    {
+        auto hash = GetDataPtr<CPointItem *>();
         if (hash)
         {
             for (auto i : hash->hash_[name])
@@ -133,10 +189,9 @@ void CVehicleTopViewWidget::AddSetterItem(const QString &name)
     setter_tab_widget_->AddCompomentName(name);
 }
 
-void CVehicleTopViewWidget::UpdateItemData(const QString &name, double delta_time,
-                                           const QVector<CObjectData> &data, const QColor &color)
+void CVehicleTopViewWidget::UpdateObjectItemData(const QString &name, double delta_time, const QVector<CObjectData> &data, const QColor &color)
 {
-    if (delta_time * 1000.0 <= 250)
+    if (delta_time <= 250)
     {
         QMap<int, CObjectData> object_track_ids;
         for (auto i : data)
@@ -177,52 +232,165 @@ void CVehicleTopViewWidget::UpdateItemData(const QString &name, double delta_tim
     }
 }
 
-void CVehicleTopViewWidget::UpdateItemData(const QString &name, double delta_time,
-                                           const QVector<CLineData> &data, const QColor &color)
+void CVehicleTopViewWidget::UpdateMapLine(const QString &name,
+                                             const QVector<CMapLine> &lines,
+                                             const QColor &color)
 {
-    if (delta_time * 1000.0 <= 250)
+    if(!IsValidIns(ins_))
     {
-        auto lines_hash = GetDataPtr<CLineItem *>();
-        if (lines_hash && lines_hash->hash_[name].size() > 0)
-        {
-            auto &items = lines_hash->hash_[name];
-            qDeleteAll(items);
-            items.clear();
-        }
-        for (auto i : data)
-        {
-            CLineItem *item = new CLineItem(background_item_);
-            item->SetColor(color);
-            item->SetData(i);
-            AppendValue<CLineItem *>(name, item);
-        }
-        graphics_scene_->update();
+        qDebug() << "InsData not valid!";
+        return;
     }
+
+    typedef QMap<unsigned long, QVector<CPointData>> typePoints;
+    QMap<unsigned long, int> marking_type;
+    QMap<unsigned long, int> line_type;
+    QVector<typePoints> mapdata;
+    CPointData tmp_point;
+    double heading = (360.0 - ins_.heading_);
+
+    QVector<CPointData> tmp_line;
+    for(CMapLine line : lines)
+    {
+        typePoints tPoints;
+        for (auto &point : line.points_)
+        {
+            transfer_.PointTransForm(point.longitude_, point.latitude_,
+                                   ins_.gnss_.longitude_, ins_.gnss_.latitude_, heading,
+                                   tmp_point.x_, tmp_point.y_);
+            tPoints[line.index_].push_back(tmp_point);
+        }
+
+        if(tPoints.size() <= 0)
+            continue;
+
+        marking_type[line.index_] = line.marking_type_;
+        line_type[line.index_] = line.type_;
+        mapdata.push_back(tPoints);
+    }
+
+    CDataHash<CPointItem *> *point_hash = GetDataPtr<CPointItem *>();
+    if(nullptr != point_hash && point_hash->hash_.contains(name))
+    {
+        for(CPointItem *item : point_hash->hash_[name])
+        {
+            SAFE_DELETE(item);
+        }
+
+        point_hash->hash_[name].clear();
+    }
+
+
+    for (auto &tPoint : mapdata)
+    {
+        for (auto &type : tPoint.keys())
+        {
+            CPointItem *item = new CPointItem(background_item_);
+            item->SetColor(color);
+            item->SetLineType(line_type[type]);
+            item->SetPointType(marking_type[type]);
+            item->SetPointName(QString::number(type));
+            item->SetData(tPoint[type]);
+            item->map_switch_ = true;
+            item->is_draw_name_ = true;
+            item->is_draw_line_node_ = true;
+            AppendValue<CPointItem *>(name, item);
+        }
+    }
+    graphics_scene_->update();
 }
 
-void CVehicleTopViewWidget::UpdateItemData(const QString &name, double delta_time,
-                                           const QVector<CPointData> &data, const QColor &color)
+void CVehicleTopViewWidget::UpdateModeLane(const QString &name, const QVector<CSDAModeLane> &lanes, const QColor &color)
 {
-    if (delta_time * 1000.0 <= 250)
+    if(!IsValidIns(ins_))
     {
-        QVector<CPointData> points;
-        for (auto point : data)
-        {
-            if (point.x_ == 0.0 && point.y_ == 0.0 && point.z_ == 0.0)
-                continue;
-            points.push_back(point);
-        }
-        auto points_hash = GetDataPtr<CPointSetItem *>();
-        if (points_hash && points_hash->hash_[name].size() > 0)
-        {
-            auto &items = points_hash->hash_[name];
-            qDeleteAll(items);
-            items.clear();
-        }
-        CPointSetItem *item = new CPointSetItem(background_item_);
-        item->SetData(points);
-        item->SetColor(color);
-        AppendValue<CPointSetItem *>(name, item);
-        graphics_scene_->update();
+        qDebug() << "InsData not valid!";
+        return;
     }
+
+    CDataHash<CPointItem *> *point_hash = GetDataPtr<CPointItem *>();
+    if(nullptr != point_hash && point_hash->hash_.contains(name))
+    {
+        for(CPointItem *item : point_hash->hash_[name])
+        {
+            SAFE_DELETE(item);
+        }
+
+        point_hash->hash_[name].clear();
+    }
+
+    for(CSDAModeLane lane : lanes)
+    {
+        QStringList names = name.split("[")[1].split("]");
+        CPointItem *item = new CPointItem(background_item_);
+        item->SetColor(color);
+        item->SetLineType(1);
+        item->SetPointName(names[0]);
+        item->SetData(lane.points_);
+        item->SetPointType(3);
+        item->is_draw_name_ = true;
+        item->map_switch_ = true;
+        item->pen_width_ = 4;
+        item->font_size  = 20;
+        AppendValue<CPointItem *>(name, item);
+    }
+
+
+    graphics_scene_->update();
+}
+
+bool CVehicleTopViewWidget::IsValidIns(const CMapInsData &ins)
+{
+    return ((ins.gnss_.latitude_ != 0.00000 || ins.gnss_.longitude_ != 0.0000)
+            || ins.heading_ != 0.000);
+}
+
+void CVehicleTopViewWidget::UpdateInsData(const CMapInsData &ins_data)
+{
+    if(!IsValidIns(ins_data))
+        return;
+
+    ins_ = ins_data;
+}
+
+void CVehicleTopViewWidget::UpdatePointItemData(const QString &name, double time, const QVector<CPointData> &data, const QColor &color)
+{
+    QVector<CPointData> points;
+    for (auto point : data)
+    {
+        if (point.x_ == 0.0 && point.y_ == 0.0 && point.z_ == 0.0)
+            continue;
+
+        points.push_back(point);
+    }
+    QVector<CPointItem *> &items = point_item_map_[name];
+    qDeleteAll(items);
+    items.clear();
+    CPointItem *item = new CPointItem(background_item_);
+    item->connect_swtich_ = false;
+    item->SetColor(color);
+    item->SetData(points);
+    items.append(item);
+}
+
+void CVehicleTopViewWidget::UpdatePredictionLineItemData(const QString &name, double time, const QVector<CPredictLine> &data, const QColor &color)
+{
+    CDataHash<CPointItem *> *point_hash = GetDataPtr<CPointItem *>();
+    if(nullptr != point_hash && point_hash->hash_.contains(name))
+    {
+        for(CPointItem *item : point_hash->hash_[name])
+        {
+            SAFE_DELETE(item);
+        }
+
+        point_hash->hash_[name].clear();
+    }
+
+    CPointItem *item = new CPointItem(background_item_);
+    item->SetColor(color);
+    item->SetPrediction(data);
+    item->prediction_switch_ = true;
+    AppendValue<CPointItem *>(name, item);
+
+    graphics_scene_->update();
 }

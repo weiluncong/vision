@@ -34,3 +34,16 @@ void CCamera::UpdateView(const std::vector<unsigned char> &img, const QString &t
         camera_label_->setPixmap(QPixmap::fromImage(image));
     }
 }
+
+void CCamera::UpdateView(const cv::Mat &img, const QString &time_str, double timestamp)
+{
+    if (!img.empty())
+    {
+        cv::Mat rgb_, dst;
+        cv::cvtColor(img, rgb_, CV_BGR2RGB);
+        cv::resize(rgb_, dst, cv::Size(camera_label_->width(), camera_label_->height()));
+        cv::putText(dst, time_str.toStdString(), cv::Point(0, 20), cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(214, 114, 113), 1);
+        QImage image(dst.data, dst.cols, dst.rows, dst.cols * dst.channels(), QImage::Format_RGB888);
+        camera_label_->setPixmap(QPixmap::fromImage(image));
+    }
+}

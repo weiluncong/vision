@@ -50,6 +50,15 @@ public:
     bool receive_flag_ = true;
     bool switch_flag_ = false;
 
+   void DDSMsgToQueue(DDSData_Msg *src_data);
+
+   static bool IsContainsReader(dds_entity_t reader);
+
+   static void DDSMsgToQueue(dds_entity_t reader, DDSData_Msg *src_data);
+
+   QString DDS2SourceTopic(const QString &dds_topic);
+
+
 private:
     void InitReceive();
     void ReceiveData(const std::string &data_address, const std::string &proto_address);
@@ -61,9 +70,21 @@ private:
     /** @brief usb摄像头数据接收*/
     void ReceiveCameraData();
     bool CreateCameraCapture();
-    /** @brief dds数据接收*/
-    void ReceiveDDSData(const std::string &config_path = "./dbc/dds-config.xml", const std::string &topic_name = "C2_SOC_TO_MCU");
+
     void DDSMsgToString(DDSData_Msg *src_data, std::string &desc_data);
+
+    void ReceiveDdsData(const std::string &config_path, const QStringList &topics);
+
+
+    bool CreateDDSTopic(dds_entity_t participant, const std::string &topic,
+                        dds_entity_t *res_topic);
+
+    bool CreateDDSReader(dds_entity_t participant, dds_entity_t dds_topic,
+                         dds_entity_t *res_reader, dds_listener_t *listener = nullptr);
+
+    bool CreateDDSParticiPant(const dds_domainid_t domain);
+
+    bool CreateDDSLister(dds_listener_t **listener);
 
     /** @brief 实时接收到的数据处理*/
     void DeliverData();
@@ -77,6 +98,11 @@ private:
     CSafeQueue<std::string> msgs_queue_;
     std::mutex recv_mutex_;
     std::condition_variable condition_var_;
+
+    /// DDS receive data
+    dds_entity_t participant_;
+    static QMap<QString, QString> topic_map_;
+    static QMap<dds_entity_t, CReceiveData *> readers_;
 };
 
 #endif // CRECEIVE_H
