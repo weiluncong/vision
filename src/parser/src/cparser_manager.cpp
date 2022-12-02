@@ -25,6 +25,8 @@ void CParserManager::InitParseFunc()
 {
     camera_parser_ = std::shared_ptr<CameraParser>(new CameraParser());
     csda_parser_   = std::shared_ptr<CSdaParser>(new CSdaParser());
+    csda_lidar_parser_ = std::shared_ptr<CSDALidarParser>(new CSDALidarParser());
+    csda_pediction_parser_ = std::shared_ptr<CSDAPredictionParser>(new CSDAPredictionParser());
     cvision_parser_ = std::shared_ptr<CSdaVisionParser>(new CSdaVisionParser());
     cobject_parser_ = std::shared_ptr<CObjectParser>(new CObjectParser());
     csda_parser = std::shared_ptr<CSdaParser>(new CSdaParser());
@@ -35,8 +37,8 @@ void CParserManager::InitParseFunc()
     AddParserFun("RadarProto.RadarObjects", &CObjectParser::ParseObjects, cobject_parser_);
 
     //lidar parser
-    AddParserFun("LidarObjectProto.Objects", &CSdaParser::ParseLidarObjects, csda_parser_);
-    AddParserFun("LidarFreeSpaceProto.FreeSpaceData", &CSdaParser::ParseLidarFreeSpace, csda_parser_);
+    AddParserFun("LidarObjectProto.Objects", &CSDALidarParser::ParseLidarObjects, csda_lidar_parser_);
+    AddParserFun("LidarFreeSpaceProto.FreeSpaceData", &CSDALidarParser::ParseLidarFreeSpace, csda_lidar_parser_);
 
     //vision parser
     AddParserFun("VpCameraProto.CamFreeSpace", &CSdaVisionParser::ParserVisionFreespace, cvision_parser_);
@@ -48,8 +50,8 @@ void CParserManager::InitParseFunc()
     AddParserFun("prediction.RNPEnvOut", &CSdaParser::ParseRNPEnvOut, csda_parser);
 
     //sda prediction parser
-    AddParserFun("prediction.RNPObjectOut", &CSdaParser::ParsePredictions, csda_parser);
-    AddParserFun("prediction.RNPObjectDebugOut", &CSdaParser::ParsePredictObjectDebug, csda_parser);
+    AddParserFun("prediction.RNPObjectOut", &CSDAPredictionParser::ParsePredictions, csda_pediction_parser_);
+    AddParserFun("prediction.RNPObjectDebugOut", &CSDAPredictionParser::ParsePredictObjectDebug, csda_pediction_parser_);
 }
 
 void CParserManager::Parser(const QList<cReplayData> &list)

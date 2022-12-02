@@ -61,11 +61,17 @@ void CObjectParser::ParseObject(const google::protobuf::Message &msg, const doub
         auto descriptor = msg.GetDescriptor();
         auto reflection = msg.GetReflection();
         auto left_top = descriptor->FindFieldByName("left_top");
-        const auto &left_top_msg = reflection->GetMessage(msg, left_top);
+        if (left_top != nullptr)
+        {
+            const auto &left_top_msg = reflection->GetMessage(msg, left_top);
+            ParserPoint(left_top_msg, obj_box.top_left_);
+        }
         auto right_down = descriptor->FindFieldByName("right_down");
-        const auto &right_down_msg = reflection->GetMessage(msg, right_down);
-        ParserPoint(left_top_msg, obj_box.top_left_);
-        ParserPoint(right_down_msg, obj_box.bottom_right_);
+        if (right_down != nullptr)
+        {
+            const auto &right_down_msg = reflection->GetMessage(msg, right_down);
+            ParserPoint(right_down_msg, obj_box.bottom_right_);
+        }
     }
 }
 

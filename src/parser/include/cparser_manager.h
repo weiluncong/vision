@@ -13,6 +13,8 @@
 #include "cobject_parser.h"
 #include "csignal_manager.h"
 #include "csda_parser.h"
+#include "csda_lidar_parser.h"
+#include "csda_prediction_parser.h"
 
 class CParserManager : public QObject
 {
@@ -43,6 +45,8 @@ private:
     std::shared_ptr<CSdaParser> csda_parser_ = nullptr;
     std::shared_ptr<CSdaVisionParser> cvision_parser_ = nullptr;
     std::shared_ptr<CObjectParser> cobject_parser_ = nullptr;
+    std::shared_ptr<CSDALidarParser> csda_lidar_parser_ = nullptr;
+    std::shared_ptr<CSDAPredictionParser> csda_pediction_parser_ = nullptr;
     std::shared_ptr<CSdaParser> csda_parser = nullptr;
 
     CProtoPool *proto_pool_ = nullptr;
