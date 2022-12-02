@@ -28,10 +28,15 @@ void CParserManager::InitParseFunc()
     camline_parser_ = std::shared_ptr<CCamLineParser>(new CCamLineParser());
     cpoint_set_parser_ = std::shared_ptr<CPointSetParser>(new CPointSetParser());
 
+    // object parser
     AddParserFun("FusionProto.FusObjects", &CObjectParser::ParseObjects, cobject_parser_);
     AddParserFun("CameraProto.CamObjects", &CObjectParser::ParseObjects, cobject_parser_);
     AddParserFun("RadarProto.RadarObjects", &CObjectParser::ParseObjects, cobject_parser_);
+
+    // line parser
     AddParserFun("CameraProto.CamLines", &CCamLineParser::ParseCamLines, camline_parser_);
+
+    // freespace parser
     AddParserFun("FusionProto.FusFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
     AddParserFun("FusionProto.RadarFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
     AddParserFun("FusionProto.VisionFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
