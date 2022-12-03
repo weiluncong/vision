@@ -12,9 +12,9 @@ public:
     CSDAPredictionParser() {}
     ~CSDAPredictionParser() {}
     // 解析预测信号，包含目标信息、目标历史轨迹、预测轨迹
-    void ParsePredictions(const QString &msg_name, const google::protobuf::Message &msg, double time);
+    void ParsePredictions(const QString &package_msg_name, const google::protobuf::Message &msg, double time);
     // 解析预测信号，解析目标debug信息
-    void ParsePredictObjectDebug(const QString &msg_name, const google::protobuf::Message &msg, double time);
+    void ParsePredictObjectDebug(const QString &package_msg_name, const google::protobuf::Message &msg, double time);
 
 private:
     // 解析轨迹包

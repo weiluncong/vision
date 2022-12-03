@@ -10,11 +10,11 @@ class CameraParser : public AbstractParser
 {
 public:
     CameraParser();
+    ~CameraParser();
 
-    void ParseCamera(const QString &msg_name, const std::string &data, double time);
+    void ParseCamera(const QString &package_msg_name, const std::string &data, double time);
 
 private:
-    CDataCenter *data_center_;
     int frame_id_ = 0;
     int p_num_ = 0;
     cav::CH265Decoder *decoder_;

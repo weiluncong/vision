@@ -1,8 +1,8 @@
 #include "csda_parser.h"
 
-void CSdaParser::ParseHDMap(const QString &msg_name, const google::protobuf::Message &msg, double time)
+void CSdaParser::ParseHDMap(const QString &package_msg_name, const google::protobuf::Message &msg, double time)
 {
-    if (!msg_name.contains("StaticHDMapInfo"))
+    if (!package_msg_name.contains("StaticHDMapInfo"))
     {
         return;
     }
@@ -19,45 +19,32 @@ void CSdaParser::ParseHDMap(const QString &msg_name, const google::protobuf::Mes
             int val_size = reflection->FieldSize(msg, field);
             for (int j = 0; j < val_size; j++)
             {
-                int link_id;
+                int link_id = 0;
                 QVector<CMapLine> lines;
                 const auto &link_msg = reflection->GetRepeatedMessage(msg, field, j);
                 auto link_reflector = link_msg.GetReflection();
                 auto link_descript = link_msg.GetDescriptor();
+                AssignStruct(link_msg, link_descript, link_id, "link_id");
                 int link_count = link_descript->field_count();
-                bool is_routing_path = false;
                 for (int k = 0; k < link_count; k++)
                 {
                     auto field = link_descript->field(k);
-                    if (field->lowercase_name() == "lines")
-                    {
-                        is_routing_path = FieldToQStr(msg, field).toUInt();
-                        continue;
-                    }
-
                     if (field->lowercase_name() == "lines")
                     {
                         int val_size = link_reflector->FieldSize(link_msg, field);
                         for (int l = 0; l < val_size; l++)
                         {
                             CMapLine line;
-                            line.in_navigation_route_ = is_routing_path;
                             const auto &line_msg = link_reflector->GetRepeatedMessage(link_msg, field, l);
                             auto line_reflector = line_msg.GetReflection();
                             auto line_descript = line_msg.GetDescriptor();
+                            AssignStruct(line_msg, line_descript, line.index_, "index");
+                            AssignStruct(line_msg, line_descript, line.type_, "line_type");
                             int line_count = line_descript->field_count();
                             for (int m = 0; m < line_count; m++)
                             {
                                 auto field = line_descript->field(m);
-                                if (field->lowercase_name() == "index")
-                                {
-                                    line.index_ = FieldToQStr(line_msg, field).toInt();
-                                }
-                                else if (field->lowercase_name() == "line_type")
-                                {
-                                    line.type_ = FieldToQStr(line_msg, field).toInt();
-                                }
-                                else if (field->lowercase_name() == "line_points")
+                                if (field->lowercase_name() == "line_points")
                                 {
                                     int val_size = line_reflector->FieldSize(line_msg, field);
                                     for (int n = 0; n < val_size; n++)
@@ -67,15 +54,12 @@ void CSdaParser::ParseHDMap(const QString &msg_name, const google::protobuf::Mes
                                         gnss = ParserGnss(point_msg);
                                         line.points_.push_back(gnss);
                                     }
+                                    continue;
                                 }
                             }
                             if (!line.points_.isEmpty())
                                 lines.push_back(line);
                         }
-                    }
-                    else if (field->lowercase_name() == "link_id")
-                    {
-                        link_id = FieldToQStr(link_msg, field).toInt();
                     }
                 }
                 if (!lines.isEmpty())
@@ -84,35 +68,27 @@ void CSdaParser::ParseHDMap(const QString &msg_name, const google::protobuf::Mes
         }
     }
 
-    data_center_->InsertValue(msg_name, time, data);
+    data_center_->InsertValue(package_msg_name, time, data);
     ParseFinished("topview", time);
 }
 
-void CSdaParser::ParseIns(const QString &msg_name, const google::protobuf::Message &msg, double time)
+void CSdaParser::ParseIns(const QString &package_msg_name, const google::protobuf::Message &msg, double time)
 {
-    if (!msg_name.contains("InsData") || msg_name.toLower().contains("topic") || msg_name.contains("fix"))
+    if (!package_msg_name.contains("InsData") || package_msg_name.contains("fix"))
         return;
 
     CMapInsData data;
     auto descriptor = msg.GetDescriptor();
-    int field_count = descriptor->field_count();
     data.gnss_ = ParserGnss(msg);
-    for (int i = 0; i < field_count; ++i)
-    {
-        auto field = descriptor->field(i);
-        if (field->lowercase_name() == "heading")
-        {
-            data.heading_ = FieldToQStr(msg, field).toDouble();
-        }
-    }
+    AssignStruct(msg, descriptor, data.heading_, "heading");
 
     data_center_->InsertValue("InsDataFix", time, data);
     ParseFinished("topview", time);
 }
 
-void CSdaParser::ParseIdmapStatic(const QString &msg_name, const google::protobuf::Message &msg, double time)
+void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google::protobuf::Message &msg, double time)
 {
-    if (!msg_name.contains("idmap.StaticIDMapInfo"))
+    if (!package_msg_name.contains("idmap.StaticIDMapInfo"))
     {
         return;
     }
@@ -129,17 +105,12 @@ void CSdaParser::ParseIdmapStatic(const QString &msg_name, const google::protobu
         if (field->name() == "idmap_status")
         {
             const auto &map_status_msg = reflection->GetMessage(msg, field);
-            auto map_status_reflec = map_status_msg.GetReflection();
             auto map_status_desc = map_status_msg.GetDescriptor();
-            int field_count = map_status_desc->field_count();
-            for (int j = 0; j < field_count; j++)
-            {
-                auto field = map_status_desc->field(j);
-                if (field->name() == "map_available" && FieldToQStr(map_status_msg, field).toInt() == 0)
-                {
-                    return;
-                }
-            }
+
+            int map_available_value = 0;
+            AssignStruct(map_status_msg, map_status_desc, map_available_value, "map_available");
+            if (map_available_value == 0)
+                return;
         }
 
         /// repeated Lane
@@ -154,29 +125,17 @@ void CSdaParser::ParseIdmapStatic(const QString &msg_name, const google::protobu
                 auto &lane_msg = reflection->GetRepeatedMessage(msg, field, j);
                 auto lane_reflector = lane_msg.GetReflection();
                 auto lane_descript = lane_msg.GetDescriptor();
+                // 车道id
+                AssignStruct(lane_msg, lane_descript, lane.index_, "lane_id");
+                ///<是否匹配导航路线：[/],(0,0,1),[/],(1,0),/，输出
+                ///<说明：默认不匹配，输出0；如果重复的情况在原有的基础上增加1bit
+                AssignStruct(lane_msg, lane_descript, lane.in_navigation_route_, "in_navigation_route");
 
                 /// lane msg content parser
                 int lane_count = lane_descript->field_count();
                 for (int k = 0; k < lane_count; k++)
                 {
                     auto field = lane_descript->field(k);
-                    /// qDebug() << "name:" << QString::fromStdString(field->name());
-
-                    /// 车道id
-                    if (field->name() == "lane_id")
-                    {
-                        lane.index_ = FieldToQStr(lane_msg, field).toULong();
-                        continue;
-                    }
-
-                    ///<是否匹配导航路线：[/],(0,0,1),[/],(1,0),/，输出
-                    ///<说明：默认不匹配，输出0；如果重复的情况在原有的基础上增加1bit
-                    if (field->name() == "in_navigation_route")
-                    {
-                        lane.in_navigation_route_ = FieldToQStr(lane_msg, field).toUInt();
-                        continue;
-                    }
-
                     /// 车道中心线形状点:[/],(/,/,/),[50],(/,/),按归一化顺序播发，输出
                     if (field->name() == "lane_points")
                     {
@@ -211,33 +170,17 @@ void CSdaParser::ParseIdmapStatic(const QString &msg_name, const google::protobu
                 const auto &line_msg = reflection->GetRepeatedMessage(msg, field, l);
                 auto line_reflector = line_msg.GetReflection();
                 auto line_descript = line_msg.GetDescriptor();
+
+                ///< 车道线id:[/],(0,0,/),[/],(1,0),无索引顺序，输出
+                AssignStruct(line_msg, line_descript, line.index_, "line_id");
+                ///< 车道线类型
+                AssignStruct(line_msg, line_descript, line.type_, "line_type");
+
+                AssignStruct(line_msg, line_descript, line.marking_type_, "linemarking_type");
                 int line_count = line_descript->field_count();
                 for (int m = 0; m < line_count; m++)
                 {
                     auto field = line_descript->field(m);
-
-                    ///< 车道线id:[/],(0,0,/),[/],(1,0),无索引顺序，输出
-                    if (field->name() == "line_id")
-                    {
-                        line.index_ = FieldToQStr(line_msg, field).toULong();
-                        continue;
-                    }
-
-                    ///< 车道线类型
-                    if (field->name() == "line_type")
-                    {
-                        line.type_ = GetRepeatedMsg(line_msg, field, 0).toInt();
-                        /// FieldToQStr(line_msg, field).toInt();
-                        continue;
-                    }
-
-                    if (field->name() == "linemarking_type")
-                    {
-                        line.marking_type_ = FieldToQStr(line_msg, field).toInt();
-                        /// FieldToQStr(line_msg, field).toInt();
-                        continue;
-                    }
-
                     ///< 车道线轨迹点集合
                     if (field->name() == "line_points")
                     {
@@ -264,13 +207,13 @@ void CSdaParser::ParseIdmapStatic(const QString &msg_name, const google::protobu
         }
     }
 
-    data_center_->InsertValue(msg_name, time, map_info);
+    data_center_->InsertValue(package_msg_name, time, map_info);
     ParseFinished("topview", time);
 }
 
-void CSdaParser::ParseRNPEnvOut(const QString &msg_name, const google::protobuf::Message &msg, double time)
+void CSdaParser::ParseRNPEnvOut(const QString &package_msg_name, const google::protobuf::Message &msg, double time)
 {
-    if (!msg_name.contains("RNPEnvOut"))
+    if (!package_msg_name.contains("RNPEnvOut"))
     {
         return;
     }
@@ -305,6 +248,8 @@ void CSdaParser::ParseRNPEnvOut(const QString &msg_name, const google::protobuf:
                         const auto &lane_msg = lanes_reflec->GetRepeatedMessage(lanes_msg, field, l);
                         auto lane_reflector = lane_msg.GetReflection();
                         auto lane_descript = lane_msg.GetDescriptor();
+                        AssignStruct(lane_msg, lane_descript, lane.relation2ego_, "relation2ego");
+
                         int lane_count = lane_descript->field_count();
                         for (int m = 0; m < lane_count; ++m)
                         {
@@ -321,13 +266,7 @@ void CSdaParser::ParseRNPEnvOut(const QString &msg_name, const google::protobuf:
                                     point = ParserPoint(point_msg);
                                     lane.points_.push_back(point);
                                 }
-
                                 continue;
-                            }
-
-                            if (field->name() == "relation2ego")
-                            {
-                                lane.relation2ego_ = FieldToQStr(lane_msg, field).toInt();
                             }
                         }
 
@@ -335,12 +274,12 @@ void CSdaParser::ParseRNPEnvOut(const QString &msg_name, const google::protobuf:
                             lanes.push_back(lane);
                     }
 
-                    data_center_->InsertValue(msg_name, time, lanes);
+                    data_center_->InsertValue(package_msg_name, time, lanes);
                     ParseFinished("topview", time);
+                    break;
                 }
             }
-
-            return;
+            break;
         }
     }
 }

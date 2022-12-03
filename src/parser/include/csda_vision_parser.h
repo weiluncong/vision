@@ -15,16 +15,10 @@ class CSdaVisionParser : public CSdaCommmonParser
 {
 public:
     CSdaVisionParser();
-    ~CSdaVisionParser() {}
-
-    // 视觉视频信号解析
-    // void ParseVisionCamera(const QString &msg_name, const google::protobuf::Message &data, double time);
-
-    // // 视觉总信号解析
-    // void ParseVision(const QString &msg_name, const google::protobuf::Message &msg, double time);
+    ~CSdaVisionParser();
 
     // 视觉总语义分割解析
-    void ParseSematic(const QString &msg_name, const std::string &data, double time);
+    void ParseSemantic(const QString &msg_name, const std::string &data, double time);
 
     // 视觉freespace解析
     void ParserVisionFreespace(const QString &msg_name, const google::protobuf::Message &msg, double time);
@@ -37,8 +31,7 @@ private:
      * @param time 时间戳
      * @param id 当前数据帧数
      */
-    void RLEDecode(std::vector<uchar> &data, QString name, double time, int id);
-    // std::vector<uchar> RLEDecode(std::vector<uchar> &data);
+    void RLEDecode(const std::vector<uchar> &data, const QString &name, double time, int id);
 
     /**
      * @brief 获取类型颜色
@@ -78,7 +71,7 @@ protected:
     cav::CapilotParsingFrame *vision_decode_;
 
     int full_num_ = 0;
-    bool online_parsing_img_flag = true;    //抽帧
+    bool online_parsing_img_flag = true; //抽帧
 };
 
 #endif // CSDA_VISION_PARSER_H

@@ -4,11 +4,11 @@ CFreeSpaceParser::CFreeSpaceParser()
 {
 }
 
-void CFreeSpaceParser::ParseFreeSpace(const QString &msg_name, const google::protobuf::Message &msg, const double time)
+void CFreeSpaceParser::ParseFreeSpace(const QString &package_msg_name, const google::protobuf::Message &msg, double time)
 {
     bool filter_switch = false;
-    filter_switch |= msg_name.contains("FreeSpace");
-    filter_switch &= !msg_name.contains("Bus");
+    filter_switch |= package_msg_name.contains("FreeSpace");
+    filter_switch &= !package_msg_name.contains("Bus");
     if (!filter_switch)
     {
         return;
@@ -34,6 +34,6 @@ void CFreeSpaceParser::ParseFreeSpace(const QString &msg_name, const google::pro
         AssignStruct(pmsg, position_descript, point.y_, "lateral_distance");
         point_vector.append(point);
     }
-    data_center_->InsertValue(msg_name, time, point_vector);
-    ParseFinished("TopView", time);
+    data_center_->InsertValue(package_msg_name, time, point_vector);
+    ParseFinished("topview", time);
 }

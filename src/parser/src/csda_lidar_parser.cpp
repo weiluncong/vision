@@ -14,8 +14,7 @@ void CSDALidarParser::ParseLidarFreeSpace(const QString &msg_name, const google:
     {
         const auto &center_msg = reflection->GetRepeatedMessage(msg, field, i);
         cav::CPointData point = ParserPoint(center_msg);
-        if (PointValueCheck(point))
-            data.push_back(point);
+        data.push_back(point);
     }
     data_center_->InsertValue<QVector<cav::CPointData>>(msg_name, time, data);
     ParseFinished("topview", time);

@@ -20,17 +20,22 @@ public:
     virtual ~AbstractParser() {}
 
     template <typename T>
-    inline void AssignStruct(const google::protobuf::Message &msg,
-                             const google::protobuf::Descriptor *descript, T &param, const std::string &name)
-    {
-        param = StringToAny<T>(FieldTypeConvert(msg, descript->FindFieldByName(name)));
-    }
+    void AssignStruct(const google::protobuf::Message &msg,
+                      const google::protobuf::Descriptor *descript, T &param, const std::string &name);
 
-    std::string FieldTypeConvert(const google::protobuf::Message &msg, const google::protobuf::FieldDescriptor *field);
+    std::string FieldToStr(const google::protobuf::Message &msg, const google::protobuf::FieldDescriptor *field);
+    QString FieldToQStr(const google::protobuf::Message &msg, const google::protobuf::FieldDescriptor *field);
     QString GetRepeatedMsg(const google::protobuf::Message &msg, const google::protobuf::FieldDescriptor *field, int index);
     void ParseFinished(const QString &type, double timestamp);
 
     CDataCenter *data_center_;
 };
+
+template <typename T>
+void AbstractParser::AssignStruct(const google::protobuf::Message &msg,
+                                  const google::protobuf::Descriptor *descript, T &param, const std::string &name)
+{
+    param = StringToAny<T>(FieldToStr(msg, descript->FindFieldByName(name)));
+}
 
 #endif // ABSTRACT_PARSER_H

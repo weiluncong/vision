@@ -24,7 +24,7 @@ CParserManager::~CParserManager()
 void CParserManager::InitParseFunc()
 {
     camera_parser_ = std::shared_ptr<CameraParser>(new CameraParser());
-    csda_parser_   = std::shared_ptr<CSdaParser>(new CSdaParser());
+    csda_parser_ = std::shared_ptr<CSdaParser>(new CSdaParser());
     csda_lidar_parser_ = std::shared_ptr<CSDALidarParser>(new CSDALidarParser());
     csda_pediction_parser_ = std::shared_ptr<CSDAPredictionParser>(new CSDAPredictionParser());
     cvision_parser_ = std::shared_ptr<CSdaVisionParser>(new CSdaVisionParser());
@@ -36,20 +36,20 @@ void CParserManager::InitParseFunc()
     AddParserFun("CameraProto.CamObjects", &CObjectParser::ParseObjects, cobject_parser_);
     AddParserFun("RadarProto.RadarObjects", &CObjectParser::ParseObjects, cobject_parser_);
 
-    //lidar parser
+    // lidar parser
     AddParserFun("LidarObjectProto.Objects", &CSDALidarParser::ParseLidarObjects, csda_lidar_parser_);
     AddParserFun("LidarFreeSpaceProto.FreeSpaceData", &CSDALidarParser::ParseLidarFreeSpace, csda_lidar_parser_);
 
-    //vision parser
+    // vision parser
     AddParserFun("VpCameraProto.CamFreeSpace", &CSdaVisionParser::ParserVisionFreespace, cvision_parser_);
 
-    //sda env parser
+    // sda env parser
     AddParserFun("localization.InsData", &CSdaParser::ParseIns, csda_parser);
     AddParserFun("hdmap.StaticHDMapInfo", &CSdaParser::ParseHDMap, csda_parser);
     AddParserFun("idmap.StaticIDMapInfo", &CSdaParser::ParseIdmapStatic, csda_parser);
     AddParserFun("prediction.RNPEnvOut", &CSdaParser::ParseRNPEnvOut, csda_parser);
 
-    //sda prediction parser
+    // sda prediction parser
     AddParserFun("prediction.RNPObjectOut", &CSDAPredictionParser::ParsePredictions, csda_pediction_parser_);
     AddParserFun("prediction.RNPObjectDebugOut", &CSDAPredictionParser::ParsePredictObjectDebug, csda_pediction_parser_);
 }
@@ -105,19 +105,19 @@ void CParserManager::HandleMetaData(double timestamp, const QString &topic_name,
         parse_pools_[swc_name]->submit(std::bind(&CParserManager::ParseMessage, this, TOSTR(topic_name),
                                                  TOSTR(package_msg_name), data, time));
 
-//        bool parse_flag = false;
-//        for (auto i : signal_parser_)
-//        {
-//            parse_flag |= topic_name.contains(i);
-//        }
+        //        bool parse_flag = false;
+        //        for (auto i : signal_parser_)
+        //        {
+        //            parse_flag |= topic_name.contains(i);
+        //        }
 
-//        if (parse_flag)
-//        {
-//            google::protobuf::Message *msg = proto_pool_->GetProtoMessage(TOSTR(topic_name), TOSTR(package_msg_name), data);
-//            if (!msg)
-//                return;
-//            data_center_->InsertValue(topic_name, time, msg);
-//        }
+        //        if (parse_flag)
+        //        {
+        //            google::protobuf::Message *msg = proto_pool_->GetProtoMessage(TOSTR(topic_name), TOSTR(package_msg_name), data);
+        //            if (!msg)
+        //                return;
+        //            data_center_->InsertValue(topic_name, time, msg);
+        //        }
     }
     else
     {
@@ -128,9 +128,9 @@ void CParserManager::HandleMetaData(double timestamp, const QString &topic_name,
             camera_parser_->ParseCamera(topic_name, data, time);
             return;
         }
-        else if (topic_name.contains("ParsingImage-fc") )
+        else if (topic_name.contains("ParsingImage-fc"))
         {
-            cvision_parser_->ParseSematic(topic_name, data, time);
+            cvision_parser_->ParseSemantic(topic_name, data, time);
         }
     }
 }

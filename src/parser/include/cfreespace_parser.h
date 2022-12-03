@@ -1,5 +1,5 @@
-#ifndef FREESPACE_PARSER_H
-#define FREESPACE_PARSER_H
+#ifndef CFREESPACE_PARSER_H
+#define CFREESPACE_PARSER_H
 
 #include "abstract_parser.h"
 #include "cpoint_struct.h"
@@ -10,7 +10,7 @@ public:
     CFreeSpaceParser();
     ~CFreeSpaceParser() {}
 
-    void ParseFreeSpace(const QString &msg_name, const google::protobuf::Message &msg, const double time);
+    void ParseFreeSpace(const QString &package_msg_name, const google::protobuf::Message &msg, double time);
 };
 
-#endif // FREESPACE_PARSER_H
+#endif // CFREESPACE_PARSER_H

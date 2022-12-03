@@ -13,13 +13,13 @@ public:
     ~CSdaParser() {}
 
     // 图尚地图解析
-    void ParseHDMap(const QString &msg_name, const google::protobuf::Message &msg, double time);
+    void ParseHDMap(const QString &package_msg_name, const google::protobuf::Message &msg, double time);
     // 定位信息解析
-    void ParseIns(const QString &msg_name, const google::protobuf::Message &msg, double time);
+    void ParseIns(const QString &package_msg_name, const google::protobuf::Message &msg, double time);
     // 众包地图解析
-    void ParseIdmapStatic(const QString &msg_name, const google::protobuf::Message &msg, double time);
+    void ParseIdmapStatic(const QString &package_msg_name, const google::protobuf::Message &msg, double time);
     // 环境模型解析
-    void ParseRNPEnvOut(const QString &msg_name, const google::protobuf::Message &msg, double time);
+    void ParseRNPEnvOut(const QString &package_msg_name, const google::protobuf::Message &msg, double time);
 };
 
 #endif // CSDA_PARSER_H

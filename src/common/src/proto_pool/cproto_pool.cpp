@@ -8,7 +8,6 @@ void CProtoPool::LoadProtoContent(const std::string &content)
     if (content.empty())
     {
         std::cout << "Proto Contnet is Empty, Data can not to Parser, Please Check the data!!" << std::endl;
-        ;
         return;
     }
 
@@ -39,8 +38,9 @@ void CProtoPool::LoadProtoContent(const std::string &content)
 
     google::protobuf::compiler::DiskSourceTree source_tree;
     source_tree.MapPath("", "./dbc/proto/");
-    if (!importer_)
-        importer_ = new google::protobuf::compiler::Importer(&source_tree, NULL);
+    if (importer_)
+        SAFE_DELETE(importer_);
+    importer_ = new google::protobuf::compiler::Importer(&source_tree, NULL);
     for (auto i : pcontent)
     {
         auto file_des = importer_->Import(i);
@@ -158,5 +158,6 @@ void CProtoPool::UpdateProtoContent(const std::string &serviceAddress)
         proto_content_ += msg.to_string();
         std::cout << "proto content size: " << proto_content_.size() << std::endl;
     }
+    std::lock_guard<std::mutex> proto_lock(proto_mutex_);
     LoadProtoContent(proto_content_);
 }

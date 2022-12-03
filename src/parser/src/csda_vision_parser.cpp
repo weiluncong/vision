@@ -2,17 +2,22 @@
 
 CSdaVisionParser::CSdaVisionParser()
 {
-    data_center_ = CDataCenter::GetCDataCenter();
     rle_decode_ = new cav::CRLECompressedImage();
     vision_decode_ = new cav::CapilotParsingFrame();
     full_num_ = 0;
 }
 
-void CSdaVisionParser::ParseSematic(const QString &msg_name, const std::string &data, double time)
+CSdaVisionParser::~CSdaVisionParser()
 {
-    if (!msg_name.contains("ParsingImage-fc"))
+    SAFE_DELETE(rle_decode_);
+    SAFE_DELETE(vision_decode_);
+}
+
+void CSdaVisionParser::ParseSemantic(const QString &package_msg_name, const std::string &data, double time)
+{
+    if (!package_msg_name.contains("ParsingImage-fc"))
         return;
-    
+
     online_parsing_img_flag = !online_parsing_img_flag;
     if (FLAGS_v_online && !online_parsing_img_flag)
     {
@@ -37,7 +42,7 @@ void CSdaVisionParser::ParseSematic(const QString &msg_name, const std::string &
                                      vision_decode_->parsing_size(),
                                      sematic_data.data(), length))
         {
-            QString name = msg_name + "_panorama_semantic";
+            QString name = package_msg_name + "_panorama_semantic";
             t1 = new std::thread(&CSdaVisionParser::RLEDecode, this, std::ref(sematic_data), name, time, full_num_);
         }
         else
@@ -50,7 +55,7 @@ void CSdaVisionParser::ParseSematic(const QString &msg_name, const std::string &
                                      vision_decode_->lane_parsing_size(),
                                      lane_semantic_data.data(), length))
         {
-            QString name = msg_name + "_lane_semantic";
+            QString name = package_msg_name + "_lane_semantic";
             RLEDecode(lane_semantic_data, name, time, full_num_);
         }
         else
@@ -63,7 +68,7 @@ void CSdaVisionParser::ParseSematic(const QString &msg_name, const std::string &
     }
 }
 
-void CSdaVisionParser::RLEDecode(std::vector<uchar> &data, QString name, double time, int id)
+void CSdaVisionParser::RLEDecode(const std::vector<uchar> &data, const QString &name, double time, int id)
 {
     if (data.size() < IMAGE_SIZE)
         return;
@@ -128,9 +133,9 @@ cav::CPointData CSdaVisionParser::GetCVColor(int type)
     return color;
 }
 
-void CSdaVisionParser::ParserVisionFreespace(const QString &msg_name, const google::protobuf::Message &msg, double time)
+void CSdaVisionParser::ParserVisionFreespace(const QString &package_msg_name, const google::protobuf::Message &msg, double time)
 {
-    if (!msg_name.contains("VpCameraProto.CamFreeSpace"))
+    if (!package_msg_name.contains("VpCameraProto.CamFreeSpace"))
     {
         return;
     }
@@ -155,7 +160,7 @@ void CSdaVisionParser::ParserVisionFreespace(const QString &msg_name, const goog
         AssignStruct(pmsg, position_descript, point.z_, "vertical_distance");
         point_vector.push_back(point);
     }
-    data_center_->InsertValue<QVector<CPointData>>(msg_name, time, point_vector);
+    data_center_->InsertValue<QVector<CPointData>>(package_msg_name, time, point_vector);
     ParseFinished("topview", time);
 }
 
@@ -329,52 +334,3 @@ CSDARLE CSdaVisionParser::ParserRLE(const google::protobuf::Message &msg)
     }
     return rle;
 }
-
-// void CSdaVisionParser::ParseVision(const QString &msg_name, const google::protobuf::Message &msg, double time)
-// {
-//     if (!msg_name.contains("CamPerception"))
-//     {
-//         return;
-//     }
-
-//     auto reflection = msg.GetReflection();
-//     auto descriptor = msg.GetDescriptor();
-//     int field_count = descriptor->field_count();
-//     for (int i = 0; i < field_count; i++)
-//     {
-//         auto field = descriptor->field(i);
-//         const auto &field_name = field->lowercase_name();
-//         if (field_name == "lines")
-//         {
-//             QVector<CSDALineCVBlocks> data;
-//             int val_size = reflection->FieldSize(msg, field);
-//             for (int j = 0; j < val_size; j++)
-//             {
-//                 CSDALineCVBlocks lines;
-//                 auto &line_msg = reflection->GetRepeatedMessage(msg, field, j);
-//                 ParserVisionLane(line_msg, lines);
-//                 if (!lines.isEmpty())
-//                     data.push_back(lines);
-//             }
-//             data_center_->InsertValue(msg_name, time, data);
-//             ParseFinished("cvision", time);
-//         }
-//         else if (field_name == "lines_v2")
-//         {
-//             QVector<CSDALineRleBlocks> data;
-//             int val_size = reflection->FieldSize(msg, field);
-//             for (int j = 0; j < val_size; j++)
-//             {
-//                 CSDALineRleBlocks block;
-//                 auto &line_msg = reflection->GetRepeatedMessage(msg, field, j);
-//                 ParseVisionLine(line_msg, block);
-//                 if (!block.isEmpty())
-//                 {
-//                     data.push_back(block);
-//                 }
-//             }
-//             data_center_->InsertValue(msg_name, time, data);
-//             ParseFinished("cvision", time);
-//         }
-//     }
-// }

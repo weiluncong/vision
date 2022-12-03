@@ -12,10 +12,10 @@ public:
     ~CObjectParser() {}
 
     void ParseObjects(const QString &package_msg_name, const google::protobuf::Message &msg, double time);
-    void ParseObject(const google::protobuf::Message &msg, const double &timestamp, CObjectData &obj, cav::CObjBoxCV &obj_box);
+
 private:
+    void ParseObject(const QString &package_msg_name, const google::protobuf::Message &msg, double time, CObjectData &obj, cav::CObjBoxCV &obj_box);
     void ParserPoint(const google::protobuf::Message &msg, cav::CPointData &point);
-    QString msg_name_;
 };
 
-#endif //COBJECT_PARSER_H
+#endif // COBJECT_PARSER_H

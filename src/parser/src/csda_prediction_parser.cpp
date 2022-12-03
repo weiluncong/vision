@@ -1,9 +1,8 @@
 #include "csda_prediction_parser.h"
 
-
-void CSDAPredictionParser::ParsePredictions(const QString &msg_name, const google::protobuf::Message &msg, double time)
+void CSDAPredictionParser::ParsePredictions(const QString &package_msg_name, const google::protobuf::Message &msg, double time)
 {
-    if (!msg_name.contains("prediction.RNPObjectOut"))
+    if (!package_msg_name.contains("prediction.RNPObjectOut"))
         return;
     QVector<cav::CObjectData> obj_vector;
     QVector<cav::CPredictLine> history_lines_vec;
@@ -82,18 +81,18 @@ void CSDAPredictionParser::ParsePredictions(const QString &msg_name, const googl
             predict_line_multi.prob_ = predict_lines_multi_reflection->GetRepeatedFloat(predict_lines_multi_msg, prob_field, 0);
         predict_lines_vec.push_back(predict_line_multi);
     }
-    QString obj_name = msg_name + "-obj";
+    QString obj_name = package_msg_name + "-obj";
     data_center_->InsertValue<QVector<cav::CObjectData>>(obj_name, time, obj_vector);
-    QString history_name = msg_name + "-history_trajectory";
+    QString history_name = package_msg_name + "-history_trajectory";
     data_center_->InsertValue<QVector<cav::CPredictLine>>(history_name, time, history_lines_vec);
-    QString predict_name = msg_name + "-predict_trajectory";
+    QString predict_name = package_msg_name + "-predict_trajectory";
     data_center_->InsertValue<QVector<cav::CPredictLine>>(predict_name, time, predict_lines_vec);
     ParseFinished("topview", time);
 }
 
-void CSDAPredictionParser::ParsePredictObjectDebug(const QString &msg_name, const google::protobuf::Message &msg, double time)
+void CSDAPredictionParser::ParsePredictObjectDebug(const QString &package_msg_name, const google::protobuf::Message &msg, double time)
 {
-    if (!msg_name.contains("prediction.RNPObjectDebugOut"))
+    if (!package_msg_name.contains("prediction.RNPObjectDebugOut"))
         return;
     QVector<cav::CPredictLine> predictions;
 
@@ -149,7 +148,7 @@ void CSDAPredictionParser::ParsePredictObjectDebug(const QString &msg_name, cons
                 predictions.push_back(prediction);
         }
     }
-    data_center_->InsertValue<QVector<cav::CPredictLine>>(msg_name, time, predictions);
+    data_center_->InsertValue<QVector<cav::CPredictLine>>(package_msg_name, time, predictions);
     ParseFinished("topview", time);
 }
 
@@ -168,9 +167,8 @@ void CSDAPredictionParser::ParserTrajectoryMultimodal(const google::protobuf::Me
     debug_line.predict_line_ = predict_line_multi;
 
     auto prob_field = descriptor->FindFieldByName("probs");
-    debug_line.prob_  =  reflection->GetRepeatedFloat(msg, prob_field, 0);
+    debug_line.prob_ = reflection->GetRepeatedFloat(msg, prob_field, 0);
 }
-
 
 void CSDAPredictionParser::ParserTrajectory(const google::protobuf::Message &msg, QVector<cav::CPointData> &line)
 {

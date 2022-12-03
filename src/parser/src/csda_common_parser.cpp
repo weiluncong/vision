@@ -4,23 +4,9 @@ cav::CPointData CSdaCommmonParser::ParserPoint(const google::protobuf::Message &
 {
     cav::CPointData point;
     auto descriptor = msg.GetDescriptor();
-    int field_count = descriptor->field_count();
-    for (int i = 0; i < field_count; i++)
-    {
-        auto field = descriptor->field(i);
-        if (field->lowercase_name() == "x")
-        {
-            point.x_ = FieldToQStr(msg, field).toDouble();
-        }
-        else if (field->lowercase_name() == "y")
-        {
-            point.y_ = FieldToQStr(msg, field).toDouble();
-        }
-        else if (field->lowercase_name() == "z")
-        {
-            point.z_ = FieldToQStr(msg, field).toDouble();
-        }
-    }
+    AssignStruct(msg, descriptor, point.x_, "x");
+    AssignStruct(msg, descriptor, point.y_, "y");
+    AssignStruct(msg, descriptor, point.z_, "z");
     return point;
 }
 
@@ -42,13 +28,4 @@ cav::CMapPoint CSdaCommmonParser::ParserGnss(const google::protobuf::Message &ms
         }
     }
     return gnss;
-}
-
-QString CSdaCommmonParser::FieldToQStr(const google::protobuf::Message &msg,
-                                    const google::protobuf::FieldDescriptor *field)
-{
-    if(nullptr == field)
-        return "";
-
-    return QString::fromStdString(FieldTypeConvert(msg, field));
 }

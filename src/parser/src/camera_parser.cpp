@@ -3,23 +3,23 @@
 
 CameraParser::CameraParser()
 {
-    data_center_ = CDataCenter::GetCDataCenter();
     decoder_ = new cav::CH265Decoder();
 }
 
-void CameraParser::ParseCamera(const QString &msg_name, const std::string &data, double time)
+CameraParser::~CameraParser()
 {
-    bool rawDataFlag = msg_name.contains("RawData-usb");
-    rawDataFlag |= msg_name.contains("RawData-fc");
-    rawDataFlag |= msg_name.contains("RawData_fc");
-    bool cameraDataFlag = msg_name.contains("CameraData-usb");
-    bool visionDattaFlag = msg_name.contains("RawImage-fc");
+    SAFE_DELETE(decoder_);
+}
 
-    if (!rawDataFlag && !cameraDataFlag && !visionDattaFlag)
-    {
-        return;
-    }
-    if (rawDataFlag)
+void CameraParser::ParseCamera(const QString &package_msg_name, const std::string &data, double time)
+{
+    bool raw_data_flag = package_msg_name.contains("RawData-usb");
+    raw_data_flag |= package_msg_name.contains("RawData-fc");
+    raw_data_flag |= package_msg_name.contains("RawData_fc");
+    bool camera_data_flag = package_msg_name.contains("CameraData-usb");
+    bool vision_data_flag = package_msg_name.contains("RawImage-fc");
+
+    if (raw_data_flag)
     {
         RawDataProto::RawData raw;
         raw.ParseFromString(data);
@@ -29,24 +29,24 @@ void CameraParser::ParseCamera(const QString &msg_name, const std::string &data,
             CImageData image;
             image.img_.resize(image_data.size());
             memcpy(image.img_.data(), image_data.data(), image_data.size());
-            data_center_->InsertValue(msg_name, time, image);
+            data_center_->InsertValue(package_msg_name, time, image);
             ParseFinished("camera", time);
         }
     }
-    else if (cameraDataFlag)
+    else if (camera_data_flag)
     {
         std::vector<unsigned char> d(data.begin(), data.end());
         CImageData image;
         image.img_ = d;
-        data_center_->InsertValue(msg_name, time, image);
+        data_center_->InsertValue(package_msg_name, time, image);
         ParseFinished("camera", time);
     }
-    else if (visionDattaFlag)
+    else if (vision_data_flag)
     {
-        int headSize = sizeof(int32_t) + sizeof(int64_t);
+        int head_size = sizeof(int32_t) + sizeof(int64_t);
         CImageData vision_image;
-        vision_image.img_.resize(data.size() - headSize);
-        memcpy(vision_image.img_.data(), (char *)(data.data() + headSize), data.size() - headSize);
+        vision_image.img_.resize(data.size() - head_size);
+        memcpy(vision_image.img_.data(), (char *)(data.data() + head_size), data.size() - head_size);
         int type = (vision_image.img_[4] & 0x7e) >> 1;
         if (type > 0 && type < 9)
         {
@@ -66,11 +66,10 @@ void CameraParser::ParseCamera(const QString &msg_name, const std::string &data,
         cv::Mat src = decoder_->Decode(const_cast<uint8_t *>(vision_image.img_.data()), vision_image.img_.size());
         if (src.empty())
             return;
-        std::vector<unsigned char> data_encode;
-        cv::imencode(".jpg", src, data_encode, {cv::IMWRITE_JPEG_QUALITY, 30});
-        vision_image.img_ = data_encode;
+        vision_image.img_.clear();
+        cv::imencode(".jpg", src, vision_image.img_, {cv::IMWRITE_JPEG_QUALITY, 30});
 
-        data_center_->InsertValue(msg_name, time, vision_image);
+        data_center_->InsertValue(package_msg_name, time, vision_image);
         ParseFinished("cvision", time);
     }
 }

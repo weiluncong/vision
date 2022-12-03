@@ -5,7 +5,7 @@
 #include <sstream>
 using namespace std;
 
-std::string AbstractParser::FieldTypeConvert(const google::protobuf::Message &msg, const google::protobuf::FieldDescriptor *field)
+std::string AbstractParser::FieldToStr(const google::protobuf::Message &msg, const google::protobuf::FieldDescriptor *field)
 {
     if (!field)
         return "";
@@ -50,6 +50,14 @@ std::string AbstractParser::FieldTypeConvert(const google::protobuf::Message &ms
         break;
     }
     return os.str();
+}
+
+QString AbstractParser::FieldToQStr(const google::protobuf::Message &msg, const google::protobuf::FieldDescriptor *field)
+{
+    if (nullptr == field)
+        return "";
+
+    return TOQSTR(FieldToStr(msg, field));
 }
 
 QString AbstractParser::GetRepeatedMsg(const google::protobuf::Message &msg, const google::protobuf::FieldDescriptor *field, int index)
