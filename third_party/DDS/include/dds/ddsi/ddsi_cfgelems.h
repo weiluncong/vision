@@ -1,4 +1,21 @@
 /*
+ *  Copyright(c) 2021 to 2023 AutoCore Technology (Nanjing) Co., Ltd. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ *    conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *    of conditions and the following disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used
+ *    to endorse or promote products derived from this software without specific prior written
+ *    permission.
+ */
+
+/*
  * Copyright(c) 2020 ADLINK Technology Limited and others
  *
  * This program and the accompanying materials are made available under the
@@ -1056,8 +1073,8 @@ static struct cfgelem sock_sndbuf_size_attrs[] = {
 };
 
 static struct cfgelem internal_cfgelems[] = {
-  MOVED("MaxMessageSize", "CycloneDDS/Domain/General/MaxMessageSize"),
-  MOVED("FragmentSize", "CycloneDDS/Domain/General/FragmentSize"),
+  MOVED("MaxMessageSize", "AutoCoreDDS/Domain/General/MaxMessageSize"),
+  MOVED("FragmentSize", "AutoCoreDDS/Domain/General/FragmentSize"),
   INT("DeliveryQueueMaxSamples", NULL, 1, "256",
     MEMBER(delivery_queue_maxsamples),
     FUNCTIONS(0, uf_uint, 0, pf_uint),
@@ -1231,8 +1248,8 @@ static struct cfgelem internal_cfgelems[] = {
       "deletion of a reliable writer with unacknowledged data in its history "
       "will be postponed to provide proper reliable transmission.<p>"),
     UNIT("duration")),
-  MOVED("MinimumSocketReceiveBufferSize", "CycloneDDS/Domain/Internal/SocketReceiveBufferSize[@min]"),
-  MOVED("MinimumSocketSendBufferSize", "CycloneDDS/Domain/Internal/SocketSendBufferSize[@min]"),
+  MOVED("MinimumSocketReceiveBufferSize", "AutoCoreDDS/Domain/Internal/SocketReceiveBufferSize[@min]"),
+  MOVED("MinimumSocketSendBufferSize", "AutoCoreDDS/Domain/Internal/SocketSendBufferSize[@min]"),
   GROUP("SocketReceiveBufferSize", NULL, sock_rcvbuf_size_attrs, 1,
     NOMEMBER,
     NOFUNCTIONS,
@@ -1685,7 +1702,7 @@ static struct cfgelem shmem_cfgelems[] = {
       "default is to use one of the MAC addresses of the machine, which should "
       "work well in most cases.</p>"
     )),
-  STRING("Prefix", NULL, 1, "DDS_CYCLONE",
+  STRING("Prefix", NULL, 1, "DDS_AUTOCORE",
     MEMBER(iceoryx_service),
     FUNCTIONS(0, uf_string, ff_free, pf_string),
     DESCRIPTION(
@@ -1937,7 +1954,7 @@ static struct cfgelem tracing_cfgelems[] = {
     VALUES(
       "finest","finer","fine","config","info","warning","severe","none"
     )),
-  STRING("OutputFile", NULL, 1, "cyclonedds.log",
+  STRING("OutputFile", NULL, 1, "autocoredds.log",
     MEMBER(tracefile),
     FUNCTIONS(0, uf_tracingOutputFileName, ff_free, pf_string),
     DESCRIPTION(
@@ -1984,7 +2001,7 @@ static struct cfgelem domain_cfgattrs[] = {
 };
 
 static struct cfgelem domain_cfgelems[] = {
-  MOVED("Id", "CycloneDDS/Domain[@Id]"),
+  MOVED("Id", "AutoCoreDDS/Domain[@Id]"),
   GROUP("General", general_cfgelems, NULL, 1,
     NOMEMBER,
     NOFUNCTIONS,
@@ -2106,31 +2123,32 @@ static struct cfgelem root_cfgelems[] = {
     DESCRIPTION(
       "<p>The General element specifying Domain related settings.</p>"
     )),
-  MOVED("General", "CycloneDDS/Domain/General"),
+  MOVED("General", "AutoCoreDDS/Domain/General"),
 #if DDS_HAS_NETWORK_PARTITIONS
-  MOVED("Partitioning", "CycloneDDS/Domain/Partitioning"),
+  MOVED("Partitioning", "AutoCoreDDS/Domain/Partitioning"),
 #endif
+
 #if DDS_HAS_NETWORK_CHANNELS
-  MOVED("Channels", "CycloneDDS/Domain/Channels"),
+  MOVED("Channels", "AutoCoreDDS/Domain/Channels"),
 #endif
-  MOVED("Threads", "CycloneDDS/Domain/Threads"),
-  MOVED("Sizing", "CycloneDDS/Domain/Sizing"),
-  MOVED("Compatibility", "CycloneDDS/Domain/Compatibility"),
-  MOVED("Discovery", "CycloneDDS/Domain/Discovery"),
-  MOVED("Tracing", "CycloneDDS/Domain/Tracing"),
-  MOVED("Internal|Unsupported", "CycloneDDS/Domain/Internal"),
-  MOVED("TCP", "CycloneDDS/Domain/TCP"),
-  MOVED("ThreadPool", "CycloneDDS/Domain/ThreadPool"),
+  MOVED("Threads", "AutoCoreDDS/Domain/Threads"),
+  MOVED("Sizing", "AutoCoreDDS/Domain/Sizing"),
+  MOVED("Compatibility", "AutoCoreDDS/Domain/Compatibility"),
+  MOVED("Discovery", "AutoCoreDDS/Domain/Discovery"),
+  MOVED("Tracing", "AutoCoreDDS/Domain/Tracing"),
+  MOVED("Internal|Unsupported", "AutoCoreDDS/Domain/Internal"),
+  MOVED("TCP", "AutoCoreDDS/Domain/TCP"),
+  
 #if DDS_HAS_SECURITY
-  MOVED("DDSSecurity", "CycloneDDS/Domain/Security"),
+  MOVED("DDSSecurity", "AutoCoreDDS/Domain/Security"),
 #endif
 #if DDS_HAS_SSL
-  MOVED("SSL", "CycloneDDS/Domain/SSL"),
+  MOVED("SSL", "AutoCoreDDS/Domain/SSL"),
 #endif
 #ifdef DDS_HAS_SHM
-  MOVED("SharedMemory", "CycloneDDS/Domain/SharedMemory"),
+  MOVED("SharedMemory", "AutoCoreDDS/Domain/SharedMemory"),
 #endif
-  MOVED("DDSI2E|DDSI2", "CycloneDDS/Domain"),
+  MOVED("DDSI2E|DDSI2", "AutoCoreDDS/Domain"),
   END_MARKER
 };
 
@@ -2143,10 +2161,10 @@ static struct cfgelem root_cfgattrs[] = {
 };
 
 static struct cfgelem cyclonedds_root_cfgelems[] = {
-  GROUP("CycloneDDS", root_cfgelems, root_cfgattrs, 1,
+  GROUP("AutoCoreDDS", root_cfgelems, root_cfgattrs, 1,
     NOMEMBER,
     NOFUNCTIONS,
-    DESCRIPTION("CycloneDDS configuration")),
+    DESCRIPTION("AutoCoreDDS configuration")),
   END_MARKER
 };
 

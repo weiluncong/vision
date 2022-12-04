@@ -1,4 +1,21 @@
 /*
+ *  Copyright(c) 2021 to 2023 AutoCore Technology (Nanjing) Co., Ltd. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ *    conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *    of conditions and the following disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used
+ *    to endorse or promote products derived from this software without specific prior written
+ *    permission.
+ */
+
+/*
  * Copyright(c) 2006 to 2018 ADLINK Technology Limited and others
  *
  * This program and the accompanying materials are made available under the
@@ -19,12 +36,13 @@ extern "C" {
 #endif
 
 DDS_INLINE_EXPORT inline seqno_t fromSN (const nn_sequence_number_t sn) {
-  return ((seqno_t) sn.high << 32) | sn.low;
+  uint64_t sn_high = (uint32_t) sn.high;
+  return (seqno_t) ((sn_high << 32) | sn.low);
 }
 
 DDS_INLINE_EXPORT inline nn_sequence_number_t toSN (seqno_t n) {
   nn_sequence_number_t x;
-  x.high = (int) (n >> 32);
+  x.high = (int) ((uint64_t) n >> 32);
   x.low = (unsigned) n;
   return x;
 }

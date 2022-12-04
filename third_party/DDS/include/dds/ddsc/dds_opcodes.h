@@ -1,4 +1,21 @@
 /*
+ *  Copyright(c) 2021 to 2023 AutoCore Technology (Nanjing) Co., Ltd. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ *    conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *    of conditions and the following disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used
+ *    to endorse or promote products derived from this software without specific prior written
+ *    permission.
+ */
+
+/*
  * Copyright(c) 2021 ADLINK Technology Limited and others
  *
  * This program and the accompanying materials are made available under the
@@ -254,6 +271,10 @@ enum dds_stream_typecode_subtype {
 #define DDS_TOPIC_DISABLE_TYPECHECK             (1u << 3)
 #define DDS_TOPIC_FIXED_SIZE                    (1u << 4)
 #define DDS_TOPIC_FIXED_KEY_XCDR2               (1u << 5)   /* Set if the XCDR2 serialized key fits in 16 bytes */
+#define DDS_TOPIC_XTYPES_METADATA               (1u << 6)   /* Set if XTypes meta-data is present for this topic */
+
+/* Max size of fixed key */
+#define DDS_FIXED_KEY_MAX_SIZE (16)
 
 
 #define DDS_TOPIC_TYPE_EXTENSIBILITY_MASK       0xc0000000

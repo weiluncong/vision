@@ -32,7 +32,7 @@ void CDataTotalRecord::StartRecord()
 
 void CDataTotalRecord::DoRecord()
 {
-    while (1)
+    while (!exit_record_)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         if (FLAGS_v_total_record)
@@ -62,5 +62,9 @@ void CDataTotalRecord::ReleaseRecord()
 {
     SAFE_DELETE(data_record_);
     if (!FLAGS_v_total_record)
+    {
+        exit_record_ = true;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         SafeClear(data_center_->data_buf_);
+    }
 }

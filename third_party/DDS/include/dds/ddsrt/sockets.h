@@ -1,3 +1,20 @@
+/*
+ *  Copyright(c) 2021 to 2023 AutoCore Technology (Nanjing) Co., Ltd. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ *    conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *    of conditions and the following disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used
+ *    to endorse or promote products derived from this software without specific prior written
+ *    permission.
+ */
+
 #ifndef DDSRT_SOCKETS_H
 #define DDSRT_SOCKETS_H
 
@@ -15,6 +32,8 @@
 #include "dds/ddsrt/misc.h"
 #if _WIN32
 #include "dds/ddsrt/sockets/windows.h"
+#elif DDSRT_WITH_OSAL
+#include "dds/ddsrt/sockets/osal.h"
 #else
 #include "dds/ddsrt/sockets/posix.h"
 #endif
@@ -174,6 +193,29 @@ ddsrt_setsockreuse(
   ddsrt_socket_t sock,
   bool reuse);
 
+#if DDSRT_WITH_OSAL
+DDS_EXPORT dds_return_t
+ddsrt_setbroadcast_multicast_if(
+  ddsrt_socket_t sock,
+  char* address);
+
+DDS_EXPORT dds_return_t
+ddsrt_setbroadcast_add_membership(
+  ddsrt_socket_t sock,
+  char *multi_address,
+  char *intf_address);
+#endif
+
+#if DDSRT_WITH_OSAL
+DDS_EXPORT int32_t
+ddsrt_select(
+  int32_t nfds,
+  OS_FdSet *readfds,
+  OS_FdSet *writefds,
+  OS_FdSet *errorfds,
+  dds_duration_t reltime,
+  int32_t *ready);
+#else
 DDS_EXPORT int32_t
 ddsrt_select(
   int32_t nfds,
@@ -191,6 +233,7 @@ ddsrt_select(
 #define ddsrt_select(nfds, readfds, writefds, errorfds, timeout, ready) \
     ddsrt_select(-1, readfds, writefds, errorfds, timeout, ready)
 #endif /* _WIN32 */
+#endif /* DDSRT_WITH_OSAL */
 
 /**
  * @brief Get the size of a socket address.

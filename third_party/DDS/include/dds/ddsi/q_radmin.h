@@ -1,4 +1,21 @@
 /*
+ *  Copyright(c) 2021 to 2023 AutoCore Technology (Nanjing) Co., Ltd. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ *    conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *    of conditions and the following disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used
+ *    to endorse or promote products derived from this software without specific prior written
+ *    permission.
+ */
+
+/*
  * Copyright(c) 2006 to 2018 ADLINK Technology Limited and others
  *
  * This program and the accompanying materials are made available under the
@@ -142,6 +159,7 @@ struct nn_rsample_info {
 };
 
 struct nn_rdata {
+  unsigned char real_src_ip[16];
   struct nn_rmsg *rmsg;         /* received (and refcounted) in rmsg */
   struct nn_rdata *nextfrag;    /* fragment chain */
   uint32_t min, maxp1;          /* fragment as byte offsets */
@@ -165,7 +183,7 @@ struct nn_rdata {
    we have the option to do wild things. */
 #ifndef NDEBUG
 #define NN_ZOFF_TO_OFF(zoff) ((unsigned) (zoff))
-#define NN_OFF_TO_ZOFF(off) (assert ((off) < 65536 && ((off) % 4) == 0), ((unsigned short) (off)))
+#define NN_OFF_TO_ZOFF(off) (assert ((off) < 65536), ((unsigned short) (off)))
 #else
 #define NN_ZOFF_TO_OFF(zoff) ((unsigned) (zoff))
 #define NN_OFF_TO_ZOFF(off) ((unsigned short) (off))
