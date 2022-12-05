@@ -34,6 +34,7 @@ void CLineItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
             QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
             painter->drawLine(start_point, end_point);
         }
+        painter->setPen(QPen(Qt::DashLine));
     }
     else
     {
@@ -46,8 +47,8 @@ void CLineItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
             path.quadTo(control_point, end_point);
             painter->setPen(QPen(color_, 6));
             painter->drawPoint(start_point);
-            painter->setPen(QPen(color_, 3));
         }
+        painter->setPen(QPen(color_, 3));
         painter->drawPath(path);
     }
 }

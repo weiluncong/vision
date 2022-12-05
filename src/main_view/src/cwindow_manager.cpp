@@ -135,6 +135,10 @@ void CWindowManager::HandleActDataTotalRecord()
             }
             total_record_address_ = record_file_path;
         }
+        else
+        {
+            FLAGS_v_total_record = !FLAGS_v_total_record;
+        }
     }
     else
     {

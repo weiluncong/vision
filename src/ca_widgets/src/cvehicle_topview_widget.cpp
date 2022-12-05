@@ -72,9 +72,35 @@ void CVehicleTopViewWidget::HandleActColorChanged(const QString &name, const QCo
         name.contains("RadarProto.RadarObjects"))
     {
         auto hash = GetDataPtr<CObjectItem *>();
-        for (auto i : hash->hash_[name])
+        if (hash)
         {
-            i->SetColor(color);
+            for (auto i : hash->hash_[name])
+            {
+                i->SetColor(color);
+            }
+        }
+    }
+    else if (name.contains("CameraProto.CamLines"))
+    {
+        auto hash = GetDataPtr<CLineItem *>();
+        if (hash)
+        {
+            for (auto i : hash->hash_[name])
+            {
+                i->SetColor(color);
+            }
+        }
+    }
+    else if (name.contains("FusionProto.FusFreeSpace") || name.contains("FusionProto.RadarFreeSpace") ||
+             name.contains("FusionProto.VisionFreeSpace") || name.contains("CameraProto.CamFreeSpace"))
+    {
+        auto hash = GetDataPtr<CPointSetItem *>();
+        if (hash)
+        {
+            for (auto i : hash->hash_[name])
+            {
+                i->SetColor(color);
+            }
         }
     }
     graphics_scene_->update();
@@ -87,6 +113,29 @@ void CVehicleTopViewWidget::HandleActCheckStatusChanged(const QString &name, boo
         name.contains("RadarProto.RadarObjects"))
     {
         auto hash = GetDataPtr<CObjectItem *>();
+        if (hash)
+        {
+            for (auto i : hash->hash_[name])
+            {
+                i->setVisible(status);
+            }
+        }
+    }
+    else if (name.contains("CameraProto.CamLines"))
+    {
+        auto hash = GetDataPtr<CLineItem *>();
+        if (hash)
+        {
+            for (auto i : hash->hash_[name])
+            {
+                i->setVisible(status);
+            }
+        }
+    }
+    else if (name.contains("FusionProto.FusFreeSpace") || name.contains("FusionProto.RadarFreeSpace") ||
+             name.contains("FusionProto.VisionFreeSpace") || name.contains("CameraProto.CamFreeSpace"))
+    {
+        auto hash = GetDataPtr<CPointSetItem *>();
         if (hash)
         {
             for (auto i : hash->hash_[name])
