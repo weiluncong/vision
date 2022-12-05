@@ -8,6 +8,7 @@ void CProtoPool::LoadProtoContent(const std::string &content)
     if (content.empty())
     {
         std::cout << "Proto Contnet is Empty, Data can not to Parser, Please Check the data!!" << std::endl;
+        ;
         return;
     }
 
@@ -50,6 +51,12 @@ void CProtoPool::LoadProtoContent(const std::string &content)
             continue;
         }
     }
+
+    for (auto i = msgs_.begin(); i != msgs_.end(); ++i)
+    {
+        SAFE_DELETE(i->second);
+    }
+    SafeClear(msgs_);
 }
 
 google::protobuf::Message *CProtoPool::GetProtoMessage(const std::string &topic_name,
@@ -65,19 +72,14 @@ google::protobuf::Message *CProtoPool::GetProtoMessage(const std::string &topic_
         msgs_[package_msg_name] = msg;
     }
 
-    google::protobuf::Message *msg = msgs_[package_msg_name]->New();
-    if (!msg)
+    if (msgs_[package_msg_name])
     {
-        qDebug() << "CProtoPool::GetProtoMessage message_name:"
-                 << QString::fromStdString(package_msg_name)
-                 << "topic_name:" << QString::fromStdString(topic_name);
-    }
-    else
-    {
+        google::protobuf::Message *msg = msgs_[package_msg_name]->New();
         msg->Clear();
         msg->ParseFromString(data);
+        return msg;
     }
-    return msg;
+    return nullptr;
 }
 
 google::protobuf::Message *CProtoPool::CreateMessage(const std::string &package_msg_name)
@@ -128,10 +130,10 @@ void CProtoPool::UpdateProtoContent(const std::string &serviceAddress)
             socket.recv(reply);
             if (reply.res())
             {
+                std::lock_guard<std::mutex> proto_lock(proto_mutex_);
                 for (auto it = reply.all_content().contents().cbegin();
                      it != reply.all_content().contents().cend(); ++it)
                 {
-                    std::lock_guard<std::mutex> proto_lock(proto_mutex_);
                     proto_content_ += it->second.SerializeAsString();
                 }
                 reply.all_content().SerializeToString(&all_proto_content_);

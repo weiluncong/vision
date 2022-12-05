@@ -47,4 +47,4 @@
 #  endif
 #endif
 
-#endif
+#endif /* DDS_EXPORT_H */

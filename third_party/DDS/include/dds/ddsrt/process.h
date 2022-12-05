@@ -1,4 +1,21 @@
 /*
+ *  Copyright(c) 2021 to 2023 AutoCore Technology (Nanjing) Co., Ltd. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ *    conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *    of conditions and the following disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used
+ *    to endorse or promote products derived from this software without specific prior written
+ *    permission.
+ */
+
+/*
  * Copyright(c) 2006 to 2018 ADLINK Technology Limited and others
  *
  * This program and the accompanying materials are made available under the
@@ -47,6 +64,13 @@ typedef pid_t ddsrt_pid_t;
 extern "C" {
 #endif
 
+#define DDSRT_PROC_NAME_LEN     32     /* process name length */
+
+#define DDSRT_PROC_PATH_LEN     128    /* process all-path length */
+
+#define DDSRT_PROC_PID_PATH_LEN 32     /* the lenght of path '/proc/pid' */
+
+
 /**
  * @brief Return process ID (PID) of the calling process.
  *
@@ -54,6 +78,46 @@ extern "C" {
  */
 DDS_EXPORT ddsrt_pid_t
 ddsrt_getpid(void);
+
+#if DDSRT_HAVE_MULTI_PROCESS
+
+
+
+/***************************************************************************
+* author      lilin
+* date        2020/11/26
+* brief       ddsrt get process execute path
+* remarks     pid <=0:self process; pid:specified process;
+****************************************************************************/
+DDS_EXPORT void 
+ddsrt_exe_path_get(
+  char exe_path[DDSRT_PROC_PATH_LEN], 
+  ddsrt_pid_t pid);
+
+/***************************************************************************
+* author      lilin
+* date        2020/11/26
+* brief       ddsrt get current process name
+* remarks     
+****************************************************************************/
+DDS_EXPORT void 
+ddsrt_proc_name_get(
+  char proc_name[DDSRT_PROC_NAME_LEN]);
+
+/***************************************************************************
+* author      lilin
+* date        2020/11/26
+* brief       ddsrt get process name by pid
+* remarks     pid <=0:self process; pid:specified process;
+****************************************************************************/
+DDS_EXPORT void 
+ddsrt_proc_name_get_by_pid(
+  char proc_name[DDSRT_PROC_NAME_LEN], 
+  ddsrt_pid_t pid);
+
+
+
+#endif /* DDSRT_HAVE_MULTI_PROCESS */
 
 #if defined (__cplusplus)
 }

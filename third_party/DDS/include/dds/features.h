@@ -37,6 +37,17 @@
 /* #undef DDS_HAS_TOPIC_DISCOVERY */
 
 /* Whether or not support for Iceoryx support is included */
-/* #undef DDS_HAS_SHM */
+#define DDS_HAS_SHM 1
 
+/* Whether or not support ACFW runtime specific DDS changes are included */
+/* #undef DDS_HAS_ACFW_RPC_PATCHES */
+
+/* Whether or not support for Iceoryx support is included */
+#define DDS_HAS_MULTI_INTF 1
+
+/* Whether or not support for non-blocking discovery mechanism is included */
+#define DDS_HAS_NONBLOCK_RPC_DISCOVERY 1
+
+/* Whether or not support for osal*/
+/* #undef DDS_HAS_OSAL */
 #endif

@@ -1,4 +1,21 @@
 /*
+ *  Copyright(c) 2021 to 2023 AutoCore Technology (Nanjing) Co., Ltd. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ *    conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *    of conditions and the following disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used
+ *    to endorse or promote products derived from this software without specific prior written
+ *    permission.
+ */
+
+/*
  * Copyright(c) 2006 to 2018 ADLINK Technology Limited and others
  *
  * This program and the accompanying materials are made available under the
@@ -52,6 +69,8 @@ typedef int64_t dds_duration_t;
 #define DDS_NSECS_IN_SEC INT64_C(1000000000)
 #define DDS_NSECS_IN_MSEC INT64_C(1000000)
 #define DDS_NSECS_IN_USEC INT64_C(1000)
+#define DDS_MSECS_IN_SEC INT64_C(1000)
+
 /** @}*/
 
 /** @name Infinite timeout for indicate absolute time */
@@ -89,6 +108,8 @@ typedef struct {
 #define DDSRT_WCTIME_NEVER ((ddsrt_wctime_t) { DDS_NEVER })
 #define DDSRT_ETIME_NEVER ((ddsrt_etime_t) { DDS_NEVER })
 #define DDSRT_WCTIME_INVALID ((ddsrt_wctime_t) { INT64_MIN })
+
+void ddsrt_assert(bool flag);
 
 /**
  * @brief Get the current time in nanoseconds since the UNIX Epoch.
@@ -161,8 +182,22 @@ DDS_EXPORT ddsrt_etime_t ddsrt_time_elapsed(void);
  *          a return value of size or more means the output was truncated.
  */
 #define DDSRT_RFC3339STRLEN (25)
+#define DDSRT_TIME_STR_LEN  (32)     /* string length for current time */
+#define DDSRT_TIME_STR_FORMAT_MS    "%04d-%02d-%02d %02d:%02d:%02d.%03d"
+
+
+/***************************************************************************
+* author      lilin
+* date        2020/12/04
+* brief       ddsrt get current time string with millisecond precision
+* remarks     format: 2020-12-04 12:00:00.000
+****************************************************************************/
+DDS_EXPORT void ddsrt_ctime_ms(char time_str[DDSRT_TIME_STR_LEN]);
 
 DDS_EXPORT size_t ddsrt_ctime(dds_time_t abstime, char *str, size_t size);
+
+DDS_EXPORT size_t ddsrt_ctime1(dds_time_t abstime, char *str, size_t size);
+
 
 /**
  * @brief Calculate a time given an offset time and a duration.
@@ -178,8 +213,8 @@ DDS_EXPORT size_t ddsrt_ctime(dds_time_t abstime, char *str, size_t size);
  */
 DDS_INLINE_EXPORT inline dds_time_t ddsrt_time_add_duration(dds_time_t abstime, dds_duration_t reltime)
 {
-  assert(abstime >= 0);
-  assert(reltime >= 0);
+  ddsrt_assert(abstime >= 0);
+  ddsrt_assert(reltime >= 0);
   return (reltime >= DDS_NEVER - abstime ? DDS_NEVER : abstime + reltime);
 }
 

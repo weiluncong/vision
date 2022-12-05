@@ -1,4 +1,21 @@
 /*
+ *  Copyright(c) 2021 to 2023 AutoCore Technology (Nanjing) Co., Ltd. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ *    conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *    of conditions and the following disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used
+ *    to endorse or promote products derived from this software without specific prior written
+ *    permission.
+ */
+
+/*
  * Copyright(c) 2006 to 2018 ADLINK Technology Limited and others
  *
  * This program and the accompanying materials are made available under the
@@ -26,6 +43,7 @@
 
 #include "dds/export.h"
 #include "dds/ddsrt/attributes.h"
+#include "dds/ddsrt/process.h"
 
 #if defined (__cplusplus)
 extern "C" {
@@ -41,6 +59,10 @@ extern "C" {
  *
  * @{
  */
+
+#define MAX_LOG_DIR_LEN (256)
+#define MAX_LOG_PATH_LEN (512)
+
 /** Fatal error condition. Immediate abort on sink return. */
 #define DDS_LC_FATAL (1u)
 /** Error condition. */
@@ -111,6 +133,7 @@ typedef struct {
   size_t size;
   /** Default log message header length */
   size_t hdrsize;
+  size_t filesize;
 } dds_log_data_t;
 
 /** Function signature that log and trace callbacks must adhere too. */
@@ -130,6 +153,11 @@ struct ddsrt_log_cfg_common {
 
   /** Domain id for reporting; UINT32_MAX = no domain */
   uint32_t domid;
+
+  ddsrt_pid_t pid;
+
+  bool is_stderr;
+  char filename[MAX_LOG_PATH_LEN];
 };
 
 typedef struct ddsrt_log_cfg {
@@ -308,6 +336,26 @@ dds_log(
     ...)
   ddsrt_attribute_format_printf(5, 6);
 
+#if defined(__linux) || defined(__QNXNTO__)
+/**
+* @brief user stace init
+*
+* @param log_path  log path, if log_path is null, trace file is created under $HOME/autocore/
+* @param is_stderr stderr or file
+* @return void
+* */
+  DDS_EXPORT void 
+  dds_user_trace_init(const char* log_path, bool is_stderr);
+#endif
+
+/**
+* @brief log file name end with server ID
+* 
+* @param serverID 
+* @return void 
+*/
+  DDS_EXPORT void dds_set_logid(uint32_t serverID);
+
 /**
  * @brief Undecorated function name of the current function.
  *
@@ -418,16 +466,19 @@ dds_log(
     (((cfg)->c.mask & (cat)) ? \
       dds_log_cfg((cfg), (cat), __FILE__, __LINE__, DDS_FUNCTION, __VA_ARGS__) : 0)
 
+/** Write a log message of type #DDS_LC_TRACE into global log. */
+#define DDS_TRACE(...) \
+	  dds_log(DDS_LC_TRACE, __FILE__, __LINE__, DDS_FUNCTION, __VA_ARGS__)
 /** Write a log message of type #DDS_LC_INFO into global log. */
 #define DDS_INFO(...) \
-  DDS_LOG(DDS_LC_INFO, __VA_ARGS__)
+	  dds_log(DDS_LC_INFO, __FILE__, __LINE__, DDS_FUNCTION, __VA_ARGS__)
 /** Write a log message of type #DDS_LC_WARNING into global log. */
 #define DDS_WARNING(...) \
-  DDS_LOG(DDS_LC_WARNING, __VA_ARGS__)
+	  dds_log(DDS_LC_WARNING, __FILE__, __LINE__, DDS_FUNCTION, __VA_ARGS__)
 /** Write a log message of type #DDS_LC_ERROR into global log. */
 #define DDS_ERROR(...) \
-  DDS_LOG(DDS_LC_ERROR, __VA_ARGS__)
-/** Write a log message of type #DDS_LC_ERROR into global log and abort. */
+	  dds_log(DDS_LC_ERROR, __FILE__, __LINE__, DDS_FUNCTION, __VA_ARGS__)
+/** Write a log message of type #DDS_LC_ERROR into global log and abort. */  
 #define DDS_FATAL(...) \
   dds_log(DDS_LC_FATAL, __FILE__, __LINE__, DDS_FUNCTION, __VA_ARGS__)
 

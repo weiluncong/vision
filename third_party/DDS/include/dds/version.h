@@ -12,12 +12,12 @@
 #ifndef DDS_VERSION_H
 #define DDS_VERSION_H
 
-#define DDS_VERSION "0.9.0"
-#define DDS_VERSION_MAJOR 0
-#define DDS_VERSION_MINOR 9
+#define DDS_VERSION "1.2.0"
+#define DDS_VERSION_MAJOR 1
+#define DDS_VERSION_MINOR 2
 #define DDS_VERSION_PATCH 0
 #define DDS_VERSION_TWEAK 
-#define DDS_PROJECT_NAME "CycloneDDS"
+#define DDS_PROJECT_NAME "AutoCoreDDS"
 
 #define DDS_HOST_NAME "Linux"
 #define DDS_TARGET_NAME "Linux"

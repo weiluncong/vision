@@ -1,4 +1,21 @@
 /*
+ *  Copyright(c) 2021 to 2023 AutoCore Technology (Nanjing) Co., Ltd. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ *    conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *    of conditions and the following disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used
+ *    to endorse or promote products derived from this software without specific prior written
+ *    permission.
+ */
+
+/*
  * Copyright(c) 2006 to 2018 ADLINK Technology Limited and others
  *
  * This program and the accompanying materials are made available under the
@@ -1067,7 +1084,7 @@ decode_SecPrefix(
  * @retval NN_RTPS_MSG_STATE_ENCODED  Decoding succeeded.
  * @retval NN_RTPS_MSG_STATE_ERROR    Decoding failed.
  */
-nn_rtps_msg_state_t decode_rtps_message(struct thread_state1 * const ts1, struct ddsi_domaingv *gv, struct nn_rmsg **rmsg, Header_t **hdr, unsigned char **buff, ssize_t *sz, struct nn_rbufpool *rbpool, bool isstream);
+nn_rtps_msg_state_t decode_rtps_message(struct thread_state1 * const ts1, struct ddsi_domaingv *gv, struct nn_rmsg **rmsg, Header_t **hdr, unsigned char **buff, size_t *sz, struct nn_rbufpool *rbpool, bool isstream);
 
 /**
  * @brief Send the RTPS message securely.
@@ -1416,7 +1433,7 @@ decode_rtps_message(
   UNUSED_ARG(struct nn_rmsg **rmsg),
   UNUSED_ARG(Header_t **hdr),
   UNUSED_ARG(unsigned char **buff),
-  UNUSED_ARG(ssize_t *sz),
+  UNUSED_ARG(size_t *sz),
   UNUSED_ARG(struct nn_rbufpool *rbpool),
   UNUSED_ARG(bool isstream))
 {

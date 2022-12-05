@@ -2,6 +2,7 @@
 #define CDATAMAP_H
 
 #include <QMap>
+#include <QDebug>
 #include <mutex>
 #include <iostream>
 #include "cglobal_param.h"

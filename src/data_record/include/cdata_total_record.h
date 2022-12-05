@@ -27,6 +27,7 @@ private:
     CDataCenter *data_center_ = nullptr;
     std::string proto_content_;
     QString file_path_;
+    bool exit_record_ = false;
 };
 
 #endif // CDATATOTALRECORD_H

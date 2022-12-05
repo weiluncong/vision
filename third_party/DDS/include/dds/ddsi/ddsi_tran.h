@@ -1,4 +1,21 @@
 /*
+ *  Copyright(c) 2021 to 2023 AutoCore Technology (Nanjing) Co., Ltd. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ *    conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *    of conditions and the following disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used
+ *    to endorse or promote products derived from this software without specific prior written
+ *    permission.
+ */
+
+/*
  * Copyright(c) 2006 to 2018 ADLINK Technology Limited and others
  *
  * This program and the accompanying materials are made available under the
@@ -56,6 +73,7 @@ typedef void (*ddsi_tran_peer_locator_fn_t) (ddsi_tran_conn_t, ddsi_locator_t *)
 typedef void (*ddsi_tran_disable_multiplexing_fn_t) (ddsi_tran_conn_t);
 typedef ddsi_tran_conn_t (*ddsi_tran_accept_fn_t) (ddsi_tran_listener_t);
 typedef dds_return_t (*ddsi_tran_create_conn_fn_t) (ddsi_tran_conn_t *conn, ddsi_tran_factory_t fact, uint32_t, const struct ddsi_tran_qos *);
+
 typedef dds_return_t (*ddsi_tran_create_listener_fn_t) (ddsi_tran_listener_t *listener, ddsi_tran_factory_t fact, uint32_t port, const struct ddsi_tran_qos *);
 typedef void (*ddsi_tran_release_conn_fn_t) (ddsi_tran_conn_t);
 typedef void (*ddsi_tran_close_conn_fn_t) (ddsi_tran_conn_t);
@@ -132,6 +150,9 @@ struct ddsi_tran_conn
   ddsi_tran_factory_t m_factory;
   ddsi_tran_listener_t m_listener;
   ddsi_tran_conn_t m_conn;
+
+  /*real ip*/
+  unsigned char real_src_ip[16];
 };
 
 struct ddsi_tran_listener
@@ -243,6 +264,7 @@ DDS_INLINE_EXPORT inline int ddsi_is_valid_port (const struct ddsi_tran_factory 
 DDS_INLINE_EXPORT inline uint32_t ddsi_receive_buffer_size (const struct ddsi_tran_factory *factory) {
   return factory->m_receive_buffer_size_fn (factory);
 }
+
 DDS_INLINE_EXPORT inline dds_return_t ddsi_factory_create_conn (ddsi_tran_conn_t *conn, ddsi_tran_factory_t factory, uint32_t port, const struct ddsi_tran_qos *qos) {
   *conn = NULL;
   if ((qos->m_interface != NULL) != (qos->m_purpose == DDSI_TRAN_QOS_XMIT_UC || qos->m_purpose == DDSI_TRAN_QOS_XMIT_MC))
@@ -251,6 +273,7 @@ DDS_INLINE_EXPORT inline dds_return_t ddsi_factory_create_conn (ddsi_tran_conn_t
     return DDS_RETCODE_BAD_PARAMETER;
   return factory->m_create_conn_fn (conn, factory, port, qos);
 }
+
 DDS_INLINE_EXPORT inline dds_return_t ddsi_factory_create_listener (ddsi_tran_listener_t *listener, ddsi_tran_factory_t factory, uint32_t port, const struct ddsi_tran_qos *qos) {
   *listener = NULL;
   if (!ddsi_is_valid_port (factory, port))

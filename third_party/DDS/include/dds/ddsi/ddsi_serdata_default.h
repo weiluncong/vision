@@ -1,4 +1,21 @@
 /*
+ *  Copyright(c) 2021 to 2023 AutoCore Technology (Nanjing) Co., Ltd. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ *    conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *    of conditions and the following disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used
+ *    to endorse or promote products derived from this software without specific prior written
+ *    permission.
+ */
+
+/*
  * Copyright(c) 2006 to 2018 ADLINK Technology Limited and others
  *
  * This program and the accompanying materials are made available under the
@@ -18,6 +35,8 @@
 #include "dds/ddsrt/avl.h"
 #include "dds/ddsi/ddsi_serdata.h"
 #include "dds/ddsi/ddsi_plist_generic.h"
+#include "dds/ddsi/ddsi_typelib.h"
+#include "dds/ddsi/ddsi_typelookup.h"
 
 #include "dds/dds.h"
 
@@ -36,8 +55,6 @@ struct serdatapool {
   struct nn_freelist freelist;
 };
 
-#define FIXED_KEY_MAX_SIZE 16
-
 #define KEYBUFTYPE_UNSET    0u
 #define KEYBUFTYPE_STATIC   1u // uses u.stbuf
 #define KEYBUFTYPE_DYNALIAS 2u // points into payload
@@ -49,7 +66,7 @@ struct ddsi_serdata_default_key {
   unsigned buftype : 2;
   unsigned keysize : 30;
   union {
-    unsigned char stbuf[FIXED_KEY_MAX_SIZE];
+    unsigned char stbuf[DDS_FIXED_KEY_MAX_SIZE];
     unsigned char *dynbuf;
   } u;
 };
@@ -128,6 +145,8 @@ struct ddsi_sertype_default_desc {
   enum ddsi_sertype_extensibility extensibility;  /* Extensibility of the top-level type */
   ddsi_sertype_default_desc_key_seq_t keys;
   ddsi_sertype_default_desc_op_seq_t ops;
+  ddsi_sertype_cdr_data_t typeinfo_ser;
+  ddsi_sertype_cdr_data_t typemap_ser;
 };
 
 struct ddsi_sertype_default {
@@ -162,6 +181,7 @@ extern DDS_EXPORT const struct ddsi_serdata_ops ddsi_serdata_ops_xcdr2_nokey;
 
 struct serdatapool * ddsi_serdatapool_new (void);
 void ddsi_serdatapool_free (struct serdatapool * pool);
+dds_return_t ddsi_sertype_default_init (const struct ddsi_domaingv *gv, struct ddsi_sertype_default *st, const dds_topic_descriptor_t *desc, uint16_t min_xcdrv, dds_data_representation_id_t data_representation);
 
 #if defined (__cplusplus)
 }

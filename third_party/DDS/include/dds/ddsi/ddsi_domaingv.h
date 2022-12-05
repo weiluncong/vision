@@ -1,4 +1,21 @@
 /*
+ *  Copyright(c) 2021 to 2023 AutoCore Technology (Nanjing) Co., Ltd. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ *    conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *    of conditions and the following disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used
+ *    to endorse or promote products derived from this software without specific prior written
+ *    permission.
+ */
+
+/*
  * Copyright(c) 2006 to 2018 ADLINK Technology Limited and others
  *
  * This program and the accompanying materials are made available under the
@@ -21,6 +38,7 @@
 #include "dds/ddsrt/sockets.h"
 #include "dds/ddsrt/sync.h"
 #include "dds/ddsrt/fibheap.h"
+#include "dds/ddsrt/avl.h"
 
 #include "dds/ddsi/ddsi_plist.h"
 #include "dds/ddsi/ddsi_ownip.h"
@@ -323,9 +341,9 @@ struct ddsi_domaingv {
   struct ddsrt_hh *sertypes;
 
 #ifdef DDS_HAS_TYPE_DISCOVERY
-  ddsrt_mutex_t tl_admin_lock;
-  struct ddsrt_hh *tl_admin;
-  ddsrt_cond_t tl_resolved_cond;
+  ddsrt_mutex_t typelib_lock;
+  ddsrt_avl_tree_t typelib;
+  ddsrt_cond_t typelib_resolved_cond;
 #endif
 #ifdef DDS_HAS_TOPIC_DISCOVERY
   ddsrt_mutex_t topic_defs_lock;

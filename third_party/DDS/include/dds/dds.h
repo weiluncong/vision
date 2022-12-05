@@ -1,4 +1,21 @@
 /*
+ *  Copyright(c) 2021 to 2023 AutoCore Technology (Nanjing) Co., Ltd. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ *    conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *    of conditions and the following disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used
+ *    to endorse or promote products derived from this software without specific prior written
+ *    permission.
+ */
+
+/*
  * Copyright(c) 2006 to 2018 ADLINK Technology Limited and others
  *
  * This program and the accompanying materials are made available under the
@@ -41,6 +58,9 @@
 #if defined (__cplusplus)
 extern "C" {
 #endif
+
+typedef struct ddsi_typeid dds_typeid_t;
+typedef struct ddsi_typeobj dds_typeobj_t;
 
 struct dds_rhc;
 struct ddsi_plist;
@@ -789,7 +809,7 @@ dds_set_listener(dds_entity_t entity, const dds_listener_t * listener);
  *             Some resource limit (maximum participants, memory, handles,
  *             &c.) prevented creation of the participant.
  * @retval DDS_RETCODE_ERROR
- *             The "CYCLONEDDS_URI" environment variable lists non-existent
+ *             The "AUTOCOREDDS_URI" environment variable lists non-existent
  *             or invalid configuration files, or contains invalid embedded
  *             configuration items; or an unspecified internal error has
  *             occurred.
@@ -818,16 +838,16 @@ dds_create_participant(
  *   | n         | m != n              | n, config is ignored: default
  *
  *     Config models:
- *     1: <CycloneDDS>
+ *     1: <AutoCoreDDS>
  *          <Domain id="X">...</Domain>
  *          <Domain .../>
- *        </CycloneDDS>
+ *        </AutoCoreDDS>
  *        where ... is all that can today be set in children of CycloneDDS
  *        with the exception of the id
- *     2: <CycloneDDS>
+ *     2: <AutoCoreDDS>
  *          <Domain><Id>X</Id></Domain>
  *          ...
- *        </CycloneDDS>
+ *        </AutoCoreDDS>
  *        legacy form, domain id must be the first element in the file with
  *        a value (if nothing has been set previously, it a warning is good
  *        enough)
@@ -2653,6 +2673,50 @@ dds_read(
   uint32_t maxs);
 
 /**
+ * @brief Access and read the collection of data values (of same type) and sample info from the
+ *        data reader, readcondition or querycondition, blocking with timeout.
+ *
+ * Return value provides information about number of samples read, which will
+ * be <= maxs. Based on the count, the buffer will contain data to be read only
+ * when valid_data bit in sample info structure is set.
+ * The buffer required for data values, could be allocated explicitly or can
+ * use the memory from data reader to prevent copy. In the latter case, buffer and
+ * sample_info should be returned back, once it is no longer using the Data.
+ * Data values once read will remain in the buffer with the sample_state set to READ
+ * and view_state set to NOT_NEW.
+ *
+ * @param[in]  reader_or_condition Reader, readcondition or querycondition entity.
+ * @param[out] buf An array of pointers to samples into which data is read (pointers can be NULL).
+ * @param[out] si Pointer to an array of \ref dds_sample_info_t returned for each data value.
+ * @param[in]  bufsz The size of buffer provided.
+ * @param[in]  maxs Maximum number of samples to read.
+ * @param[in]  timeout, in milliseconds.
+ *
+ * @returns A dds_return_t with the number of samples read or an error code
+ *
+ * @retval >0
+ *             Number of samples read.
+ * @retval DDS_RETCODE_ERROR
+ *             An internal error has occurred.
+ * @retval DDS_RETCODE_BAD_PARAMETER
+ *             One of the given arguments is not valid.
+ * @retval DDS_RETCODE_ILLEGAL_OPERATION
+ *             The operation is invoked on an inappropriate object.
+ * @retval DDS_RETCODE_ALREADY_DELETED
+ *             The entity has already been deleted.
+ * @retval DDS_RETCODE_TIMEOUT
+ *             Read timeout.
+ */
+DDS_EXPORT dds_return_t
+dds_read_wait(
+  dds_entity_t reader_or_condition,
+  void **buf,
+  dds_sample_info_t *si,
+  size_t bufsz,
+  uint32_t maxs,
+  uint32_t timeout);
+
+/**
  * @brief Access and read loaned samples of data reader, readcondition or querycondition.
  *
  * After dds_read_wl function is being called and the data has been handled, dds_return_loan function must be called to possibly free memory.
@@ -2943,6 +3007,50 @@ dds_take(
   dds_sample_info_t *si,
   size_t bufsz,
   uint32_t maxs);
+
+/**
+ * @brief Access the collection of data values (of same type) and sample info from the
+ *        data reader, readcondition or querycondition, blocking with timeout.
+ *
+ * Data value once read is removed from the Data Reader cannot to
+ * 'read' or 'taken' again.
+ * Return value provides information about number of samples read, which will
+ * be <= maxs. Based on the count, the buffer will contain data to be read only
+ * when valid_data bit in sample info structure is set.
+ * The buffer required for data values, could be allocated explicitly or can
+ * use the memory from data reader to prevent copy. In the latter case, buffer and
+ * sample_info should be returned back, once it is no longer using the Data.
+ *
+ * @param[in]  reader_or_condition Reader, readcondition or querycondition entity.
+ * @param[out] buf An array of pointers to samples into which data is read (pointers can be NULL).
+ * @param[out] si Pointer to an array of \ref dds_sample_info_t returned for each data value.
+ * @param[in]  bufsz The size of buffer provided.
+ * @param[in]  maxs Maximum number of samples to read.
+ * @param[in]  timeout, in milliseconds.
+ *
+ * @returns A dds_return_t with the number of samples read or an error code.
+ *
+ * @retval >0
+ *             Number of samples read.
+ * @retval DDS_RETCODE_ERROR
+ *             An internal error has occurred.
+ * @retval DDS_RETCODE_BAD_PARAMETER
+ *             One of the given arguments is not valid.
+ * @retval DDS_RETCODE_ILLEGAL_OPERATION
+ *             The operation is invoked on an inappropriate object.
+ * @retval DDS_RETCODE_ALREADY_DELETED
+ *             The entity has already been deleted.
+ * @retval DDS_RETCODE_TIMEOUT
+ *             Take timeout.
+ */
+DDS_EXPORT dds_return_t
+dds_take_wait(
+  dds_entity_t reader_or_condition,
+  void **buf,
+  dds_sample_info_t *si,
+  size_t bufsz,
+  uint32_t maxs,
+  uint32_t timeout);
 
 /**
  * @brief Access loaned samples of data reader, readcondition or querycondition.
@@ -3845,14 +3953,14 @@ dds_get_matched_publication_data (
  * dds_get_matched_publication_data
  *
  * @param[in] builtintopic_endpoint  The builtintopic endpoint struct
- * @param[out] type_identifier       Buffer that will be allocated for the type identifier. Needs to be freed by the caller of this function.
- * @param[out] size                  Number of bytes in type_identifier buffer
+ * @param[in] kind                   Kind of type identifier (minimal/complete)
+ * @param[out] type_identifier       Type identifier that will be allocated by this function in case of success. Needs to be freed by the caller.
  */
 DDS_EXPORT dds_return_t
 dds_builtintopic_get_endpoint_typeid (
   dds_builtintopic_endpoint_t * builtintopic_endpoint,
-  unsigned char **type_identifier,
-  size_t *size);
+  dds_typeid_kind_t kind,
+  dds_typeid_t **type_identifier);
 #endif
 
 /**
@@ -3956,13 +4064,12 @@ dds_domain_set_deafmute (
 #ifdef DDS_HAS_TYPE_DISCOVERY
 
 /**
- * @brief This function resolves the type information for the provided
- * type identifier.
+ * @brief This function resolves the type for the provided type identifier,
+ * which can e.g. be retrieved from endpoint or topic discovery data.
  *
  * @param[in]   entity              A domain entity or an entity bound to a domain, such
  *                                  as a participant, reader or writer.
- * @param[in]   type_identifier     Type identifier data
- * @param[in]   type_identifier_sz  Length of the type identifier data
+ * @param[in]   type_id             Type identifier
  * @param[in]   timeout             Timeout for waiting for requested type information to be available
  * @param[out]  sertype             The type information, or NULL if the type could not be resolved
  *
@@ -3977,20 +4084,67 @@ dds_domain_set_deafmute (
  * @retval DDS_RETCODE_OK
  *             The operation was successful.
  * @retval DDS_BAD_PARAMETER
- *             The entity parameter is not a valid parameter, the type_identifier is not provided or
- *             its length is incorrect, or the sertype out parameter is NULL
+ *             The entity parameter is not a valid parameter, type_id or type name
+ *             is not provided, or the sertype out parameter is NULL
  * @retval DDS_RETCODE_NOT_FOUND
- *             A type with the provided type_identifier was not found
+ *             A type with the provided type_id and type_name was not found
  * @retval DDS_RETCODE_ILLEGAL_OPERATION
  *             The operation is invoked on an inappropriate object.
 */
 DDS_EXPORT dds_return_t
-dds_domain_resolve_type (
+dds_resolve_type (
   dds_entity_t entity,
-  unsigned char *type_identifier,
-  size_t type_identifier_sz,
+  const dds_typeid_t *type_id,
   dds_duration_t timeout,
   struct ddsi_sertype **sertype);
+
+/**
+ * @brief This function resolves the type for the provided type identifier,
+ * which can e.g. be retrieved from endpoint or topic discovery data.
+ *
+ * @param[in]   entity              A domain entity or an entity bound to a domain, such
+ *                                  as a participant, reader or writer.
+ * @param[in]   type_id             Type identifier
+ * @param[in]   timeout             Timeout for waiting for requested type information to be available
+ * @param[out]  type_obj            The type information, untouched if type is not resolved
+ *
+ *
+ * @returns A dds_return_t indicating success or failure.
+ *
+ * @retval DDS_RETCODE_OK
+ *             The operation was successful.
+ * @retval DDS_BAD_PARAMETER
+ *             The entity parameter is not a valid parameter, type_id or type name
+ *             is not provided, or the sertype out parameter is NULL
+ * @retval DDS_RETCODE_NOT_FOUND
+ *             A type with the provided type_id and type_name was not found
+ * @retval DDS_RETCODE_ILLEGAL_OPERATION
+ *             The operation is invoked on an inappropriate object.
+*/
+DDS_EXPORT dds_return_t
+dds_get_typeobj (
+  dds_entity_t entity,
+  const dds_typeid_t *type_id,
+  dds_duration_t timeout,
+  dds_typeobj_t **type_obj);
+
+/**
+ * @brief Free the type object that was retrieved using dds_get_typeobj
+ *
+ * @param[in]  type_obj     The type object
+ *
+ *
+ * @returns A dds_return_t indicating success or failure.
+ *
+ * @retval DDS_RETCODE_OK
+ *             The operation was successful.
+ * @retval DDS_BAD_PARAMETER
+ *             The type_obj parameter is NULL
+*/
+DDS_EXPORT dds_return_t
+dds_free_typeobj (
+  dds_typeobj_t *type_obj);
+
 
 #endif /* DDS_HAS_TYPE_DISCOVERY */
 

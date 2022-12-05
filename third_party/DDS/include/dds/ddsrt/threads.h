@@ -1,4 +1,21 @@
 /*
+ *  Copyright(c) 2021 to 2023 AutoCore Technology (Nanjing) Co., Ltd. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ *    conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *    of conditions and the following disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used
+ *    to endorse or promote products derived from this software without specific prior written
+ *    permission.
+ */
+
+/*
  * Copyright(c) 2006 to 2018 ADLINK Technology Limited and others
  *
  * This program and the accompanying materials are made available under the
@@ -28,6 +45,8 @@
 
 #if DDSRT_WITH_FREERTOS
 #include "dds/ddsrt/threads/freertos.h"
+#elif DDSRT_WITH_OSAL
+#include "dds/ddsrt/threads/osal.h"
 #elif _WIN32
 #include "dds/ddsrt/threads/windows.h"
 #else
@@ -168,6 +187,9 @@ ddsrt_thread_join(
   ddsrt_thread_t thread,
   uint32_t *thread_result);
 
+DDS_EXPORT dds_return_t
+  ddsrt_thread_cancel(ddsrt_thread_t thread);
+
 /**
  * @brief Get name of current thread.
  *
@@ -289,6 +311,18 @@ ddsrt_thread_init(uint32_t reason);
  */
 DDS_EXPORT void
 ddsrt_thread_fini(uint32_t reason);
+
+/**
+* @brief Set a thread's cancellation type
+* The pthread_setcanceltype() function sets the calling thread's cancellation type to type and returns
+* the previous cancellation type in oldtype.
+* @param[in] type The new cancellation type.
+* @param[out] oldtype A pointer to a location where the function can store the old cancellation type. This parameter
+*                     can be NULL if you don't want to store the old value
+* @retval DDS_RETCODE_OK                    Success.
+* @retval DDS_RETCODE_BAD_PARAMETER         Invalid cancelability type.
+*/
+dds_return_t ddsrt_thread_setcanceltype(int type, int* oldtype);
 
 #if defined (__cplusplus)
 }

@@ -1,5 +1,4 @@
 #include "cdata_producer.h"
-#include "yaml/cyaml_handler.h"
 
 CDataProducer::CDataProducer(QObject *parent)
     : QObject(parent)
