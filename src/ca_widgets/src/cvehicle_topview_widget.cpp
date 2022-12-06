@@ -73,7 +73,7 @@ void CVehicleTopViewWidget::HandleActColorChanged(const QString &name, const QCo
         name.contains("prediction.RNPObjectOut-obj"))
     {
         auto hash = GetDataPtr<CObjectItem *>();
-        if(hash)
+        if (hash)
         {
             for (auto i : hash->hash_[name])
             {
@@ -209,7 +209,7 @@ void CVehicleTopViewWidget::AddSetterItem(const QString &name)
 
 void CVehicleTopViewWidget::UpdateObjectItemData(const QString &name, double delta_time, const QVector<CObjectData> &data, const QColor &color)
 {
-    if (delta_time*1000 <= 250)
+    if (delta_time * 1000.0 <= 250)
     {
         QMap<int, CObjectData> object_track_ids;
         for (auto i : data)
