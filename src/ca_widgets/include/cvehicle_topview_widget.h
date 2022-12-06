@@ -9,8 +9,9 @@
 #include "csetter_tab_widget.h"
 #include "cglobal_param.h"
 #include "cobject_item.h"
+#include "cline_item.h"
 #include "cmap_struct.h"
-#include "cprediction_struct.h"
+#include "cline_struct.h"
 #include "ctransfer.h"
 #include "cpoint_item.h"
 
@@ -39,14 +40,11 @@ public:
                               const QVector<CObjectData> &data, const QColor &color);
     void UpdatePointItemData(const QString &name, double time, const QVector<CPointData> &data, const QColor &color);
     
-    void UpdatePredictionLineItemData(const QString &name, double time, const QVector<CPredictLine> &data, const QColor &color);
+    void UpdateLineItemData(const QString &name, double delta_time, const QVector<CLineData> &data, const QColor &color);
 
     void UpdateMapLine(const QString &name,const QVector<CMapLine> &lines,
                            const QColor &color);
 
-
-    void UpdateModeLane(const QString &name,const QVector<CSDAModeLane> &lanes,
-                        const QColor &color);
 
     void UpdateInsData(const CMapInsData &data);
 

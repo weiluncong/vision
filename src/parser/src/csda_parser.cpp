@@ -173,14 +173,18 @@ void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google:
 
                 ///< 车道线id:[/],(0,0,/),[/],(1,0),无索引顺序，输出
                 AssignStruct(line_msg, line_descript, line.index_, "line_id");
-                ///< 车道线类型
-                AssignStruct(line_msg, line_descript, line.type_, "line_type");
-
                 AssignStruct(line_msg, line_descript, line.marking_type_, "linemarking_type");
                 int line_count = line_descript->field_count();
                 for (int m = 0; m < line_count; m++)
                 {
                     auto field = line_descript->field(m);
+
+                    ///< 车道线类型
+                    if (field->name() == "line_type")
+                    {
+                        line.type_ = GetRepeatedMsg(line_msg, field, 0).toInt();
+                        continue;
+                    }
                     ///< 车道线轨迹点集合
                     if (field->name() == "line_points")
                     {
@@ -240,15 +244,15 @@ void CSdaParser::ParseRNPEnvOut(const QString &package_msg_name, const google::p
                 /// repeated Lane
                 if (field->name() == "lanes")
                 {
-                    QVector<CSDAModeLane> lanes;
+                    QMap<int, QVector<CLineData>> map;
                     int lane_size = lanes_reflec->FieldSize(lanes_msg, field);
                     for (int l = 0; l < lane_size; ++l)
                     {
-                        CSDAModeLane lane;
+                        CLineData line;
                         const auto &lane_msg = lanes_reflec->GetRepeatedMessage(lanes_msg, field, l);
                         auto lane_reflector = lane_msg.GetReflection();
                         auto lane_descript = lane_msg.GetDescriptor();
-                        AssignStruct(lane_msg, lane_descript, lane.relation2ego_, "relation2ego");
+                        AssignStruct(lane_msg, lane_descript, line.relation_to_ego_, "relation2ego");
 
                         int lane_count = lane_descript->field_count();
                         for (int m = 0; m < lane_count; ++m)
@@ -261,20 +265,21 @@ void CSdaParser::ParseRNPEnvOut(const QString &package_msg_name, const google::p
                                 int val_size = lane_reflector->FieldSize(lane_msg, field);
                                 for (int n = 0; n < val_size; ++n)
                                 {
-                                    cav::CPointData point;
+                                    CPointData point;
                                     const auto &point_msg = lane_reflector->GetRepeatedMessage(lane_msg, field, n);
                                     point = ParserPoint(point_msg);
-                                    lane.points_.push_back(point);
+                                    line.points_.push_back(point);
                                 }
                                 continue;
                             }
                         }
-
-                        if (!lane.points_.isEmpty())
-                            lanes.push_back(lane);
+                        map[line.relation_to_ego_].push_back(line);
                     }
 
-                    data_center_->InsertValue(package_msg_name, time, lanes);
+                    for (auto it = map.begin(); it != map.end(); it++)
+                    {
+                        data_center_->InsertValue(package_msg_name + "[" + QString::number(it.key()) + "]", time, it.value());
+                    }
                     ParseFinished("topview", time);
                     break;
                 }

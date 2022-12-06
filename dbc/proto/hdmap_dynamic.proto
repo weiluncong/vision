@@ -12,7 +12,6 @@ message AnchorPosRelatedInfo {
   double to_link_end = 5;
   double to_geo_fence_end = 6;
   .hdmap.Gnss current_distination = 7;
-  bool current_link_in_odd = 8;
 }
 
 message SpecialArea {
@@ -45,11 +44,6 @@ message PathPlanningOut {
   double path_planning_to_ramp_end_dis = 3;
   repeated .hdmap.RoutingPath routing_path = 4;
   uint32 ramp_direction_to_mainroad = 5;
-  double to_odd_false = 6;
-  double to_link_without_suc = 7;
-  double path_planning_out_ramp_start_dis = 8;
-  double path_planning_out_ramp_end_dis = 9;
-  repeated double to_line_change_into_solid = 10;
 }
 
 message DynamicHDMapInfo {
@@ -66,9 +60,5 @@ message DynamicHDMapInfo {
   double lane_curvature_100m = 11;
   double lane_curvature_200m = 12;
   double lane_curvature_300m = 13;
-  uint32 dynamic_map_status = 14;
-  double to_second_lane_num_change_dis = 15;
-  uint32 second_lane_num_change_type = 16;
-  uint32 second_lane_num_change_pos = 17;
 }
 

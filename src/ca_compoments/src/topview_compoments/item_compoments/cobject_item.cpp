@@ -21,21 +21,6 @@ void CObjectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     painter->setPen(QPen(color_, 3));
     UpdateObjectRect();
 
-    QString obj_info = QString::number(obj_data_.track_id_);
-    if (obj_data_.move_status_ != 0)
-    {
-        obj_info += "_";
-        obj_info += QString::number(obj_data_.move_status_) ;
-    }
-    if (obj_data_.algorithm_type_ != 0)
-    {
-        if (obj_data_.move_status_ != 0)
-            obj_info += "_";
-        else
-            obj_info += "_0_";
-        obj_info += QString::number(obj_data_.algorithm_type_) ;
-    }
-
     //1,2,3,7 car;  4 person; 5 bicycle; 11 cone;
     if (obj_data_.pos_x_ != 0 || obj_data_.pos_y_ != 0)
     {
@@ -44,37 +29,24 @@ void CObjectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             obj_data_.track_id_ != 0 && obj_data_.track_id_ != 255)
         {
             obj_data_.heading_angle_ = 0;
-            painter->drawEllipse(origin_point_.x(), origin_point_.y(), 6, 6);
-            painter->drawText(origin_point_.x(), origin_point_.y(), QString::number(obj_data_.track_id_));
+            PainterDrawCircle(painter);
         }
         else if (type == 4)
         {
-            painter->drawEllipse(origin_point_.x(), origin_point_.y(), 6, 6);
-            painter->setPen(QPen(Qt::black, 4));
-            painter->drawText(origin_point_.x(), origin_point_.y(), obj_info);
+            PainterDrawCircle(painter);
         }
         else if (type == 5)
         {
-            QPolygon bicycle;
-            bicycle.setPoints(3, (top_left_.x() + top_right_.x()) / 2, (top_left_.y() + top_right_.y()) / 2,
-                              bottom_left_.x(), bottom_left_.y(), bottom_right_.x(), bottom_right_.y());
-            painter->drawPolygon(bicycle);
-            painter->drawPoint(origin_point_);
-            painter->setPen(QPen(Qt::black, 4));
-            painter->drawText(origin_point_.x() - 6, origin_point_.y() + 6, obj_info);
+            PainterDrawTriangle(painter);
         }
         else if (type == 11)
         {
             painter->setBrush(color_);
-            painter->drawEllipse(origin_point_.x(), origin_point_.y(), 6, 6);
-            painter->setPen(QPen(Qt::black, 4));
-            painter->drawText(origin_point_.x() - 6, origin_point_.y() + 6, obj_info);
+            PainterDrawCircle(painter);
         }
         else
         {
             PainterDrawQuadrangle(painter);
-            painter->setPen(QPen(Qt::black, 4));
-            painter->drawText(origin_point_.x() - 6, origin_point_.y() + 6, obj_info);
         }
     }
 }
@@ -87,6 +59,29 @@ void CObjectItem::PainterDrawQuadrangle(QPainter *painter)
     path.quadTo((bottom_right_ + bottom_left_) / 2, bottom_left_);
     path.quadTo((bottom_left_ + top_left_) / 2, top_left_);
     painter->drawPath(path);
+    PainterDrawText(painter);
+}
+
+void CObjectItem::PainterDrawCircle(QPainter *painter)
+{
+    painter->drawEllipse(origin_point_.x(), origin_point_.y(), 6, 6);
+    PainterDrawText(painter);
+}
+
+void CObjectItem::PainterDrawTriangle(QPainter *painter)
+{
+    QPolygon bicycle;
+    bicycle.setPoints(3, (top_left_.x() + top_right_.x()) / 2, (top_left_.y() + top_right_.y()) / 2,
+                      bottom_left_.x(), bottom_left_.y(), bottom_right_.x(), bottom_right_.y());
+    painter->drawPolygon(bicycle);
+    painter->drawPoint(origin_point_);
+    PainterDrawText(painter);
+}
+
+void CObjectItem::PainterDrawText(QPainter *painter)
+{
+    painter->setPen(QPen(Qt::black, 4));
+    painter->drawText(origin_point_.x() - 6, origin_point_.y() + 6, GetObjInfoText());
 }
 
 void CObjectItem::UpdateObjectRect()
@@ -118,4 +113,24 @@ QPointF CObjectItem::PointRotation(const QPointF &point, const QPointF &origin, 
     p.setX((point.x() - origin.x()) * cos(-angle) - (point.y() - origin.y()) * sin(-angle) + origin.x());
     p.setY((point.x() - origin.x()) * sin(-angle) + (point.y() - origin.y()) * cos(-angle) + origin.y());
     return p;
+}
+
+QString CObjectItem::GetObjInfoText() const
+{
+    QString obj_info = QString::number(obj_data_.track_id_);
+    if (obj_data_.move_status_ != 0)
+    {
+        obj_info += "_";
+        obj_info += QString::number(obj_data_.move_status_) ;
+    }
+    if (obj_data_.algorithm_type_ != 0)
+    {
+        if (obj_data_.move_status_ != 0)
+            obj_info += "_";
+        else
+            obj_info += "_0_";
+        obj_info += QString::number(obj_data_.algorithm_type_) ;
+    }
+
+    return obj_info;
 }

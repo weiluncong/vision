@@ -19,20 +19,13 @@ public:
 private:
     void UpdateObjectItem(double timestamp);
     void UpdatePointItem(double timestamp);
-
-    void UpadtePredictionItem(double timestamp);
+    void UpadteLineItem(double timestamp);
 
     void UpdateMapItem(double timestamp);
-
-    void UpdateRNPEnvOut(double timestamp);
-
-    void UpdateModeLane(const QString &topic, QVector<CSDAModeLane> mode_lane);
-
     void UpdateMapLine(const QString &topic, QVector<CMapLine> map_line);
 
     CVehicleTopViewWidget *vehicle_topview_widget_ = nullptr;
 
-    QMap<QString, QVector<CSDAModeLane>> current_mode_lane_;
     QMap<QString, QMap<int, QVector<CMapLine>>> current_maps_;
 };
 

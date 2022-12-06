@@ -18,14 +18,12 @@ message RadarDetection {
   int32 point_id = 12;
   int32 obj_id = 13;
   .CommonProto.PointMotionState motion_status = 14;
-  double time_stamp_local = 15;
 }
 
 message RadarFsPoint {
   .CommonProto.PointType type = 1;
   .CommonProto.Point2DPosition position = 2;
   .CommonProto.PointMotionState motion_state = 3;
-  double time_stamp_local = 4;
 }
 
 message RadarObject {
@@ -53,9 +51,6 @@ message RadarObject {
   int32 age = 22;
   int32 region_id = 23;
   repeated .CommonProto.Point2DPosition obj_refer_points = 24;
-  int32 motionstatus = 25;
-  double ClassConf = 26;
-  double time_stamp_local = 27;
 }
 
 message RadarDetections {
@@ -63,7 +58,6 @@ message RadarDetections {
   repeated .RadarProto.RadarDetection detections = 2;
   repeated .CommonProto.SensorParameters sensors_parameters = 3;
   int32 frame_index = 4;
-  double time_stamp_local = 5;
 }
 
 message RadarObjects {
@@ -71,7 +65,6 @@ message RadarObjects {
   repeated .RadarProto.RadarObject objs = 2;
   repeated .CommonProto.SensorParameters sensors_parameters = 3;
   int32 frame_index = 4;
-  double time_stamp_local = 5;
 }
 
 message RadarFreeSpace {
@@ -79,17 +72,13 @@ message RadarFreeSpace {
   repeated .RadarProto.RadarFsPoint points = 2;
   repeated .CommonProto.SensorParameters sensors_parameters = 3;
   int32 frame_index = 4;
-  double time_stamp_local = 5;
 }
 
 message RadarPedData {
   double time_stamp = 1;
   int32 ped_result = 2;
   int32 ped_azi = 3;
-  double reserved_0 = 4;
-  double ped_xm = 5;
-  double ped_Confidence = 6;
-  double ped_Ym = 7;
-  double time_stamp_local = 8;
+  double ped_xm_low = 4;
+  double ped_xm_up = 5;
 }
 

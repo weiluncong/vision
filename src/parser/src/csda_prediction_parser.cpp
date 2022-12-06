@@ -4,9 +4,9 @@ void CSDAPredictionParser::ParsePredictions(const QString &package_msg_name, con
 {
     if (!package_msg_name.contains("prediction.RNPObjectOut"))
         return;
-    QVector<cav::CObjectData> obj_vector;
-    QVector<cav::CPredictLine> history_lines_vec;
-    QVector<cav::CPredictLine> predict_lines_vec;
+    QVector<CObjectData> obj_vector;
+    QVector<CLineData> history_lines_vec;
+    QVector<CLineData> predict_lines_vec;
 
     auto reflection = msg.GetReflection();
     auto descriptor = msg.GetDescriptor();
@@ -58,10 +58,10 @@ void CSDAPredictionParser::ParsePredictions(const QString &package_msg_name, con
         obj_vector.push_back(obj);
 
         //历史轨迹解析
-        CPredictLine history_line;
+        CLineData history_line;
         auto history_line_field = obj_descript->FindFieldByName("trajectory_history");
         const auto &history_line_msg = obj_reflection->GetMessage(obj_msg, history_line_field);
-        ParserTrajectory(history_line_msg, history_line.predict_line_);
+        ParserTrajectory(history_line_msg, history_line.points_);
         history_lines_vec.push_back(history_line);
 
         //预测轨迹解析
@@ -72,21 +72,18 @@ void CSDAPredictionParser::ParsePredictions(const QString &package_msg_name, con
         //轨迹线仅有一条，不做repeate处理
         auto trajector_field = predict_lines_multi_descriptor->FindFieldByName("trajectories");
         const auto &trajector_msg = predict_lines_multi_reflection->GetRepeatedMessage(predict_lines_multi_msg, trajector_field, 0);
-        CPredictLine predict_line_multi;
-        ParserTrajectory(trajector_msg, predict_line_multi.predict_line_);
+        CLineData predict_line_multi;
+        ParserTrajectory(trajector_msg, predict_line_multi.points_);
 
         auto prob_field = predict_lines_multi_descriptor->FindFieldByName("probs");
         int size = predict_lines_multi_reflection->FieldSize(predict_lines_multi_msg, prob_field);
         if (size != 0)
-            predict_line_multi.prob_ = predict_lines_multi_reflection->GetRepeatedFloat(predict_lines_multi_msg, prob_field, 0);
+            predict_line_multi.confidence_ = predict_lines_multi_reflection->GetRepeatedFloat(predict_lines_multi_msg, prob_field, 0);
         predict_lines_vec.push_back(predict_line_multi);
     }
-    QString obj_name = package_msg_name + "-obj";
-    data_center_->InsertValue<QVector<cav::CObjectData>>(obj_name, time, obj_vector);
-    QString history_name = package_msg_name + "-history_trajectory";
-    data_center_->InsertValue<QVector<cav::CPredictLine>>(history_name, time, history_lines_vec);
-    QString predict_name = package_msg_name + "-predict_trajectory";
-    data_center_->InsertValue<QVector<cav::CPredictLine>>(predict_name, time, predict_lines_vec);
+    data_center_->InsertValue(package_msg_name + "-obj", time, obj_vector);
+    data_center_->InsertValue(package_msg_name + "-history_trajectory", time, history_lines_vec);
+    data_center_->InsertValue(package_msg_name + "-predict_trajectory", time, predict_lines_vec);
     ParseFinished("topview", time);
 }
 
@@ -94,7 +91,7 @@ void CSDAPredictionParser::ParsePredictObjectDebug(const QString &package_msg_na
 {
     if (!package_msg_name.contains("prediction.RNPObjectDebugOut"))
         return;
-    QVector<cav::CPredictLine> predictions;
+    QVector<CLineData> predict_lines_vec;
 
     auto reflection = msg.GetReflection();
     auto descriptor = msg.GetDescriptor();
@@ -110,49 +107,45 @@ void CSDAPredictionParser::ParsePredictObjectDebug(const QString &package_msg_na
         {
             auto predict_lines_multi_field = obj_descript->FindFieldByName("trajectory_multimodel_rule_veh");
             const auto &predict_lines_multi_msg = obj_reflection->GetMessage(obj_msg, predict_lines_multi_field);
-            CPredictLine prediction;
-            prediction.id_ = id;
-            prediction.type_ = cav::CPredictionType::AlgorithmCar;
-            ParserTrajectoryMultimodal(predict_lines_multi_msg, prediction);
-            if (!prediction.predict_line_.isEmpty())
-                predictions.push_back(prediction);
+            CLineData line;
+            line.id_ = id;
+            line.type_ = 1;//AlgorithmCar
+            ParserTrajectoryMultimodal(predict_lines_multi_msg, line);
+            predict_lines_vec.push_back(line);
         }
         {
             auto predict_lines_multi_field = obj_descript->FindFieldByName("trajectory_multimodel_rule_ped");
             const auto &predict_lines_multi_msg = obj_reflection->GetMessage(obj_msg, predict_lines_multi_field);
-            CPredictLine prediction;
-            prediction.id_ = id;
-            prediction.type_ = cav::CPredictionType::AlgorithmPerson;
-            ParserTrajectoryMultimodal(predict_lines_multi_msg, prediction);
-            if (!prediction.predict_line_.isEmpty())
-                predictions.push_back(prediction);
+            CLineData line;
+            line.id_ = id;
+            line.type_ = 2;//AlgorithmPerson
+            ParserTrajectoryMultimodal(predict_lines_multi_msg, line);
+            predict_lines_vec.push_back(line);
         }
         {
             auto predict_lines_multi_field = obj_descript->FindFieldByName("trajectory_multimodel_cslstm");
             const auto &predict_lines_multi_msg = obj_reflection->GetMessage(obj_msg, predict_lines_multi_field);
-            CPredictLine prediction;
-            prediction.id_ = id;
-            prediction.type_ = cav::CPredictionType::AlgorithmCslstm;
-            ParserTrajectoryMultimodal(predict_lines_multi_msg, prediction);
-            if (!prediction.predict_line_.isEmpty())
-                predictions.push_back(prediction);
+            CLineData line;
+            line.id_ = id;
+            line.type_ = 3;//AlgorithmCslstm;
+            ParserTrajectoryMultimodal(predict_lines_multi_msg, line);
+            predict_lines_vec.push_back(line);
         }
         {
             auto predict_lines_multi_field = obj_descript->FindFieldByName("trajectory_multimodel_raster");
             const auto &predict_lines_multi_msg = obj_reflection->GetMessage(obj_msg, predict_lines_multi_field);
-            CPredictLine prediction;
-            prediction.id_ = id;
-            prediction.type_ = cav::CPredictionType::AlgorithmRaster;
-            ParserTrajectoryMultimodal(predict_lines_multi_msg, prediction);
-            if (!prediction.predict_line_.isEmpty())
-                predictions.push_back(prediction);
+            CLineData line;
+            line.id_ = id;
+            line.type_ = 4;//AlgorithmRaster;
+            ParserTrajectoryMultimodal(predict_lines_multi_msg, line);
+            predict_lines_vec.push_back(line);
         }
     }
-    data_center_->InsertValue<QVector<cav::CPredictLine>>(package_msg_name, time, predictions);
+    data_center_->InsertValue(package_msg_name, time, predict_lines_vec);
     ParseFinished("topview", time);
 }
 
-void CSDAPredictionParser::ParserTrajectoryMultimodal(const google::protobuf::Message &msg, cav::CPredictLine &debug_line)
+void CSDAPredictionParser::ParserTrajectoryMultimodal(const google::protobuf::Message &msg, CLineData &line)
 {
     auto descriptor = msg.GetDescriptor();
     auto reflection = msg.GetReflection();
@@ -162,12 +155,10 @@ void CSDAPredictionParser::ParserTrajectoryMultimodal(const google::protobuf::Me
     if (size == 0)
         return;
     const auto &trajector_msg = reflection->GetRepeatedMessage(msg, trajector_field, 0);
-    QVector<cav::CPointData> predict_line_multi;
-    ParserTrajectory(trajector_msg, predict_line_multi);
-    debug_line.predict_line_ = predict_line_multi;
+    ParserTrajectory(trajector_msg, line.points_);
 
     auto prob_field = descriptor->FindFieldByName("probs");
-    debug_line.prob_ = reflection->GetRepeatedFloat(msg, prob_field, 0);
+    line.confidence_ = reflection->GetRepeatedFloat(msg, prob_field, 0);
 }
 
 void CSDAPredictionParser::ParserTrajectory(const google::protobuf::Message &msg, QVector<cav::CPointData> &line)

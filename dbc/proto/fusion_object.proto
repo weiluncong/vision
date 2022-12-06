@@ -3,14 +3,6 @@ syntax = "proto3";
 import "common.proto";
 package FusionProto;
 
-enum ObjMeasureState {
-  MEASURE_STATE_INVALID = 0;
-  MEASURE_STATE_UNSTABLE = 1;
-  MEASURE_STATE_NEW = 2;
-  MEASURE_STATE_PREDICTED = 3;
-  MEASURE_STATE_STABLE = 4;
-}
-
 message FusObject {
   int32 track_id = 1;
   double longitudinal_distance = 2;
@@ -41,19 +33,6 @@ message FusObject {
   double longitudinal_relative_velocity = 27;
   double lateral_relative_velocity = 28;
   repeated .CommonProto.Point2DPosition obj_refer_points = 29;
-  .FusionProto.ObjMeasureState obj_measure_state = 30;
-  int32 fc_source_trackid = 31;
-  int32 fr_source_trackid = 32;
-  int32 fcr_source_trackid = 33;
-  int32 rcr_source_trackid = 34;
-}
-
-message PedData {
-  int32 ped_result = 1;
-  double ped_confidence = 2;
-  int32 ped_azi = 3;
-  double ped_xm = 4;
-  double ped_ym = 5;
 }
 
 message FusObjects {

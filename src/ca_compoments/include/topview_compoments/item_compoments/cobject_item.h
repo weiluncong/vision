@@ -27,8 +27,12 @@ public:
 private:
     void UpdateObjectRect();
     void PainterDrawQuadrangle(QPainter *painter);
+    void PainterDrawCircle(QPainter *painter);
+    void PainterDrawTriangle(QPainter *painter);
+    void PainterDrawText(QPainter *painter);
     void Rotation(double angle);
     QPointF PointRotation(const QPointF &point, const QPointF &origin, double angle);
+    QString GetObjInfoText() const;
 
 private:
     CVehicleBackGroundItem *parent_item_;

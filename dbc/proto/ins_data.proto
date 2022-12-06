@@ -55,6 +55,5 @@ message InsData {
   double q_w = 38;
   .localization.WheelData wheel_data = 39;
   .localization.Header header = 40;
-  double time_stamp_local = 41;
 }
 

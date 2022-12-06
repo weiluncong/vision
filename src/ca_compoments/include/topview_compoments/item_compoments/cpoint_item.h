@@ -7,7 +7,6 @@
 
 #include "cvehicle_background_item.h"
 #include "cpoint_struct.h"
-#include "cprediction_struct.h"
 
 
 class CPointItem : public QObject, public QGraphicsItem
@@ -25,13 +24,10 @@ public:
     void SetPointName(const QString &name){ name_ = name; }
     void SetColor(const QColor &color){ color_ = color; }
     void SetData(const QVector<cav::CPointData> &data) { point_datas_ = data; }
-    void SetPrediction(const QVector<cav::CPredictLine> &data) { prediction_lines_ = data;}
     void clear(){ this->hide();}
 
     bool connect_swtich_ = false;
     bool map_switch_ = false;
-    bool prediction_switch_ = false;
-    bool is_draw_name_ = false;
     int pen_width_ = 2;
     int font_size = 5;
     bool is_draw_line_node_ = false;
@@ -45,7 +41,6 @@ private:
     QColor color_;
     QString name_;
     QVector<cav::CPointData> point_datas_;
-    QVector<cav::CPredictLine> prediction_lines_;
 
     //<无车道线0;
     //<未知1;

@@ -8,10 +8,9 @@ void CTopViewScheduler::SyncData(double timestamp)
         return;
 
     UpdateObjectItem(timestamp);
+    UpadteLineItem(timestamp);
     UpdatePointItem(timestamp);
     UpdateMapItem(timestamp);
-    UpdateRNPEnvOut(timestamp);
-    UpadtePredictionItem(timestamp);
     vehicle_topview_widget_->UpdateInsData(
                 data_center_->GetValue<CMapInsData>("InsDataFix", timestamp));
 
@@ -48,7 +47,7 @@ void CTopViewScheduler::UpdateObjectItem(double timestamp)
             double t_temp = timestamp;
             auto objs = data_center_->GetValue<QVector<CObjectData>>(topic_name, t_temp);
             if (!objs.isEmpty())
-                vehicle_topview_widget_->UpdateObjectItemData(topic_name, abs(t_temp - timestamp) * 1000, objs, params_map[topic_name].color_);
+                vehicle_topview_widget_->UpdateObjectItemData(topic_name, abs(t_temp - timestamp), objs, params_map[topic_name].color_);
         }
     }
 }
@@ -77,9 +76,9 @@ void CTopViewScheduler::UpdatePointItem(double timestamp)
     }
 }
 
-void CTopViewScheduler::UpadtePredictionItem(double timestamp)
+void CTopViewScheduler::UpadteLineItem(double timestamp)
 {
-    CDataMap<QVector<cav::CPredictLine>> *line_datas = data_center_->GetDataPtr<QVector<cav::CPredictLine>>();
+    auto line_datas = data_center_->GetDataPtr<QVector<CLineData>>();
     if (!line_datas)
         return;
 
@@ -94,9 +93,9 @@ void CTopViewScheduler::UpadtePredictionItem(double timestamp)
         if (params_map[topic_name].check_status_)
         {
             double t_temp = timestamp;
-            auto lines = data_center_->GetValue<QVector<CPredictLine>>(topic_name, t_temp);
+            auto lines = data_center_->GetValue<QVector<CLineData>>(topic_name, t_temp);
             if (!lines.isEmpty())
-                vehicle_topview_widget_->UpdatePredictionLineItemData(topic_name, abs(t_temp - timestamp), lines, params_map[topic_name].color_);
+                vehicle_topview_widget_->UpdateLineItemData(topic_name, abs(t_temp - timestamp), lines, params_map[topic_name].color_);
         }
     }
 }
@@ -140,53 +139,6 @@ void CTopViewScheduler::UpdateMapItem(double timestamp)
         }
 
         UpdateMapLine(topic_name + "[Navigation]", navigation_path);
-    }
-}
-
-void CTopViewScheduler::UpdateRNPEnvOut(double timestamp)
-{
-    auto mode_lanes = data_center_->GetDataPtr<QVector<CSDAModeLane>>();
-    if (!mode_lanes || mode_lanes->IsEmpty())
-        return;
-
-    auto params_map = vehicle_topview_widget_->setter_tab_widget_->GetAllItemParam();
-    for (auto topic_name : mode_lanes->Keys())
-    {
-        double t_temp = timestamp;
-        QVector<CSDAModeLane> lanes = data_center_->GetValue<QVector<CSDAModeLane>>(topic_name, timestamp);
-        if(std::abs(t_temp - timestamp) > 2.5)
-            continue;
-
-        if(!lanes.isEmpty())
-            current_mode_lane_[topic_name] = lanes;
-
-        QMap<int, QVector<CSDAModeLane>> deal_lane;
-        for(CSDAModeLane lane: current_mode_lane_[topic_name])
-        {
-            deal_lane[lane.relation2ego_].push_back(lane);
-        }
-
-        for(int key : deal_lane.keys())
-        {
-            UpdateModeLane(topic_name + "[" + QString::number(key) + "]", deal_lane[key]);
-        }
-    }
-}
-
-void CTopViewScheduler::UpdateModeLane(const QString &topic_name, QVector<CSDAModeLane> mode_lane)
-{
-    auto params_map = vehicle_topview_widget_->setter_tab_widget_->GetAllItemParam();
-
-    if (!params_map.contains(topic_name))
-    {
-        vehicle_topview_widget_->AddSetterItem(topic_name);
-        params_map = vehicle_topview_widget_->setter_tab_widget_->GetAllItemParam();
-    }
-
-    if (params_map[topic_name].check_status_)
-    {
-        if (!mode_lane.isEmpty())
-            vehicle_topview_widget_->UpdateModeLane(topic_name, mode_lane, params_map[topic_name].color_);
     }
 }
 

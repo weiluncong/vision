@@ -1,5 +1,6 @@
 syntax = "proto3";
 
+import "diagnosis.proto";
 package localization;
 
 enum SensorType {
@@ -11,19 +12,10 @@ enum SensorType {
   kFusion = 20;
 }
 
-enum LocStatus {
-  kInvalid = 0;
-  kUninitialized = 1;
-  kFailure = 2;
-  kGnssFilter = 3;
-  kFusionFilterLat = 4;
-  kFusionFilter = 5;
-}
-
 message CaAppendix {
   double heading = 1;
   double confidence = 2;
   .localization.SensorType type = 3;
-  .localization.LocStatus loc_status = 4;
+  .localization.Diagnosis diagnosis = 4;
 }
 

@@ -147,54 +147,6 @@ void CPointItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
             painter->drawEllipse(itemPoint, pen_width_ + 1, pen_width_ + 1);
         }
     }
-    else if (prediction_switch_)
-    {
-        for (auto line : prediction_lines_)
-        {
-            if (line.type_ == cav::CPredictionType::AlgorithmUnknow || 
-                line.type_ == cav::CPredictionType::AlgorithmCar || 
-                line.type_ == cav::CPredictionType::AlgorithmPerson)
-            {
-                for (int i = 0; i < line.predict_line_.size() - 1; i++)
-                {
-                    QPointF startPoint = parentItem_->PointItemInScene(QPointF(line.predict_line_[i].y_, line.predict_line_[i].x_));
-                    QPointF endPoint = parentItem_->PointItemInScene(QPointF(line.predict_line_[i + 1].y_, line.predict_line_[i + 1].x_));
-                    painter->drawEllipse(startPoint, 2, 2);
-                    painter->drawLine(startPoint, endPoint);
-                }
-                QPointF point  = parentItem_->PointItemInScene(QPointF(line.predict_line_.last().y_, line.predict_line_.last().x_));
-                painter->drawEllipse(point, 2, 2);
-            }
-            else if (line.type_ == cav::CPredictionType::AlgorithmCslstm)
-            {
-                for (int i = 0; i < line.predict_line_.size() - 1; i++)
-                {
-                        
-                    QPointF startPoint = parentItem_->PointItemInScene(QPointF(line.predict_line_[i].y_, line.predict_line_[i].x_));
-                    QPointF endPoint = parentItem_->PointItemInScene(QPointF(line.predict_line_[i + 1].y_, line.predict_line_[i + 1].x_));
-                    painter->drawEllipse(startPoint, 2, 2);
-                    if (i % 2 == 0)
-                        painter->drawLine(startPoint, endPoint);
-                }
-                QPointF point  = parentItem_->PointItemInScene(QPointF(line.predict_line_.last().y_, line.predict_line_.last().x_));
-                painter->drawEllipse(point, 2, 2);
-            }
-            else if (line.type_ == cav::CPredictionType::AlgorithmRaster)
-            {
-                for (int i = 0; i < line.predict_line_.size() - 1; i++)
-                {
-
-                    QPointF startPoint = parentItem_->PointItemInScene(QPointF(line.predict_line_[i].y_, line.predict_line_[i].x_));
-                    QPointF endPoint = parentItem_->PointItemInScene(QPointF(line.predict_line_[i + 1].y_, line.predict_line_[i + 1].x_));
-                    painter->drawEllipse(startPoint, 2, 2);
-                    if (i % 3 == 0)
-                        painter->drawLine(startPoint, endPoint);
-                }
-                QPointF point = parentItem_->PointItemInScene(QPointF(line.predict_line_.last().y_, line.predict_line_.last().x_));
-                painter->drawEllipse(point, 2, 2);
-            }
-        }
-    }
     else
     {
         for (cav::CPointData point : point_datas_)

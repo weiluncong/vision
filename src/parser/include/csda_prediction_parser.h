@@ -2,6 +2,7 @@
 #define CSDA_PREDICTION_PARSER_H
 
 #include "csda_common_parser.h"
+#include "cline_struct.h"
 
 /**
  * @brief SDA 预测信号解析 包含预测目标、预测轨迹、历史轨迹、多算法预测轨迹
@@ -20,7 +21,7 @@ private:
     // 解析轨迹包
     void ParserTrajectory(const google::protobuf::Message &msg, QVector<cav::CPointData> &line);
     // 解析轨迹集
-    void ParserTrajectoryMultimodal(const google::protobuf::Message &msg, cav::CPredictLine &debug_line);
+    void ParserTrajectoryMultimodal(const google::protobuf::Message &msg, CLineData &line);
 };
 
 #endif // CSDA_PREDICTION_PARSER_H

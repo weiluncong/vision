@@ -73,14 +73,6 @@ namespace cav
         double heading_ = 0;
         CMapPoint gnss_;
     };
-
-    class CSDAModeLane
-    {
-    public:
-        ///< 车道线与自车道相对位置 向左为负 向右为正  反向全部-1000 0表示在导航
-        int relation2ego_;
-        QVector<CPointData> points_;
-    };
 }
 
 #endif // CMAP_STRUCT_H

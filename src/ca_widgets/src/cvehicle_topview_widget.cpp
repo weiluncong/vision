@@ -70,34 +70,43 @@ void CVehicleTopViewWidget::HandleActColorChanged(const QString &name, const QCo
 {
     if (name.contains("FusionProto.FusObjects") || name.contains("CameraProto.CamObjects") ||
         name.contains("RadarProto.RadarObjects") || name.contains("LidarObjectProto.Objects") ||
-        name.contains("prediction.RNPObjectOut"))
+        name.contains("prediction.RNPObjectOut-obj"))
     {
         auto hash = GetDataPtr<CObjectItem *>();
-        if(nullptr == hash)
-            return;
-
-        for (auto i : hash->hash_[name])
+        if(hash)
         {
-            i->SetColor(color);
+            for (auto i : hash->hash_[name])
+            {
+                i->SetColor(color);
+            }
         }
     }
     else if (name.contains("Detections") || name.contains("FreeSpace") || name.contains("LidarFreeSpaceProto.FreeSpaceData"))
     {
         if (!point_item_map_.isEmpty())
         {
-
             for (auto i : point_item_map_[name])
             {
                 i->SetColor(color);
             }
         }
     }
-
-    if (name.contains("StaticHDMapInfo") || name.contains("StaticIDMapInfo") || 
-        name.contains("RNPEnvOut") || name.contains("RNPObjectDebugOut") ||
-        name.contains("history_trajectory") || name.contains("predict_trajectory"))
+    else if (name.contains("StaticHDMapInfo") || name.contains("StaticIDMapInfo") || name.contains("RNPEnvOut"))
     {
         auto hash = GetDataPtr<CPointItem *>();
+        if (hash)
+        {
+            for (auto i : hash->hash_[name])
+            {
+                i->SetColor(color);
+            }
+        }
+    }
+    else if (name.contains("prediction.RNPObjectDebugOut") ||
+             name.contains("prediction.RNPObjectOut-history_trajectory") ||
+             name.contains("prediction.RNPObjectOut-predict_trajectory"))
+    {
+        auto hash = GetDataPtr<CLineItem *>();
         if (hash)
         {
             for (auto i : hash->hash_[name])
@@ -114,7 +123,7 @@ void CVehicleTopViewWidget::HandleActCheckStatusChanged(const QString &name, boo
 {
     if (name.contains("FusionProto.FusObjects") || name.contains("CameraProto.CamObjects") ||
         name.contains("RadarProto.RadarObjects") || name.contains("LidarObjectProto.Objects") ||
-        name.contains("prediction.RNPObjectOut"))
+        name.contains("prediction.RNPObjectOut-obj"))
     {
         auto hash = GetDataPtr<CObjectItem *>();
         if (hash)
@@ -134,15 +143,24 @@ void CVehicleTopViewWidget::HandleActCheckStatusChanged(const QString &name, boo
                 i->setVisible(status);
             }
         }
-        else
-            qDebug() << "point_item_map_.empty";
     }
-
-    if (name.contains("StaticHDMapInfo") || name.contains("StaticIDMapInfo") || 
-        name.contains("RNPEnvOut") || name.contains("RNPObjectDebugOut") ||
-        name.contains("history_trajectory") || name.contains("predict_trajectory"))
+    else if (name.contains("StaticHDMapInfo") || name.contains("StaticIDMapInfo"))
     {
         auto hash = GetDataPtr<CPointItem *>();
+        if (hash)
+        {
+            for (auto i : hash->hash_[name])
+            {
+                i->setVisible(status);
+            }
+        }
+    }
+    else if (name.contains("RNPEnvOut") ||
+             name.contains("prediction.RNPObjectDebugOut") ||
+             name.contains("prediction.RNPObjectOut-history_trajectory") ||
+             name.contains("prediction.RNPObjectOut-predict_trajectory"))
+    {
+        auto hash = GetDataPtr<CLineItem *>();
         if (hash)
         {
             for (auto i : hash->hash_[name])
@@ -191,7 +209,7 @@ void CVehicleTopViewWidget::AddSetterItem(const QString &name)
 
 void CVehicleTopViewWidget::UpdateObjectItemData(const QString &name, double delta_time, const QVector<CObjectData> &data, const QColor &color)
 {
-    if (delta_time <= 250)
+    if (delta_time*1000 <= 250)
     {
         QMap<int, CObjectData> object_track_ids;
         for (auto i : data)
@@ -232,9 +250,7 @@ void CVehicleTopViewWidget::UpdateObjectItemData(const QString &name, double del
     }
 }
 
-void CVehicleTopViewWidget::UpdateMapLine(const QString &name,
-                                             const QVector<CMapLine> &lines,
-                                             const QColor &color)
+void CVehicleTopViewWidget::UpdateMapLine(const QString &name, const QVector<CMapLine> &lines, const QColor &color)
 {
     if(!IsValidIns(ins_))
     {
@@ -280,7 +296,6 @@ void CVehicleTopViewWidget::UpdateMapLine(const QString &name,
         point_hash->hash_[name].clear();
     }
 
-
     for (auto &tPoint : mapdata)
     {
         for (auto &type : tPoint.keys())
@@ -292,50 +307,10 @@ void CVehicleTopViewWidget::UpdateMapLine(const QString &name,
             item->SetPointName(QString::number(type));
             item->SetData(tPoint[type]);
             item->map_switch_ = true;
-            item->is_draw_name_ = true;
             item->is_draw_line_node_ = true;
             AppendValue<CPointItem *>(name, item);
         }
     }
-    graphics_scene_->update();
-}
-
-void CVehicleTopViewWidget::UpdateModeLane(const QString &name, const QVector<CSDAModeLane> &lanes, const QColor &color)
-{
-    if(!IsValidIns(ins_))
-    {
-        qDebug() << "InsData not valid!";
-        return;
-    }
-
-    CDataHash<CPointItem *> *point_hash = GetDataPtr<CPointItem *>();
-    if(nullptr != point_hash && point_hash->hash_.contains(name))
-    {
-        for(CPointItem *item : point_hash->hash_[name])
-        {
-            SAFE_DELETE(item);
-        }
-
-        point_hash->hash_[name].clear();
-    }
-
-    for(CSDAModeLane lane : lanes)
-    {
-        QStringList names = name.split("[")[1].split("]");
-        CPointItem *item = new CPointItem(background_item_);
-        item->SetColor(color);
-        item->SetLineType(1);
-        item->SetPointName(names[0]);
-        item->SetData(lane.points_);
-        item->SetPointType(3);
-        item->is_draw_name_ = true;
-        item->map_switch_ = true;
-        item->pen_width_ = 4;
-        item->font_size  = 20;
-        AppendValue<CPointItem *>(name, item);
-    }
-
-
     graphics_scene_->update();
 }
 
@@ -373,24 +348,27 @@ void CVehicleTopViewWidget::UpdatePointItemData(const QString &name, double time
     items.append(item);
 }
 
-void CVehicleTopViewWidget::UpdatePredictionLineItemData(const QString &name, double time, const QVector<CPredictLine> &data, const QColor &color)
+void CVehicleTopViewWidget::UpdateLineItemData(const QString &name, double delta_time, const QVector<CLineData> &data, const QColor &color)
 {
-    CDataHash<CPointItem *> *point_hash = GetDataPtr<CPointItem *>();
-    if(nullptr != point_hash && point_hash->hash_.contains(name))
+    if (delta_time*1000 <= 250)
     {
-        for(CPointItem *item : point_hash->hash_[name])
+        auto objs_hash = GetDataPtr<CLineItem *>();
+        if (objs_hash && objs_hash->hash_[name].size() > 0)
         {
-            SAFE_DELETE(item);
+            auto &items = objs_hash->hash_[name];
+            qDeleteAll(items);
+            items.clear();
         }
 
-        point_hash->hash_[name].clear();
+        for (auto i : data)
+        {
+            CLineItem *item = new CLineItem(background_item_);
+            item->SetColor(color);
+            item->SetData(i);
+            AppendValue<CLineItem *>(name, item);
+        }
+
+        graphics_scene_->update();
     }
 
-    CPointItem *item = new CPointItem(background_item_);
-    item->SetColor(color);
-    item->SetPrediction(data);
-    item->prediction_switch_ = true;
-    AppendValue<CPointItem *>(name, item);
-
-    graphics_scene_->update();
 }

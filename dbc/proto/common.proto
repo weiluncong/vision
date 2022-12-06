@@ -43,8 +43,6 @@ enum ObjectClass {
   OBJECT_CLASS_CONE = 11;
   OBJECT_CLASS_PARKING_LOCKED = 12;
   OBJECT_CLASS_PARKING_UNLOCKED = 13;
-  OBJECT_CLASS_PEDHEAD = 14;
-  OBJECT_CLASS_GENERAL = 15;
 }
 
 enum TurnSignal {
@@ -148,12 +146,11 @@ enum LineType {
   LINE_TYPE_DELINEATOR_POST = 16;
   LINE_TYPE_PARKING_CAR = 17;
   LINE_TYPE_UNKNOWN_RAISED = 18;
-  LINE_TYPE_FISHBONE_SOLID = 19;
+  LINE_TYPE_FISHBONE = 19;
   LINE_TYPE_UNKNOWN = 20;
   LINE_TYPE_DIVERSION_INSIDE = 21;
   LINE_TYPE_DIVERSION_OUTSIDE = 22;
   LINE_TYPE_WIDE_DASHED = 23;
-  LINE_TYPE_FISHBONE_DASHED = 24;
 }
 
 enum TrafficSignType {
@@ -173,49 +170,34 @@ enum TrafficSignType {
 }
 
 enum GroundTrafficSignType {
-  GROUND_SIGN_NO_DETECT = 0;
-  GROUND_SIGN_FORWARD = 1;
-  GROUND_SIGN_LEFT = 2;
-  GROUND_SIGN_RIGHT = 3;
-  GROUND_SIGN_TURN_ROUND_TO_LEFT = 4;
-  GROUND_SIGN_TURN_ROUND_TO_RIGHT = 5;
-  GROUND_SIGN_FORWARD_LEFT = 6;
-  GROUND_SIGN_FORWARD_RIGHT = 7;
-  GROUND_SIGN_FORWARD_TURNRDTOLEFT = 8;
-  GROUND_SIGN_FORWARD_TURNRDTORIGHT = 9;
-  GROUND_SIGN_TURNRD_TO_LEFT_OR_RIGHT = 10;
-  GROUND_SIGN_LEFT_TURNRD_TO_LEFT = 11;
-  GROUND_SIGN_RIGHT_TURNRD_TO_RIGHT = 12;
-  GROUND_SIGN_LEFT_TURNRD_TO_RIGHT = 13;
-  GROUND_SIGN_RIGHT_TURNRD_TO_LEFT = 14;
-  GROUND_SIGN_LEFT_FORWARD_RIGHT = 15;
-  GROUND_SIGN_LEFT_FORWARD_TURNRD_TO_RIGHT = 16;
-  GROUND_SIGN_RIGHT_FORWARD_TURNRD_TO_LEFT = 17;
-  GROUND_SIGN_TURNRD_TO_RT_FORWARD_TURNRD_TO_LT = 18;
-  GROUND_SIGN_RESERVED = 19;
+  GROUND_SIGN_NONE = 0;
+  GROUND_SIGN_STRAIGHT = 1;
+  GROUND_SIGN_TURN_LEFT = 2;
+  GROUND_SIGN_TURN_RIGHT = 3;
+  GROUND_SIGN_TURN_AROUND = 4;
+  GROUND_SIGN_TURN_LEFT_STRAIGHT = 5;
+  GROUND_SIGN_TURN_RIGHT_STRAIGHT = 6;
+  GROUND_SIGN_SIDEWALK_WARNING = 7;
+  GROUND_SIGN_SIDEWALK = 8;
+  GROUND_SIGN_STOP_LINE = 9;
+  GROUND_SIGN_WATING_LINE = 10;
+  GROUND_SIGN_UNDERGROUND_GUIDE_SHEAR = 11;
 }
 
 enum TrafficLightColor {
-  LIGHT_NO_DETECTED = 0;
+  LIGHT_COLOR_NONE = 0;
   LIGHT_COLOR_RED = 1;
-  LIGHT_COLOR_GREEN = 2;
-  LIGHT_COLOR_YELLOW = 3;
-  LIGHT_OFF = 4;
-  LIGHT_OTHER = 5;
-  LIGHT_RESERVED = 6;
-  LIGHT_INVALID = 7;
+  LIGHT_COLOR_YELLOW = 2;
+  LIGHT_COLOR_GREEN = 3;
+  LIGHT_COLOR_UNKNOW = 4;
 }
 
 enum TrafficLightDirection {
-  LIGHT_DIRECTION_NO_DISPLAY = 0;
-  LIGHT_DIRECTION_FORWARD = 1;
-  LIGHT_DIRECTION_LEFT = 2;
-  LIGHT_DIRECTION_FORWARD_AND_LEFT = 3;
-  LIGHT_DIRECTION_RIGHT = 4;
-  LIGHT_DIRECTION_FORWARD_AND_RIGHT = 5;
-  LIGHT_DIRECTION_RIGHT_AND_LEFT = 6;
-  LIGHT_DIRECTION_LEFT_AND_FORWARD_AND_RIGHT = 7;
-  LIGHT_DIRECTION_RESERVED = 8;
+  LIGHT_DIRECTION_NONE = 0;
+  LIGHT_DIRECTION_STRAIGHT = 1;
+  LIGHT_DIRECTION_TURN_LEFT = 2;
+  LIGHT_DIRECTION_TURN_RIGHT = 3;
+  LIGHT_DIRECTION_TURN_AROUND = 4;
 }
 
 enum SensorFlag {
@@ -235,7 +217,6 @@ enum SensorFlag {
   SENSOR_ULTRASONIC = 13;
   SENSOR_VEHICLE = 14;
   SENSOR_FLAG_NUM = 15;
-  sENsor_froNT_cAmErA = 16;
 }
 
 enum CoordinateSystem {
@@ -263,109 +244,6 @@ enum SensorStateFailure {
 enum FusionStateFailure {
   FUSION_FAIL_NO = 0;
   FUSION_FAIL_YES = 1;
-}
-
-enum SensorFailType {
-  Sensorsts_Norm = 0;
-  Sensorsts_CRCFail = 1;
-  Sensorsts_RollCounterFail = 2;
-  Sensorsts_TimeOutFail = 3;
-  Sensorsts_DSIFail = 4;
-  Sensorsts_TempFail = 5;
-  Sensorsts_VoltFail = 6;
-  Sensorsts_InFail = 7;
-  Sensorsts_SurfaceFail = 8;
-}
-
-enum CamFailType {
-  Camsts_Norm = 0;
-  Camsts_CRCFail = 1;
-  Camsts_RollCounterFail = 2;
-  Camsts_TimeOutFail = 3;
-  Camsts_DSIFail = 4;
-  Camsts_SignalFail = 5;
-  Camsts_PoseFail = 6;
-}
-
-enum RaderFailType {
-  Radersts_Norm = 0;
-  Radersts_CRCFail = 1;
-  Radersts_RollCounterFail = 2;
-  Radersts_TimeOutFail = 3;
-  Radersts_DSIFail = 4;
-}
-
-enum TrafficLightClassficationType {
-  TYPE_NO_DETECED = 0;
-  CIRCLE = 1;
-  ARROW = 2;
-  X_TYPE = 3;
-  TURN_ROUND = 4;
-  ARROW_AND_TURN_ROUND = 5;
-  OTHER = 6;
-  INVALID = 7;
-}
-
-enum TrafficLightBlindingStatus {
-  STATUS_NO_DETECED = 0;
-  LIGHT = 1;
-  FLASHING = 2;
-  OFF = 3;
-}
-
-message SensorRawFailure {
-  uint32 sns_flm = 1;
-  uint32 sns_flo = 2;
-  uint32 sns_frm = 3;
-  uint32 sns_fro = 4;
-  uint32 sns_frs = 5;
-  uint32 sns_fls = 6;
-  uint32 sns_rls = 7;
-  uint32 sns_rrs = 8;
-  uint32 sns_rro = 9;
-  uint32 sns_rrm = 10;
-  uint32 sns_rlm = 11;
-  uint32 sns_rlo = 12;
-  uint32 sns_frontcamera = 13;
-  uint32 sns_rearcamera = 14;
-  uint32 sns_leftcamera = 15;
-  uint32 sns_rightcamera = 16;
-  uint32 rlr = 17;
-  uint32 rrr = 18;
-  uint32 flr = 19;
-  uint32 frr = 20;
-  uint32 fc = 21;
-  uint32 ecu = 22;
-  uint32 avm_sys = 23;
-  uint32 soc_sys = 24;
-  uint32 mk_read = 25;
-  uint32 ck_read = 26;
-  uint32 trip_sys = 27;
-  uint32 dcan_sys = 28;
-  uint32 acan_sys = 29;
-  uint32 rcan_sys = 30;
-  uint32 ecan_sys = 31;
-  uint32 fcan_sys = 32;
-  uint32 ccan_sys = 33;
-  uint32 bcan_sys = 34;
-  uint32 bodycan_sys = 35;
-  uint32 ican_sys = 36;
-  uint32 eps2_sys = 37;
-  uint32 pmu_sys = 38;
-  uint32 esp_sys = 39;
-  uint32 whlspd = 40;
-  uint32 rbmepb_sys = 41;
-  uint32 rbmesp_sys = 42;
-  uint32 rbm_whlspd = 43;
-  uint32 eps_sys = 44;
-  uint32 rcan_sas = 45;
-  uint32 fr = 46;
-  uint32 lvsm = 47;
-  uint32 vcu_sys = 48;
-  uint32 ca_sys = 49;
-  uint32 ca_apa_sys = 50;
-  uint32 svdc_sys = 51;
-  double time_stamp = 52;
 }
 
 message PixelPoint {
