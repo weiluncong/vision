@@ -7,7 +7,7 @@ void CSdaParser::ParseHDMap(const QString &package_msg_name, const google::proto
         return;
     }
 
-    QMap<int, QVector<CMapLine>> data;
+    QMap<int, QVector<CLineData>> data;
     auto reflection = msg.GetReflection();
     auto descriptor = msg.GetDescriptor();
     int field_count = descriptor->field_count();
@@ -20,7 +20,7 @@ void CSdaParser::ParseHDMap(const QString &package_msg_name, const google::proto
             for (int j = 0; j < val_size; j++)
             {
                 int link_id = 0;
-                QVector<CMapLine> lines;
+                QVector<CLineData> line_vec;
                 const auto &link_msg = reflection->GetRepeatedMessage(msg, field, j);
                 auto link_reflector = link_msg.GetReflection();
                 auto link_descript = link_msg.GetDescriptor();
@@ -34,12 +34,12 @@ void CSdaParser::ParseHDMap(const QString &package_msg_name, const google::proto
                         int val_size = link_reflector->FieldSize(link_msg, field);
                         for (int l = 0; l < val_size; l++)
                         {
-                            CMapLine line;
+                            CLineData line;
                             const auto &line_msg = link_reflector->GetRepeatedMessage(link_msg, field, l);
                             auto line_reflector = line_msg.GetReflection();
                             auto line_descript = line_msg.GetDescriptor();
-                            AssignStruct(line_msg, line_descript, line.index_, "index");
-                            AssignStruct(line_msg, line_descript, line.type_, "line_type");
+                            AssignStruct(line_msg, line_descript, line.id_, "index");
+                            AssignStruct(line_msg, line_descript, line.lane_type_, "line_type");
                             int line_count = line_descript->field_count();
                             for (int m = 0; m < line_count; m++)
                             {
@@ -49,21 +49,19 @@ void CSdaParser::ParseHDMap(const QString &package_msg_name, const google::proto
                                     int val_size = line_reflector->FieldSize(line_msg, field);
                                     for (int n = 0; n < val_size; n++)
                                     {
-                                        CMapPoint gnss;
+                                        CPointData point;
                                         const auto &point_msg = line_reflector->GetRepeatedMessage(line_msg, field, n);
-                                        gnss = ParserGnss(point_msg);
-                                        line.points_.push_back(gnss);
+                                        point = ParserGnss(point_msg);
+                                        line.points_.push_back(point);
                                     }
                                     continue;
                                 }
                             }
-                            if (!line.points_.isEmpty())
-                                lines.push_back(line);
+                                line_vec.push_back(line);
                         }
                     }
                 }
-                if (!lines.isEmpty())
-                    data[link_id].append(lines);
+                data[link_id].append(line_vec);
             }
         }
     }
@@ -77,12 +75,12 @@ void CSdaParser::ParseIns(const QString &package_msg_name, const google::protobu
     if (!package_msg_name.contains("InsData") || package_msg_name.contains("fix"))
         return;
 
-    CMapInsData data;
+    CPointData point;
     auto descriptor = msg.GetDescriptor();
-    data.gnss_ = ParserGnss(msg);
-    AssignStruct(msg, descriptor, data.heading_, "heading");
+    point = ParserGnss(msg);
+    AssignStruct(msg, descriptor, point.heading_, "heading");
 
-    data_center_->InsertValue("InsDataFix", time, data);
+    data_center_->InsertValue("InsDataFix", time, point);
     ParseFinished("topview", time);
 }
 
@@ -96,7 +94,8 @@ void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google:
     auto reflection = msg.GetReflection();
     auto descriptor = msg.GetDescriptor();
     int field_count = descriptor->field_count();
-    QMap<int, QVector<CMapLine>> map_info;
+    QVector<CLineData> navigation_line_vec;
+    QMap<int, QVector<CLineData>> map_info;
     for (int i = 0; i < field_count; i++)
     {
         auto field = descriptor->field(i);
@@ -117,19 +116,18 @@ void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google:
         if (field->name() == "lanes")
         {
             int lane_size = reflection->FieldSize(msg, field);
-            QVector<CMapLine> lanes;
             for (int j = 0; j < lane_size; j++)
             {
-                CMapLine lane;
-                lane.type_ = CLineType::LaneLine;
+                CLineData line;
+                line.type_ = CLineType::LaneLine;
                 auto &lane_msg = reflection->GetRepeatedMessage(msg, field, j);
                 auto lane_reflector = lane_msg.GetReflection();
                 auto lane_descript = lane_msg.GetDescriptor();
                 // 车道id
-                AssignStruct(lane_msg, lane_descript, lane.index_, "lane_id");
+                AssignStruct(lane_msg, lane_descript, line.id_, "lane_id");
                 ///<是否匹配导航路线：[/],(0,0,1),[/],(1,0),/，输出
                 ///<说明：默认不匹配，输出0；如果重复的情况在原有的基础上增加1bit
-                AssignStruct(lane_msg, lane_descript, lane.in_navigation_route_, "in_navigation_route");
+                AssignStruct(lane_msg, lane_descript, line.navigation_status_, "in_navigation_route");
 
                 /// lane msg content parser
                 int lane_count = lane_descript->field_count();
@@ -142,38 +140,35 @@ void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google:
                         int point_size = lane_reflector->FieldSize(lane_msg, field);
                         for (int n = 0; n < point_size; n++)
                         {
-                            CMapPoint gnss;
+                            CPointData point;
                             const auto &point_msg = lane_reflector->GetRepeatedMessage(lane_msg, field, n);
-                            gnss = ParserGnss(point_msg);
-                            lane.points_.push_back(gnss);
+                            point = ParserGnss(point_msg);
+                            line.points_.push_back(point);
                         }
                     }
                 }
-
-                if (!lane.points_.isEmpty())
-                    lanes.push_back(lane);
+                if (line.navigation_status_)
+                    navigation_line_vec.append(line);
                 else
-                    qDebug() << "lane id:" << lane.index_ << " points is Empty!";
+                    map_info[line.lane_type_].append(line);
             }
 
-            map_info[0].append(lanes);
         }
 
         /// repeated Line
         if (field->name() == "lines")
         {
-            QVector<CMapLine> lines;
             int line_size = reflection->FieldSize(msg, field);
             for (int l = 0; l < line_size; l++)
             {
-                CMapLine line;
+                CLineData line;
                 const auto &line_msg = reflection->GetRepeatedMessage(msg, field, l);
                 auto line_reflector = line_msg.GetReflection();
                 auto line_descript = line_msg.GetDescriptor();
 
                 ///< 车道线id:[/],(0,0,/),[/],(1,0),无索引顺序，输出
-                AssignStruct(line_msg, line_descript, line.index_, "line_id");
-                AssignStruct(line_msg, line_descript, line.marking_type_, "linemarking_type");
+                AssignStruct(line_msg, line_descript, line.id_, "line_id");
+                AssignStruct(line_msg, line_descript, line.type_, "linemarking_type");
                 int line_count = line_descript->field_count();
                 for (int m = 0; m < line_count; m++)
                 {
@@ -182,7 +177,7 @@ void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google:
                     ///< 车道线类型
                     if (field->name() == "line_type")
                     {
-                        line.type_ = GetRepeatedMsg(line_msg, field, 0).toInt();
+                        line.lane_type_ = GetRepeatedMsg(line_msg, field, 0).toInt();
                         continue;
                     }
                     ///< 车道线轨迹点集合
@@ -191,27 +186,24 @@ void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google:
                         int val_size = line_reflector->FieldSize(line_msg, field);
                         for (int n = 0; n < val_size; n++)
                         {
-                            CMapPoint gnss;
+                            CPointData point;
                             const auto &point_msg = line_reflector->GetRepeatedMessage(line_msg, field, n);
-                            gnss = ParserGnss(point_msg);
-                            line.points_.push_back(gnss);
+                            point = ParserGnss(point_msg);
+                            line.points_.push_back(point);
                         }
-
                         continue;
                     }
                 }
-
-                if (!line.points_.isEmpty())
-                    lines.push_back(line);
-                else
-                    qDebug() << "lane id:" << line.index_ << " points is Empty!";
+                map_info[line.lane_type_].append(line);
             }
-
-            map_info[1].append(lines);
         }
     }
 
-    data_center_->InsertValue(package_msg_name, time, map_info);
+    data_center_->InsertValue(package_msg_name + "[Navigation]", time, navigation_line_vec);
+    for (auto it = map_info.begin(); it != map_info.end(); it++)
+    {
+        data_center_->InsertValue(package_msg_name + "[" + QString::number(it.key()) + "]", time, it.value());
+    }
     ParseFinished("topview", time);
 }
 

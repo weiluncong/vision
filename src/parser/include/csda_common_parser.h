@@ -3,7 +3,6 @@
 
 #include "cdata_center.h"
 #include "abstract_parser.h"
-#include "cmap_struct.h"
 #include "cpathplanning_struct.h"
 #include "creferenceline_struct.h"
 #include "cvision_rle_struct.h"
@@ -33,12 +32,12 @@ public:
      * @param CPointData 点:包含x，y，z
      * @return cav::CPointData 根据当前数据中是否有xyz依次填值，无则为cPointData默认值 0
      */
-    cav::CPointData ParserPoint(const google::protobuf::Message &msg);
+    CPointData ParserPoint(const google::protobuf::Message &msg);
 
     /**
      * @brief 经纬度坐标解析
      */
-    cav::CMapPoint ParserGnss(const google::protobuf::Message &msg);
+    CPointData ParserGnss(const google::protobuf::Message &msg);
 };
 
 template <typename T>

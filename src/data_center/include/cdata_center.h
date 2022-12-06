@@ -11,7 +11,6 @@
 #include "cpoint_struct.h"
 #include "cdat_struct.h"
 #include "cvision_obj_struct.h"
-#include "cmap_struct.h"
 
 using namespace cav;
 

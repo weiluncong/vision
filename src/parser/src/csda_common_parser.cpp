@@ -1,6 +1,6 @@
 #include "csda_common_parser.h"
 
-cav::CPointData CSdaCommmonParser::ParserPoint(const google::protobuf::Message &msg)
+CPointData CSdaCommmonParser::ParserPoint(const google::protobuf::Message &msg)
 {
     cav::CPointData point;
     auto descriptor = msg.GetDescriptor();
@@ -10,9 +10,9 @@ cav::CPointData CSdaCommmonParser::ParserPoint(const google::protobuf::Message &
     return point;
 }
 
-cav::CMapPoint CSdaCommmonParser::ParserGnss(const google::protobuf::Message &msg)
+CPointData CSdaCommmonParser::ParserGnss(const google::protobuf::Message &msg)
 {
-    cav::CMapPoint gnss;
+    CPointData point;
     auto descriptor = msg.GetDescriptor();
     int field_count = descriptor->field_count();
     for (int i = 0; i < field_count; i++)
@@ -20,12 +20,12 @@ cav::CMapPoint CSdaCommmonParser::ParserGnss(const google::protobuf::Message &ms
         auto field = descriptor->field(i);
         if (field->lowercase_name() == "lat" || field->lowercase_name() == "latitude")
         {
-            gnss.latitude_ = FieldToQStr(msg, field).toDouble();
+            point.latitude_ = FieldToQStr(msg, field).toDouble();
         }
         else if (field->lowercase_name() == "lng" || field->lowercase_name() == "longitude")
         {
-            gnss.longitude_ = FieldToQStr(msg, field).toDouble();
+            point.longitude_ = FieldToQStr(msg, field).toDouble();
         }
     }
-    return gnss;
+    return point;
 }

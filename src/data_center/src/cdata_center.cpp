@@ -28,10 +28,6 @@ void CDataCenter::ClearAllData()
     SAFE_DELETE(point_data_ptr);
     auto obj_box_data_ptr = GetDataPtr<QVector<CObjBoxCV>>();
     SAFE_DELETE(obj_box_data_ptr);
-    auto map_line_data_ptr = GetDataPtr<QMap<int, QVector<CMapLine>>>();
-    SAFE_DELETE(map_line_data_ptr);
-    auto map_ins_data_ptr = GetDataPtr<CMapInsData>();
-    SAFE_DELETE(map_ins_data_ptr);
 
     SafeClear(data_ptr_map_);
     data_start_time_ = 0;
