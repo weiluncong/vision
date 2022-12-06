@@ -24,18 +24,29 @@ CParserManager::~CParserManager()
 void CParserManager::InitParseFunc()
 {
     camera_parser_ = std::shared_ptr<CameraParser>(new CameraParser());
-    csda_parser_ = std::shared_ptr<CSdaParser>(new CSdaParser());
+    cobject_parser_ = std::shared_ptr<CObjectParser>(new CObjectParser());
+    camline_parser_ = std::shared_ptr<CCamLineParser>(new CCamLineParser());
+    cpoint_set_parser_ = std::shared_ptr<CPointSetParser>(new CPointSetParser());
+	csda_parser_ = std::shared_ptr<CSdaParser>(new CSdaParser());
     csda_lidar_parser_ = std::shared_ptr<CSDALidarParser>(new CSDALidarParser());
     csda_pediction_parser_ = std::shared_ptr<CSDAPredictionParser>(new CSDAPredictionParser());
     cvision_parser_ = std::shared_ptr<CSdaVisionParser>(new CSdaVisionParser());
-    cobject_parser_ = std::shared_ptr<CObjectParser>(new CObjectParser());
-    csda_parser = std::shared_ptr<CSdaParser>(new CSdaParser());
 
+    // object parser
     AddParserFun("FusionProto.FusObjects", &CObjectParser::ParseObjects, cobject_parser_);
     AddParserFun("VpCameraProto.CamObjects", &CObjectParser::ParseObjects, cobject_parser_);
     AddParserFun("CameraProto.CamObjects", &CObjectParser::ParseObjects, cobject_parser_);
     AddParserFun("RadarProto.RadarObjects", &CObjectParser::ParseObjects, cobject_parser_);
 
+    // line parser
+    AddParserFun("CameraProto.CamLines", &CCamLineParser::ParseCamLines, camline_parser_);
+
+    // freespace parser
+    AddParserFun("FusionProto.FusFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
+    AddParserFun("FusionProto.RadarFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
+    AddParserFun("FusionProto.VisionFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
+    AddParserFun("CameraProto.CamFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
+	
     // lidar parser
     AddParserFun("LidarObjectProto.Objects", &CSDALidarParser::ParseLidarObjects, csda_lidar_parser_);
     AddParserFun("LidarFreeSpaceProto.FreeSpaceData", &CSDALidarParser::ParseLidarFreeSpace, csda_lidar_parser_);
@@ -44,10 +55,10 @@ void CParserManager::InitParseFunc()
     AddParserFun("VpCameraProto.CamFreeSpace", &CSdaVisionParser::ParserVisionFreespace, cvision_parser_);
 
     // sda env parser
-    AddParserFun("localization.InsData", &CSdaParser::ParseIns, csda_parser);
-    AddParserFun("hdmap.StaticHDMapInfo", &CSdaParser::ParseHDMap, csda_parser);
-    AddParserFun("idmap.StaticIDMapInfo", &CSdaParser::ParseIdmapStatic, csda_parser);
-    AddParserFun("prediction.RNPEnvOut", &CSdaParser::ParseRNPEnvOut, csda_parser);
+    AddParserFun("localization.InsData", &CSdaParser::ParseIns, csda_parser_);
+    AddParserFun("hdmap.StaticHDMapInfo", &CSdaParser::ParseHDMap, csda_parser_);
+    AddParserFun("idmap.StaticIDMapInfo", &CSdaParser::ParseIdmapStatic, csda_parser_);
+    AddParserFun("prediction.RNPEnvOut", &CSdaParser::ParseRNPEnvOut, csda_parser_);
 
     // sda prediction parser
     AddParserFun("prediction.RNPObjectOut", &CSDAPredictionParser::ParsePredictions, csda_pediction_parser_);
@@ -79,13 +90,10 @@ void CParserManager::HandleMetaData(double timestamp, const QString &topic_name,
     {
         start_time_ = timestamp;
         data_center_->data_start_time_ = start_time_;
-        // qDebug() << "time: " << data_center_->data_start_time_;
     }
     end_time_ = timestamp;
     QString swc_name;
     QString package_msg_name;
-    if (topic_name.split("-").empty())
-        return;
     SplitTopicName(topic_name, swc_name, package_msg_name);
     double time = end_time_ - start_time_;
 
@@ -132,6 +140,10 @@ void CParserManager::HandleMetaData(double timestamp, const QString &topic_name,
         {
             cvision_parser_->ParseSemantic(topic_name, data, time);
         }
+        // google::protobuf::Message *msg = proto_pool_->GetProtoMessage(TOSTR(topic_name), TOSTR(package_msg_name), data);
+        // if (!msg)
+        //     return;
+        // data_center_->InsertValue(topic_name, time, msg);
     }
 }
 

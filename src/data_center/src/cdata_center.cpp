@@ -22,8 +22,8 @@ void CDataCenter::ClearAllData()
     SAFE_DELETE(img_data_ptr);
     auto obj_data_ptr = GetDataPtr<QVector<CObjectData>>();
     SAFE_DELETE(obj_data_ptr);
-     auto line_data_ptr = GetDataPtr<QVector<CLineData>>();
-     SAFE_DELETE(line_data_ptr);
+    auto line_data_ptr = GetDataPtr<QVector<CLineData>>();
+    SAFE_DELETE(line_data_ptr);
     auto point_data_ptr = GetDataPtr<QVector<CPointData>>();
     SAFE_DELETE(point_data_ptr);
     auto obj_box_data_ptr = GetDataPtr<QVector<CObjBoxCV>>();
