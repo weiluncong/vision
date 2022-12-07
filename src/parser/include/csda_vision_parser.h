@@ -65,8 +65,6 @@ private:
     void ParseVisionSemantic(const QString &msg_name, const google::protobuf::Message &msg, double time);
 
 protected:
-    CDataCenter *data_center_;
-
     cav::CRLECompressedImage *rle_decode_;
     cav::CapilotParsingFrame *vision_decode_;
 
