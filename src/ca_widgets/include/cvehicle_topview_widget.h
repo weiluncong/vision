@@ -61,6 +61,12 @@ private:
     void HandleActColorChanged(const QString &name, const QColor &color);
     void HandleActCheckStatusChanged(const QString &name, bool status);
     void TransferMap(QVector<CLineData> &lines);
+    template <class T>
+    void HandleActSetStatus(const QString &name, const T &status);
+    template <class T>
+    void SetStatus(const QString &name, const QColor &color);
+    template <class T>
+    void SetStatus(const QString &name, bool status);
 
 private:
     QSplitter *main_splitter_ = nullptr;
@@ -98,4 +104,54 @@ CDataHash<T> *CVehicleTopViewWidget::GetDataPtr()
     return nullptr;
 }
 
+template <class T>
+void CVehicleTopViewWidget::HandleActSetStatus(const QString &name, const T &status)
+{
+    if (name.contains("FusionProto.FusObjects") || name.contains("CameraProto.CamObjects") ||
+        name.contains("RadarProto.RadarObjects") || name.contains("LidarObjectProto.Objects") ||
+        name.contains("prediction.RNPObjectOut-obj"))
+    {
+        SetStatus<CObjectItem>(name, status);
+    }
+    else if (name.contains("prediction.RNPObjectDebugOut") ||
+             name.contains("prediction.RNPObjectOut-history_trajectory") ||
+             name.contains("prediction.RNPObjectOut-predict_trajectory") ||
+             name.contains("CameraProto.CamLines"))
+    {
+        SetStatus<CLineItem>(name, status);
+    }
+    else if (name.contains("FusionProto.FusFreeSpace") || name.contains("FusionProto.RadarFreeSpace") ||
+             name.contains("FusionProto.VisionFreeSpace") || name.contains("CameraProto.CamFreeSpace") ||
+             name.contains("StaticHDMapInfo") || name.contains("StaticIDMapInfo") || name.contains("RNPEnvOut"))
+    {
+        SetStatus<CPointSetItem>(name, status);
+    }
+    graphics_scene_->update();
+}
+
+template <class T>
+void CVehicleTopViewWidget::SetStatus(const QString &name, const QColor &color)
+{
+    auto hash = GetDataPtr<T *>();
+    if (hash)
+    {
+        for (auto i : hash->hash_[name])
+        {
+            i->SetColor(color);
+        }
+    }
+}
+
+template <class T>
+void CVehicleTopViewWidget::SetStatus(const QString &name, bool status)
+{
+    auto hash = GetDataPtr<T *>();
+    if (hash)
+    {
+        for (auto i : hash->hash_[name])
+        {
+            i->setVisible(status);
+        }
+    }
+}
 #endif // CVEHICLE_TOPVIEW_WIDGET_H
