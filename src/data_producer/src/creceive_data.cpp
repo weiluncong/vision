@@ -359,9 +359,6 @@ void CReceiveData::DDSDataCallBack(dds_entity_t reader, void *arg)
 
 bool CReceiveData::CreateDDSListener(dds_listener_t **listener)
 {
-    if ((*listener) == nullptr)
-        return false;
-
     *listener = dds_create_listener(this);
     if ((*listener) == nullptr)
         return false;
