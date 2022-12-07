@@ -68,83 +68,13 @@ void CVehicleTopViewWidget::CreateMenu()
 /** @brief 响应颜色变化时，更新图像颜色*/
 void CVehicleTopViewWidget::HandleActColorChanged(const QString &name, const QColor &color)
 {
-    if (name.contains("FusionProto.FusObjects") || name.contains("CameraProto.CamObjects") ||
-        name.contains("RadarProto.RadarObjects"))
-    {
-        auto hash = GetDataPtr<CObjectItem *>();
-        if (hash)
-        {
-            for (auto i : hash->hash_[name])
-            {
-                i->SetColor(color);
-            }
-        }
-    }
-    else if (name.contains("CameraProto.CamLines"))
-    {
-        auto hash = GetDataPtr<CLineItem *>();
-        if (hash)
-        {
-            for (auto i : hash->hash_[name])
-            {
-                i->SetColor(color);
-            }
-        }
-    }
-    else if (name.contains("FusionProto.FusFreeSpace") || name.contains("FusionProto.RadarFreeSpace") ||
-             name.contains("FusionProto.VisionFreeSpace") || name.contains("CameraProto.CamFreeSpace"))
-    {
-        auto hash = GetDataPtr<CPointSetItem *>();
-        if (hash)
-        {
-            for (auto i : hash->hash_[name])
-            {
-                i->SetColor(color);
-            }
-        }
-    }
-    graphics_scene_->update();
+    HandleActSetStatus(name, color);
 }
 
 /** @brief 响应复选框选择事件，更改item是否显示的状态*/
 void CVehicleTopViewWidget::HandleActCheckStatusChanged(const QString &name, bool status)
 {
-    if (name.contains("FusionProto.FusObjects") || name.contains("CameraProto.CamObjects") ||
-        name.contains("RadarProto.RadarObjects"))
-    {
-        auto hash = GetDataPtr<CObjectItem *>();
-        if (hash)
-        {
-            for (auto i : hash->hash_[name])
-            {
-                i->setVisible(status);
-            }
-        }
-    }
-    else if (name.contains("CameraProto.CamLines"))
-    {
-        auto hash = GetDataPtr<CLineItem *>();
-        if (hash)
-        {
-            for (auto i : hash->hash_[name])
-            {
-                i->setVisible(status);
-            }
-        }
-    }
-    else if (name.contains("FusionProto.FusFreeSpace") || name.contains("FusionProto.RadarFreeSpace") ||
-             name.contains("FusionProto.VisionFreeSpace") || name.contains("CameraProto.CamFreeSpace"))
-    {
-        auto hash = GetDataPtr<CPointSetItem *>();
-        if (hash)
-        {
-            for (auto i : hash->hash_[name])
-            {
-                i->setVisible(status);
-            }
-        }
-    }
-    graphics_scene_->update();
+    HandleActSetStatus(name, status);
 }
 
 void CVehicleTopViewWidget::HandleActBtnClicked()
