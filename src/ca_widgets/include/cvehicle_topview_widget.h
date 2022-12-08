@@ -114,6 +114,7 @@ void CVehicleTopViewWidget::HandleActSetStatus(const QString &name, const T &sta
              name.contains("prediction.RNPObjectOut-predict_trajectory") ||
              name.contains("prediction.RNPEnvOut") ||
              name.contains("idmap.StaticIDMapInfo") ||
+             name.contains("PlanningPaths") ||
              name.contains("CameraProto.CamLines"))
     {
         SetStatus<CLineItem>(name, status);
