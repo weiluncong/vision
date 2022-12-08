@@ -47,7 +47,22 @@ void CLineItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
             painter->drawLine(start_point, end_point);
         }
     }
-    else if (line_data_.type_ == 3)
+    else if (line_data_.type_ == CLineData::SolidDotLine)
+    {
+        QPainterPath path(parent_item_->PointItemInScene(line_points_[0]));
+        painter->setPen(QPen(color_, 6));
+        for (int i = 0; i < line_points_.size() - 1; ++i)
+        {
+            QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
+            QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
+            QPointF control_point = (start_point + end_point) / 2.0;
+            path.quadTo(control_point, end_point);
+            painter->drawPoint(start_point);
+        }
+        painter->setPen(QPen(color_, 3));
+        painter->drawPath(path);
+    }
+    else if (line_data_.type_ == CLineData::RedSolidLine)
     {
         painter->setPen(QPen(Qt::red, 2));
         for (int i = 0; i < line_points_.size() - 1; i++)
@@ -57,7 +72,7 @@ void CLineItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
             painter->drawLine(start_point, end_point);
         }
     }
-    else if (line_data_.type_ == 4)
+    else if (line_data_.type_ == CLineData::GreenSolidLine)
     {
         painter->setPen(QPen(Qt::green, 2));
         for (int i = 0; i < line_points_.size() - 1; i++)
@@ -67,7 +82,7 @@ void CLineItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
             painter->drawLine(start_point, end_point);
         }
     }
-    else if (line_data_.type_ == 5)
+    else if (line_data_.type_ == CLineData::BlueSolidLine)
     {
         painter->setPen(QPen(Qt::blue, 2));
         for (int i = 0; i < line_points_.size() - 1; i++)

@@ -16,6 +16,7 @@ namespace cav
         enum LineType{
             SolidLine = 1,
             DashedLine,
+            SolidDotLine,
             RedSolidLine,
             GreenSolidLine,
             BlueSolidLine
