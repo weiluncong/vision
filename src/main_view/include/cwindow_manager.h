@@ -25,7 +25,6 @@ public slots:
     void HandleDataLoadFinish();
     void HandleActDataTotalRecord();
     void HandleActDataPointRecord();
-    void HandleActOnceDataPointRecord();
 
 private:
     CMainWindow *main_window_ = nullptr;

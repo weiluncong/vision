@@ -33,3 +33,18 @@ void CDataCenter::ClearAllData()
     data_start_time_ = 0;
     data_end_time_ = 0;
 }
+
+void CDataCenter::InsertRecordData(double timestamp, const std::string &data)
+{
+    std::lock_guard<std::mutex> lg(record_mutex_);
+    data_buf_.insert({timestamp, data});
+}
+
+std::multimap<double, std::string> CDataCenter::GetRecordData(bool remove)
+{
+    std::lock_guard<std::mutex> record_lg(data_center_->record_mutex_);
+    if (remove)
+        return std::move(data_buf_);
+
+    return data_buf_;
+}

@@ -18,7 +18,10 @@ public:
     ~CDataPointRecord();
 
     void StartPointRecord();
+
+private:
     void GetProtoContent();
+    void HandlePointRecordOver();
 
 public:
     CDataCenter *data_center_ = nullptr;

@@ -45,11 +45,7 @@ void CDataTotalRecord::DoRecord()
             {
                 OpenFile();
             }
-            std::multimap<double, std::string> data_buf;
-            {
-                std::lock_guard<std::mutex> record_lg(data_center_->record_mutex_);
-                data_buf = std::move(data_center_->data_buf_);
-            }
+            std::multimap<double, std::string> data_buf = data_center_->GetRecordData(true);
             for (auto i : data_buf)
             {
                 data_record_->Record(i.second);

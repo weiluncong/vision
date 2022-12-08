@@ -154,11 +154,8 @@ void CWindowManager::HandleActDataPointRecord()
     FLAGS_v_point_record = !FLAGS_v_point_record;
     if (FLAGS_v_point_record)
     {
-        connect(main_window_->act_once_point_record_, &QAction::triggered,
-                this, &CWindowManager::HandleActOnceDataPointRecord);
         QString record_file_path = QFileDialog::getExistingDirectory(main_window_, "select file path", point_record_address_,
                                                                      QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly);
-
         if (!record_file_path.isEmpty())
         {
             /** @brief create dir to save .dat*/
@@ -178,21 +175,20 @@ void CWindowManager::HandleActDataPointRecord()
             if (!data_point_record_)
             {
                 data_point_record_ = new CDataPointRecord(record_file_path);
+                connect(main_window_->act_once_point_record_, &QAction::triggered,
+                        data_point_record_, &CDataPointRecord::StartPointRecord);
             }
             point_record_address_ = record_file_path;
+        }
+        else
+        {
+            FLAGS_v_point_record = !FLAGS_v_point_record;
         }
     }
     else
     {
         main_window_->act_total_record_->setEnabled(true);
         main_window_->act_point_record_->setIcon(QIcon(":/icon/point_record_.png"));
-        disconnect(main_window_->act_once_point_record_, &QAction::triggered,
-                   this, &CWindowManager::HandleActOnceDataPointRecord);
         SAFE_DELETE(data_point_record_);
     }
-}
-
-void CWindowManager::HandleActOnceDataPointRecord()
-{
-    data_point_record_->StartPointRecord();
 }

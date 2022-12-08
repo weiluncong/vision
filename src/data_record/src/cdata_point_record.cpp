@@ -11,6 +11,7 @@ CDataPointRecord::CDataPointRecord(const QString &file_path, QObject *parent)
 
 CDataPointRecord::~CDataPointRecord()
 {
+    SafeClear(data_center_->data_buf_);
     for(auto i : point_recorders_)
     {
         SAFE_DELETE(i);
@@ -19,31 +20,38 @@ CDataPointRecord::~CDataPointRecord()
 
 void CDataPointRecord::GetProtoContent()
 {
-    std::string temp_content = proto_pool_->GetProtoContent();
-    if (!temp_content.empty())
-        proto_content_ = temp_content;
+    if (proto_content_.empty())
+    {
+        std::string temp_content = proto_pool_->GetProtoContent();
+        if (!temp_content.empty())
+            proto_content_ = temp_content;
+    }
+}
+
+void CDataPointRecord::HandlePointRecordOver()
+{
+    CPointRecord *record = qobject_cast<CPointRecord *>(sender());
+    for(auto it = point_recorders_.begin(); it != point_recorders_.end(); ++it)
+    {
+        if(*it == record)
+        {
+            point_recorders_.erase(it);
+            SAFE_DELETE(record);
+            break;
+        }
+    }
 }
 
 void CDataPointRecord::StartPointRecord()
 {
-    if(proto_content_.empty())
+    QString name = file_path_ + "/" + QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss") + ".dat";
+    if (!QFile::exists(name)) //防止按键过快,创建同样的文件
     {
         GetProtoContent();
+        CPointRecord *point_record = new CPointRecord(this);
+        connect(point_record, &CPointRecord::SigPointRecordOver, this, &CDataPointRecord::HandlePointRecordOver);
+        point_recorders_.push_back(point_record);
+        std::thread t(&CPointRecord::DoRecord, point_record, name);
+        t.detach();
     }
-    CPointRecord *point_record = new CPointRecord(this);
-    connect(point_record, &CPointRecord::SigPointRecordOver,
-            [this]{
-                CPointRecord *record = static_cast<CPointRecord *>(sender());
-                for(auto it = point_recorders_.begin(); it != point_recorders_.end(); ++it)
-                {
-                    if(*it == record)
-                    {
-                        point_recorders_.erase(it);
-                        break;
-                    }
-                }
-            });
-    point_recorders_.push_back(point_record);
-    std::thread t(&CPointRecord::DoRecord, point_record);
-    t.detach();
 }

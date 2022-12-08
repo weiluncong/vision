@@ -1,4 +1,4 @@
-#ifndef CDATACENTER_H
+﻿#ifndef CDATACENTER_H
 #define CDATACENTER_H
 
 #include <QObject>
@@ -40,6 +40,9 @@ public:
 
     template <class T>
     T GetValue(const QString &topic_name, double &time);
+
+    void InsertRecordData(double timestamp, const std::string &data);
+    std::multimap<double, std::string> GetRecordData(bool remove);
 
 public:
     // data record

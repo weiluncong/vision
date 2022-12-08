@@ -17,7 +17,7 @@ class CPointRecord : public QObject
 public:
     CPointRecord(CDataPointRecord *point_record);
     ~CPointRecord();
-    void DoRecord();
+    void DoRecord(const QString &file_name);
     void WaitDataBufUpdate();
 
 private:

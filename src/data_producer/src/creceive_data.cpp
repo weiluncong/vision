@@ -173,10 +173,7 @@ void CReceiveData::RecordData(const std::string &topic_name, double timestamp, c
             return;
         }
         RawData rdata(topic_name, timestamp, msg_data);
-        {
-            std::lock_guard<std::mutex> save_lg(this->data_center_->record_mutex_);
-            this->data_center_->data_buf_.insert({timestamp, rdata.rawData()});
-        }
+        data_center_->InsertRecordData(timestamp, rdata.rawData());
         if (FLAGS_v_point_record)
         {
             emit this->signal_manager_->SigUpdateDataBufSize();
@@ -220,23 +217,7 @@ void CReceiveData::ReceiveCameraData()
                             parser_manager_->Parser(timestamp, topic_name, raw_data);
                         }
                         /** @brief save data for record*/
-                        if (FLAGS_v_total_record || FLAGS_v_point_record)
-                        {
-                            RawData rdata(topic_name, timestamp, raw_data);
-                            {
-                                std::lock_guard<std::mutex> save_lg(this->data_center_->record_mutex_);
-                                this->data_center_->data_buf_.insert({timestamp, rdata.rawData()});
-                            }
-                            if(FLAGS_v_point_record)
-                            {
-                                emit this->signal_manager_->SigUpdateDataBufSize();
-                                if(this->data_center_->data_buf_.size() >= FLAGS_v_point_record_size)
-                                {
-                                    auto it = this->data_center_->data_buf_.begin();
-                                    this->data_center_->data_buf_.erase(it);
-                                }
-                            }
-                        }
+                        this->RecordData(topic_name, timestamp, raw_data);
                     }
                     else
                     {
@@ -359,9 +340,6 @@ void CReceiveData::DDSDataCallBack(dds_entity_t reader, void *arg)
 
 bool CReceiveData::CreateDDSListener(dds_listener_t **listener)
 {
-    if ((*listener) == nullptr)
-        return false;
-
     *listener = dds_create_listener(this);
     if ((*listener) == nullptr)
         return false;

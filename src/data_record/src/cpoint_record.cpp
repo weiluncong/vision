@@ -8,25 +8,19 @@ CPointRecord::CPointRecord(CDataPointRecord *point_record)
 
 CPointRecord::~CPointRecord()
 {
-    SafeClear(point_record_->data_center_->data_buf_);
+
 }
 
-void CPointRecord::DoRecord()
+void CPointRecord::DoRecord(const QString &file_name)
 {
-    QString name = point_record_->file_path_ + "/" + QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss") + ".dat";
-
     connect(point_record_->signal_manager_, &CSignalManager::SigUpdateDataBufSize,
             this, &CPointRecord::WaitDataBufUpdate);
-    CDataRecord *data_record = new CDataRecord(name.toStdString());
+    CDataRecord *data_record = new CDataRecord(file_name.toStdString());
     data_record->SetProtoContent(point_record_->proto_content_);
     data_record->Init();
 
     /** @brief 第一次读取缓存区数据*/
-    std::multimap<double, std::string> data_buf;
-    {
-        std::lock_guard<std::mutex> record_lg(point_record_->data_center_->record_mutex_);
-        data_buf = point_record_->data_center_->data_buf_;
-    }
+    std::multimap<double, std::string> data_buf = point_record_->data_center_->GetRecordData(false);
     for (auto i : data_buf)
     {
         data_record->Record(i.second);
@@ -35,10 +29,7 @@ void CPointRecord::DoRecord()
     /** @brief 等待缓存区填满*/
     std::unique_lock<std::mutex> record_lg(point_record_mutex_);
     condition_var_.wait(record_lg);
-    {
-        std::lock_guard<std::mutex> record_lg(point_record_->data_center_->record_mutex_);
-        data_buf = point_record_->data_center_->data_buf_;
-    }
+    data_buf = point_record_->data_center_->GetRecordData(false);
     for(auto i : data_buf)
     {
         data_record->Record(i.second);
