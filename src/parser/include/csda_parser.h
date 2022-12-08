@@ -20,6 +20,9 @@ public:
     void ParseIdmapStatic(const QString &package_msg_name, const google::protobuf::Message &msg, double time);
     // 环境模型解析
     void ParseRNPEnvOut(const QString &package_msg_name, const google::protobuf::Message &msg, double time);
+
+    /// 解析当前车道线
+    void ParseCurrentLane(const QString &package_msg_name, const google::protobuf::Message &msg, double time);
 };
 
 #endif // CSDA_PARSER_H

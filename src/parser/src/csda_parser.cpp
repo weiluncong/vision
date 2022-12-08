@@ -95,7 +95,7 @@ void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google:
     auto descriptor = msg.GetDescriptor();
     int field_count = descriptor->field_count();
     QVector<CLineData> navigation_line_vec;
-    QMap<int, QVector<CLineData>> map_info;
+    QMap<QString, QVector<CLineData>> map_info;
     for (int i = 0; i < field_count; i++)
     {
         auto field = descriptor->field(i);
@@ -119,7 +119,6 @@ void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google:
             for (int j = 0; j < lane_size; j++)
             {
                 CLineData line;
-                line.type_ = CLineType::LaneLine;
                 auto &lane_msg = reflection->GetRepeatedMessage(msg, field, j);
                 auto lane_reflector = lane_msg.GetReflection();
                 auto lane_descript = lane_msg.GetDescriptor();
@@ -148,9 +147,15 @@ void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google:
                     }
                 }
                 if (line.navigation_status_)
+                {
+                    line.type_ = CLineData::SolidLine;
                     navigation_line_vec.append(line);
+                }
                 else
-                    map_info[line.lane_type_].append(line);
+                {
+                    line.type_ = CLineData::DashedLine;
+                    map_info["Lane"].append(line);
+                }
             }
 
         }
@@ -168,7 +173,8 @@ void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google:
 
                 ///< 车道线id:[/],(0,0,/),[/],(1,0),无索引顺序，输出
                 AssignStruct(line_msg, line_descript, line.id_, "line_id");
-                AssignStruct(line_msg, line_descript, line.type_, "linemarking_type");
+                //AssignStruct(line_msg, line_descript, line.type_, "linemarking_type");
+                line.type_ = CLineData::SolidLine;
                 int line_count = line_descript->field_count();
                 for (int m = 0; m < line_count; m++)
                 {
@@ -194,7 +200,7 @@ void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google:
                         continue;
                     }
                 }
-                map_info[line.lane_type_].append(line);
+                map_info["Line"].append(line);
             }
         }
     }
@@ -202,7 +208,7 @@ void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google:
     data_center_->InsertValue(package_msg_name + "[Navigation]", time, navigation_line_vec);
     for (auto it = map_info.begin(); it != map_info.end(); it++)
     {
-        data_center_->InsertValue(package_msg_name + "[" + QString::number(it.key()) + "]", time, it.value());
+        data_center_->InsertValue(package_msg_name + "[" + it.key() + "]", time, it.value());
     }
     ParseFinished("topview", time);
 }
@@ -241,6 +247,7 @@ void CSdaParser::ParseRNPEnvOut(const QString &package_msg_name, const google::p
                     for (int l = 0; l < lane_size; ++l)
                     {
                         CLineData line;
+                        line.type_ = CLineData::SolidLine;
                         const auto &lane_msg = lanes_reflec->GetRepeatedMessage(lanes_msg, field, l);
                         auto lane_reflector = lane_msg.GetReflection();
                         auto lane_descript = lane_msg.GetDescriptor();
@@ -278,5 +285,27 @@ void CSdaParser::ParseRNPEnvOut(const QString &package_msg_name, const google::p
             }
             break;
         }
+    }
+}
+
+void CSdaParser::ParseCurrentLane(const QString &package_msg_name, const google::protobuf::Message &msg, double time)
+{
+    if (!package_msg_name.contains("CurrentLaneId"))
+    {
+        return;
+    }
+
+    /// auto reflection = msg.GetReflection();
+    auto descriptor = msg.GetDescriptor();
+    int field_count = descriptor->field_count();
+    for (int i = 0; i < field_count; ++i)
+    {
+        auto field = descriptor->field(i);
+        if(field->name() != "current_lane_id")
+            continue;
+
+        uint64_t current_lane_id;
+        AssignStruct(msg, descriptor, current_lane_id, "current_lane_id");
+        data_center_->InsertValue("CurrentLaneId", time, current_lane_id);
     }
 }

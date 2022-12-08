@@ -59,10 +59,15 @@ void CParserManager::InitParseFunc()
     AddParserFun("hdmap.StaticHDMapInfo", &CSdaParser::ParseHDMap, csda_parser_);
     AddParserFun("idmap.StaticIDMapInfo", &CSdaParser::ParseIdmapStatic, csda_parser_);
     AddParserFun("prediction.RNPEnvOut", &CSdaParser::ParseRNPEnvOut, csda_parser_);
+    AddParserFun("localization.CurrentLaneId", &CSdaParser::ParseCurrentLane, csda_parser_);
 
     // sda prediction parser
     AddParserFun("prediction.RNPObjectOut", &CSDAPredictionParser::ParsePredictions, csda_pediction_parser_);
-    AddParserFun("prediction.RNPObjectDebugOut", &CSDAPredictionParser::ParsePredictObjectDebug, csda_pediction_parser_);
+    AddParserFun("prediction.RNPObjectDebugOut", &CCamLineParser::ParsePredictObjectDebug, camline_parser_);
+
+    // sda planningpath parser
+    AddParserFun("dnp.PlanningPaths", &CCamLineParser::ParsePlanningPath, camline_parser_);
+
 }
 
 void CParserManager::Parser(const QList<cReplayData> &list)

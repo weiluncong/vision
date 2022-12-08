@@ -26,50 +26,56 @@ void CLineItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 
     painter->setPen(QPen(color_, 3));
     painter->setRenderHint(QPainter::Antialiasing);
-    if (line_data_.type_ == 1)
-    {
-        for (int i = 0; i < line_points_.size() - 1; i += 3)
-        {
-            QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
-            QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
-            painter->drawLine(start_point, end_point);
-        }
-    }
-    else if (line_data_.type_ == 2)
+    if (line_data_.type_ == CLineData::SolidLine)
     {
         for (int i = 0; i < line_points_.size() - 1; i++)
         {
             QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
             QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
-            painter->drawEllipse(start_point, 2, 2);
             painter->drawLine(start_point, end_point);
         }
-        QPointF point = parent_item_->PointItemInScene(line_points_.last());
-        painter->drawEllipse(point, 2, 2);
+    }
+    else if (line_data_.type_ == CLineData::DashedLine)
+    {
+        QPen pen = painter->pen();
+        pen.setStyle(Qt::DashLine);
+        painter->setPen(pen);
+        for (int i = 0; i < line_points_.size() - 1; i++)
+        {
+            QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
+            QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
+            painter->drawLine(start_point, end_point);
+        }
     }
     else if (line_data_.type_ == 3)
     {
-        for (int i = 0; i < line_points_.size() - 1; i += 2)
+        painter->setPen(QPen(Qt::red, 2));
+        for (int i = 0; i < line_points_.size() - 1; i++)
         {
             QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
             QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
-            painter->drawEllipse(start_point, 2, 2);
             painter->drawLine(start_point, end_point);
         }
-        QPointF point = parent_item_->PointItemInScene(line_points_.last());
-        painter->drawEllipse(point, 2, 2);
     }
     else if (line_data_.type_ == 4)
     {
-        for (int i = 0; i < line_points_.size() - 1; i += 3)
+        painter->setPen(QPen(Qt::green, 2));
+        for (int i = 0; i < line_points_.size() - 1; i++)
         {
             QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
             QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
-            painter->drawEllipse(start_point, 2, 2);
             painter->drawLine(start_point, end_point);
         }
-        QPointF point = parent_item_->PointItemInScene(line_points_.last());
-        painter->drawEllipse(point, 2, 2);
+    }
+    else if (line_data_.type_ == 5)
+    {
+        painter->setPen(QPen(Qt::blue, 2));
+        for (int i = 0; i < line_points_.size() - 1; i++)
+        {
+            QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
+            QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
+            painter->drawLine(start_point, end_point);
+        }
     }
     else
     {

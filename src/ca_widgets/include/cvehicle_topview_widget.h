@@ -34,7 +34,6 @@ public:
     ~CVehicleTopViewWidget() override;
 
     void AddSetterItem(const QString &name);
-    void UpdateInsData(const CPointData &ins_data);
     void UpdateItemData(const QString &name, double delta_time,
                         const QVector<CObjectData> &data, const QColor &color);
     void UpdateItemData(const QString &name, double delta_time,
@@ -60,7 +59,6 @@ private:
     void HandleActZoom();
     void HandleActColorChanged(const QString &name, const QColor &color);
     void HandleActCheckStatusChanged(const QString &name, bool status);
-    void TransferMap(QVector<CLineData> &lines);
     template <class T>
     void HandleActSetStatus(const QString &name, const T &status);
     template <class T>
@@ -72,8 +70,6 @@ private:
     QSplitter *main_splitter_ = nullptr;
     QToolButton *setter_btn_ = nullptr;
     QMap<QString, void *> data_ptr_hash_;
-    CPointData ins_data_;
-    CTransfer transfer_;
 
 signals:
     void SigVehicleTopViewClosed();
@@ -116,13 +112,15 @@ void CVehicleTopViewWidget::HandleActSetStatus(const QString &name, const T &sta
     else if (name.contains("prediction.RNPObjectDebugOut") ||
              name.contains("prediction.RNPObjectOut-history_trajectory") ||
              name.contains("prediction.RNPObjectOut-predict_trajectory") ||
+             name.contains("prediction.RNPEnvOut") ||
+             name.contains("idmap.StaticIDMapInfo") ||
              name.contains("CameraProto.CamLines"))
     {
         SetStatus<CLineItem>(name, status);
     }
     else if (name.contains("FusionProto.FusFreeSpace") || name.contains("FusionProto.RadarFreeSpace") ||
              name.contains("FusionProto.VisionFreeSpace") || name.contains("CameraProto.CamFreeSpace") ||
-             name.contains("StaticHDMapInfo") || name.contains("StaticIDMapInfo") || name.contains("RNPEnvOut"))
+             name.contains("StaticHDMapInfo"))
     {
         SetStatus<CPointSetItem>(name, status);
     }

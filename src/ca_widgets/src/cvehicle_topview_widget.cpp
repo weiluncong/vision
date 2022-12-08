@@ -77,30 +77,6 @@ void CVehicleTopViewWidget::HandleActCheckStatusChanged(const QString &name, boo
     HandleActSetStatus(name, status);
 }
 
-void CVehicleTopViewWidget::TransferMap(QVector<CLineData> &lines)
-{
-    QVector<CLineData> line_vec;
-    CPointData point;
-    double heading = (360.0 - ins_data_.heading_);
-
-    for(CLineData line : lines)
-    {
-        QMap<unsigned long, QVector<CPointData>> tPoints;
-        CLineData l = line;
-        l.points_.clear();
-        for (auto &point : line.points_)
-        {
-            transfer_.PointTransForm(point.longitude_, point.latitude_,
-                                   ins_data_.longitude_, ins_data_.latitude_, heading,
-                                   point.x_, point.y_);
-            l.points_.push_back(point);
-        }
-        line_vec.push_back(l);
-    }
-
-    lines = line_vec;
-}
-
 void CVehicleTopViewWidget::HandleActBtnClicked()
 {
     if (setter_tab_widget_->isVisible())
@@ -136,14 +112,6 @@ void CVehicleTopViewWidget::AddSetterItem(const QString &name)
     setter_tab_widget_->AddCompomentName(name);
 }
 
-void CVehicleTopViewWidget::UpdateInsData(const CPointData &ins_data)
-{
-    if ((ins_data.latitude_ != 0.00000 || ins_data.longitude_ != 0.0000)
-            || ins_data.heading_ != 0.000)
-    {
-        ins_data_ = ins_data;
-    }
-}
 
 void CVehicleTopViewWidget::UpdateItemData(const QString &name, double delta_time,
                                            const QVector<CObjectData> &data, const QColor &color)
@@ -195,10 +163,6 @@ void CVehicleTopViewWidget::UpdateItemData(const QString &name, double delta_tim
     if (delta_time * 1000.0 <= 250)
     {
         QVector<CLineData> line_vec = data;
-        if (name.contains("idmap.StaticIDMapInfo"))
-            TransferMap(line_vec);
-
-
         auto lines_hash = GetDataPtr<CLineItem *>();
         if (lines_hash && lines_hash->hash_[name].size() > 0)
         {

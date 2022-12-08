@@ -12,6 +12,7 @@ public:
     ~CObjectParser() {}
 
     void ParseObjects(const QString &package_msg_name, const google::protobuf::Message &msg, double time);
+    void ParsePredictionObject(const QString &package_msg_name, const google::protobuf::Message &msg, double time);
 
 private:
     void ParseObject(const QString &package_msg_name, const google::protobuf::Message &msg, double time, CObjectData &obj, cav::CObjBoxCV &obj_box);
