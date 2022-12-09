@@ -32,6 +32,7 @@ void CCamLineParser::ParseLine(const google::protobuf::Message &msg, CLineData &
     AssignStruct(msg, descriptor, line.a2_, "curve_parameter_a2");
     AssignStruct(msg, descriptor, line.a3_, "curve_parameter_a3");
     AssignStruct(msg, descriptor, line.type_, "type");
+    line.type_ = (line.type_ == 1 || line.type_ == 2) ? CLineData::DashedLine : CLineData::SolidLine;
     AssignStruct(msg, descriptor, line.range_, "line_range");
     AssignStruct(msg, descriptor, line.start_, "start_x");
     AssignStruct(msg, descriptor, line.end_, "end_x");

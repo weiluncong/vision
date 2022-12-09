@@ -5,7 +5,7 @@ DEFINE_bool(v_total_record, false, "record total data to dat");
 DEFINE_bool(v_parser, true, "parser flag");
 DEFINE_bool(v_point_record, false, "record some data to dat");
 DEFINE_bool(v_record_lidar, true, "switch to record lidar data");
-DEFINE_uint32(v_model_setting, 0, "connect mode is soc1");
+DEFINE_uint32(v_model_setting, 1, "connect mode is soc1");
 DEFINE_uint32(v_camera_num, 5, "define usb camera num is 5");
 DEFINE_double(v_capilot_version, 3.1, "capilot version");
 DEFINE_double(v_total_record_size, 800 * 1e6, "set the dat size of totally record data");
