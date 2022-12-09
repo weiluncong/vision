@@ -39,6 +39,94 @@ void CCamLineParser::ParseLine(const google::protobuf::Message &msg, CLineData &
     line.range_ = line.end_ - line.start_;
 }
 
+void CCamLineParser::ParseVpCamLines(const QString &package_msg_name, const google::protobuf::Message &msg, double time)
+{
+    if (!package_msg_name.contains("VpCameraProto.CamLines"))
+    {
+        return;
+    }
+    QVector<CLineData> line_vector;
+    auto reflection = msg.GetReflection();
+    auto descriptor = msg.GetDescriptor();
+    auto field = descriptor->FindFieldByName("lines");
+    int size = reflection->FieldSize(msg, field);
+    for (int i = 0; i < size; i++)
+    {
+        const auto &nmsg = reflection->GetRepeatedMessage(msg, field, i);
+        auto nreflection = nmsg.GetReflection();
+        auto ndescriptor = nmsg.GetDescriptor();
+        double near, far;
+        AssignStruct(nmsg, ndescriptor, near, "near_x_distance");
+        AssignStruct(nmsg, ndescriptor, far, "far_x_distance");
+        double distance = far - near;
+        int type;
+        AssignStruct(nmsg, ndescriptor, type, "type");
+
+        auto nfield = ndescriptor->FindFieldByName("curve_x_parameter_a0");
+        int full_size = nreflection->FieldSize(nmsg, nfield);
+        for (int i = 0; i < full_size; i++)
+        {
+            CLineData line;
+            line.a0_ = nreflection->GetRepeatedDouble(nmsg, nfield, i);
+            line.range_ = distance;
+            line.type_ = type;
+            line_vector.push_back(line);
+        }
+        nfield = ndescriptor->FindFieldByName("curve_x_parameter_a1");
+        int size = nreflection->FieldSize(nmsg, nfield);
+        if (size > full_size)
+            size = full_size;
+        for (int i = 0; i < size; i++)
+        {
+            CLineData &line = line_vector[i];
+            line.a1_ = nreflection->GetRepeatedDouble(nmsg, nfield, i);
+        }
+        nfield = ndescriptor->FindFieldByName("curve_x_parameter_a2");
+        size = nreflection->FieldSize(nmsg, nfield);
+        if (size > full_size)
+            size = full_size;
+        for (int i = 0; i < size; i++)
+        {
+            CLineData &line = line_vector[i];
+            line.a2_ = nreflection->GetRepeatedDouble(nmsg, nfield, i);
+        }
+        nfield = ndescriptor->FindFieldByName("curve_x_parameter_a3");
+        size = nreflection->FieldSize(msg, nfield);
+        if (size > full_size)
+            size = full_size;
+        for (int i = 0; i < size; i++)
+        {
+            CLineData &line = line_vector[i];
+            line.a3_ = nreflection->GetRepeatedDouble(nmsg, nfield, i);
+        }
+        nfield = ndescriptor->FindFieldByName("x_begin_piont");
+        size = nreflection->FieldSize(nmsg, nfield);
+        if (size > full_size)
+            size = full_size;
+        for (int i = 0; i < size; i++)
+        {
+            CLineData &line = line_vector[i];
+            const auto &point_msg = nreflection->GetRepeatedMessage(nmsg, nfield, i);
+            CPointData point = ParserPoint(point_msg);
+            line.start_ = point.x_;
+        }
+        nfield = ndescriptor->FindFieldByName("x_end_piont");
+        size = nreflection->FieldSize(nmsg, nfield);
+        if (size > full_size)
+            size = full_size;
+        for (int i = 0; i < size; i++)
+        {
+            CLineData &line = line_vector[i];
+            const auto &point_msg = nreflection->GetRepeatedMessage(nmsg, nfield, i);
+            CPointData point = ParserPoint(point_msg);
+            line.end_ = point.x_;
+        }
+    }
+    qDebug() << "line_vector size =" << line_vector.size();
+    data_center_->InsertValue(package_msg_name, time, line_vector);
+    ParseFinished("topview", time);
+}
+
 void CCamLineParser::ParsePredictionLines(const QString &package_msg_name, QVector<const google::protobuf::Message *> msgs, double time)
 {
     QVector<CLineData> lines_vec;
@@ -73,7 +161,7 @@ void CCamLineParser::ParsePredictObjectDebug(const QString &package_msg_name, co
             const auto &predict_lines_multi_msg = obj_reflection->GetMessage(obj_msg, predict_lines_multi_field);
             CLineData line;
             line.id_ = id;
-            line.type_ = CLineData::SolidLine; //AlgorithmCar
+            line.type_ = CLineData::SolidLine; // AlgorithmCar
             ParserTrajectoryMultimodal(predict_lines_multi_msg, line);
             predict_lines_vec.push_back(line);
         }
@@ -82,7 +170,7 @@ void CCamLineParser::ParsePredictObjectDebug(const QString &package_msg_name, co
             const auto &predict_lines_multi_msg = obj_reflection->GetMessage(obj_msg, predict_lines_multi_field);
             CLineData line;
             line.id_ = id;
-            line.type_ = CLineData::RedSolidLine; //AlgorithmPerson
+            line.type_ = CLineData::RedSolidLine; // AlgorithmPerson
             ParserTrajectoryMultimodal(predict_lines_multi_msg, line);
             predict_lines_vec.push_back(line);
         }
@@ -91,7 +179,7 @@ void CCamLineParser::ParsePredictObjectDebug(const QString &package_msg_name, co
             const auto &predict_lines_multi_msg = obj_reflection->GetMessage(obj_msg, predict_lines_multi_field);
             CLineData line;
             line.id_ = id;
-            line.type_ = CLineData::GreenSolidLine; //AlgorithmCslstm;
+            line.type_ = CLineData::GreenSolidLine; // AlgorithmCslstm;
             ParserTrajectoryMultimodal(predict_lines_multi_msg, line);
             predict_lines_vec.push_back(line);
         }
@@ -100,7 +188,7 @@ void CCamLineParser::ParsePredictObjectDebug(const QString &package_msg_name, co
             const auto &predict_lines_multi_msg = obj_reflection->GetMessage(obj_msg, predict_lines_multi_field);
             CLineData line;
             line.id_ = id;
-            line.type_ = CLineData::BlueSolidLine; //AlgorithmRaster;
+            line.type_ = CLineData::BlueSolidLine; // AlgorithmRaster;
             ParserTrajectoryMultimodal(predict_lines_multi_msg, line);
             predict_lines_vec.push_back(line);
         }
@@ -113,7 +201,7 @@ void CCamLineParser::ParserTrajectoryMultimodal(const google::protobuf::Message 
 {
     auto descriptor = msg.GetDescriptor();
     auto reflection = msg.GetReflection();
-    //轨迹线仅有一条，不做repeate处理
+    // 轨迹线仅有一条，不做repeate处理
     auto trajector_field = descriptor->FindFieldByName("trajectories");
     int size = reflection->FieldSize(msg, trajector_field);
     if (size == 0)

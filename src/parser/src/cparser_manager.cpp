@@ -27,7 +27,7 @@ void CParserManager::InitParseFunc()
     cobject_parser_ = std::shared_ptr<CObjectParser>(new CObjectParser());
     camline_parser_ = std::shared_ptr<CCamLineParser>(new CCamLineParser());
     cpoint_set_parser_ = std::shared_ptr<CPointSetParser>(new CPointSetParser());
-	csda_parser_ = std::shared_ptr<CSdaParser>(new CSdaParser());
+    csda_parser_ = std::shared_ptr<CSdaParser>(new CSdaParser());
     csda_lidar_parser_ = std::shared_ptr<CSDALidarParser>(new CSDALidarParser());
     csda_pediction_parser_ = std::shared_ptr<CSDAPredictionParser>(new CSDAPredictionParser());
     cvision_parser_ = std::shared_ptr<CSdaVisionParser>(new CSdaVisionParser());
@@ -40,13 +40,14 @@ void CParserManager::InitParseFunc()
 
     // line parser
     AddParserFun("CameraProto.CamLines", &CCamLineParser::ParseCamLines, camline_parser_);
+    AddParserFun("VpCameraProto.CamLines", &CCamLineParser::ParseVpCamLines, camline_parser_);
 
     // freespace parser
     AddParserFun("FusionProto.FusFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
     AddParserFun("FusionProto.RadarFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
     AddParserFun("FusionProto.VisionFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
     AddParserFun("CameraProto.CamFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
-	
+
     // lidar parser
     AddParserFun("LidarObjectProto.Objects", &CSDALidarParser::ParseLidarObjects, csda_lidar_parser_);
     AddParserFun("LidarFreeSpaceProto.FreeSpaceData", &CSDALidarParser::ParseLidarFreeSpace, csda_lidar_parser_);
@@ -67,7 +68,6 @@ void CParserManager::InitParseFunc()
 
     // sda planningpath parser
     AddParserFun("dnp.PlanningPaths", &CCamLineParser::ParsePlanningPath, camline_parser_);
-
 }
 
 void CParserManager::Parser(const QList<cReplayData> &list)
