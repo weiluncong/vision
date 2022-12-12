@@ -34,12 +34,8 @@ private:
     void WaitForFinished();
     void InitParseFunc();
 
-    template <typename _Func, typename... _Args>
-    void AddParserFun(const QString &key, _Func &&f, _Args &&... args)
-    {
-        parse_functions_.insert(key, std::bind(std::forward<_Func>(f), std::forward<_Args>(args)...,
-                                               std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-    }
+        template <typename _Func, typename... _Args>
+    void AddParserFun(const QString &key, _Func &&f, _Args &&...args);
 
 private:
     std::shared_ptr<CameraParser> camera_parser_ = nullptr;
@@ -61,5 +57,12 @@ private:
     QMap<QString, CThreadPool *> parse_pools_;
     QMap<QString, std::function<void(const QString &, const google::protobuf::Message &, double)>> parse_functions_;
 };
+
+template <typename _Func, typename... _Args>
+void CParserManager::AddParserFun(const QString &key, _Func &&f, _Args &&...args)
+{
+    parse_functions_.insert(key, std::bind(std::forward<_Func>(f), std::forward<_Args>(args)...,
+                                           std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+}
 
 #endif // CPARSERMANAGER_H

@@ -105,7 +105,7 @@ void CVehicleTopViewWidget::HandleActSetStatus(const QString &name, const T &sta
 {
     if (name.contains("FusionProto.FusObjects") || name.contains("CameraProto.CamObjects") ||
         name.contains("RadarProto.RadarObjects") || name.contains("LidarObjectProto.Objects") ||
-        name.contains("prediction.RNPObjectOut-obj"))
+        name.contains("VpCameraProto.CamTsr") || name.contains("prediction.RNPObjectOut-obj"))
     {
         SetStatus<CObjectItem>(name, status);
     }
@@ -115,6 +115,7 @@ void CVehicleTopViewWidget::HandleActSetStatus(const QString &name, const T &sta
              name.contains("prediction.RNPEnvOut") ||
              name.contains("idmap.StaticIDMapInfo") ||
              name.contains("PlanningPaths") ||
+             name.contains("VpCameraProto.CamLines") ||
              name.contains("CameraProto.CamLines"))
     {
         SetStatus<CLineItem>(name, status);

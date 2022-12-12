@@ -34,7 +34,6 @@ void CParserManager::InitParseFunc()
 
     // object parser
     AddParserFun("FusionProto.FusObjects", &CObjectParser::ParseObjects, cobject_parser_);
-    AddParserFun("VpCameraProto.CamObjects", &CObjectParser::ParseObjects, cobject_parser_);
     AddParserFun("CameraProto.CamObjects", &CObjectParser::ParseObjects, cobject_parser_);
     AddParserFun("RadarProto.RadarObjects", &CObjectParser::ParseObjects, cobject_parser_);
 
@@ -49,11 +48,13 @@ void CParserManager::InitParseFunc()
     AddParserFun("CameraProto.CamFreeSpace", &CPointSetParser::ParseFreeSpace, cpoint_set_parser_);
 
     // lidar parser
-    AddParserFun("LidarObjectProto.Objects", &CSDALidarParser::ParseLidarObjects, csda_lidar_parser_);
+    AddParserFun("LidarObjectProto.Objects", &CObjectParser::ParseLidarObjects, cobject_parser_);
     AddParserFun("LidarFreeSpaceProto.FreeSpaceData", &CSDALidarParser::ParseLidarFreeSpace, csda_lidar_parser_);
 
     // vision parser
+    AddParserFun("VpCameraProto.CamObjects", &CObjectParser::ParseVisionDynamicObjects, cobject_parser_);
     AddParserFun("VpCameraProto.CamFreeSpace", &CSdaVisionParser::ParserVisionFreespace, cvision_parser_);
+    AddParserFun("VpCameraProto.CamTsr", &CObjectParser::ParsesVisionStaticObjects, cobject_parser_);
 
     // sda env parser
     AddParserFun("localization.InsData", &CSdaParser::ParseIns, csda_parser_);

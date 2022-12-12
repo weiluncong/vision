@@ -26,28 +26,24 @@ void CLineItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 
     painter->setPen(QPen(color_, 3));
     painter->setRenderHint(QPainter::Antialiasing);
-    if (line_data_.type_ == CLineData::SolidLine)
+
+    switch (line_data_.type_)
     {
-        for (int i = 0; i < line_points_.size() - 1; i++)
-        {
-            QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
-            QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
-            painter->drawLine(start_point, end_point);
-        }
-    }
-    else if (line_data_.type_ == CLineData::DashedLine)
+    case CLineData::SolidLine:
+        DrawSolidLine(painter);
+        break;
+    case CLineData::DashLine:
+        DrawDashLine(painter);
+        break;
+    case CLineData::QtDashLine:
     {
         QPen pen = painter->pen();
         pen.setStyle(Qt::DashLine);
         painter->setPen(pen);
-        for (int i = 0; i < line_points_.size() - 1; i++)
-        {
-            QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
-            QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
-            painter->drawLine(start_point, end_point);
-        }
+        DrawSolidLine(painter);
     }
-    else if (line_data_.type_ == CLineData::SolidDotLine)
+    break;
+    case CLineData::SolidDotLine:
     {
         QPainterPath path(parent_item_->PointItemInScene(line_points_[0]));
         painter->setPen(QPen(color_, 6));
@@ -62,50 +58,41 @@ void CLineItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
         painter->setPen(QPen(color_, 3));
         painter->drawPath(path);
     }
-    else if (line_data_.type_ == CLineData::RedSolidLine)
-    {
+    break;
+    case CLineData::RedSolidLine:
         painter->setPen(QPen(Qt::red, 2));
-        for (int i = 0; i < line_points_.size() - 1; i++)
-        {
-            QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
-            QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
-            painter->drawLine(start_point, end_point);
-        }
-    }
-    else if (line_data_.type_ == CLineData::GreenSolidLine)
-    {
+        DrawSolidLine(painter);
+        break;
+    case CLineData::GreenSolidLine:
         painter->setPen(QPen(Qt::green, 2));
-        for (int i = 0; i < line_points_.size() - 1; i++)
-        {
-            QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
-            QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
-            painter->drawLine(start_point, end_point);
-        }
-    }
-    else if (line_data_.type_ == CLineData::BlueSolidLine)
-    {
+        DrawSolidLine(painter);
+        break;
+    case CLineData::BlueSolidLine:
         painter->setPen(QPen(Qt::blue, 2));
-        for (int i = 0; i < line_points_.size() - 1; i++)
-        {
-            QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
-            QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
-            painter->drawLine(start_point, end_point);
-        }
+        DrawSolidLine(painter);
+        break;
+    default:
+        break;
     }
-    else
+}
+
+void CLineItem::DrawSolidLine(QPainter *painter)
+{
+    for (int i = 0; i < line_points_.size() - 1; i++)
     {
-        QPainterPath path(parent_item_->PointItemInScene(line_points_[0]));
-        painter->setPen(QPen(color_, 6));
-        for (int i = 0; i < line_points_.size() - 1; ++i)
-        {
-            QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
-            QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
-            QPointF control_point = (start_point + end_point) / 2.0;
-            path.quadTo(control_point, end_point);
-            painter->drawPoint(start_point);
-        }
-        painter->setPen(QPen(color_, 3));
-        painter->drawPath(path);
+        QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
+        QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
+        painter->drawLine(start_point, end_point);
+    }
+}
+
+void CLineItem::DrawDashLine(QPainter *painter)
+{
+    for (int i = 0; i < line_points_.size() - 1; i += 2)
+    {
+        QPointF start_point = parent_item_->PointItemInScene(line_points_[i]);
+        QPointF end_point = parent_item_->PointItemInScene(line_points_[i + 1]);
+        painter->drawLine(start_point, end_point);
     }
 }
 

@@ -1,4 +1,4 @@
-﻿#ifndef CDATACENTER_H
+#ifndef CDATACENTER_H
 #define CDATACENTER_H
 
 #include <QObject>
@@ -44,10 +44,14 @@ public:
     void InsertRecordData(double timestamp, const std::string &data);
     std::multimap<double, std::string> GetRecordData(bool remove);
 
+    void InsertSignalName(const QString &name) { all_signal_names_.append(name); }
+
 public:
     // data record
     std::mutex record_mutex_;
     std::multimap<double, std::string> data_buf_;
+    // 曲线图全量信号
+    QStringList all_signal_names_;
 
     double data_start_time_ = 0;
     double data_end_time_ = 0;

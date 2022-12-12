@@ -162,7 +162,6 @@ void CVehicleTopViewWidget::UpdateItemData(const QString &name, double delta_tim
 {
     if (delta_time * 1000.0 <= 250)
     {
-        QVector<CLineData> line_vec = data;
         auto lines_hash = GetDataPtr<CLineItem *>();
         if (lines_hash && lines_hash->hash_[name].size() > 0)
         {
@@ -170,7 +169,7 @@ void CVehicleTopViewWidget::UpdateItemData(const QString &name, double delta_tim
             qDeleteAll(items);
             items.clear();
         }
-        for (auto i : line_vec)
+        for (auto i : data)
         {
             CLineItem *item = new CLineItem(background_item_);
             item->SetColor(color);

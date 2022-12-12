@@ -57,7 +57,7 @@ void CSdaParser::ParseHDMap(const QString &package_msg_name, const google::proto
                                     continue;
                                 }
                             }
-                                line_vec.push_back(line);
+                            line_vec.push_back(line);
                         }
                     }
                 }
@@ -153,11 +153,10 @@ void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google:
                 }
                 else
                 {
-                    line.type_ = CLineData::DashedLine;
+                    line.type_ = CLineData::QtDashLine;
                     map_info["Lane"].append(line);
                 }
             }
-
         }
 
         /// repeated Line
@@ -173,7 +172,7 @@ void CSdaParser::ParseIdmapStatic(const QString &package_msg_name, const google:
 
                 ///< 车道线id:[/],(0,0,/),[/],(1,0),无索引顺序，输出
                 AssignStruct(line_msg, line_descript, line.id_, "line_id");
-                //AssignStruct(line_msg, line_descript, line.type_, "linemarking_type");
+                // AssignStruct(line_msg, line_descript, line.type_, "linemarking_type");
                 line.type_ = CLineData::SolidLine;
                 int line_count = line_descript->field_count();
                 for (int m = 0; m < line_count; m++)
@@ -301,7 +300,7 @@ void CSdaParser::ParseCurrentLane(const QString &package_msg_name, const google:
     for (int i = 0; i < field_count; ++i)
     {
         auto field = descriptor->field(i);
-        if(field->name() != "current_lane_id")
+        if (field->name() != "current_lane_id")
             continue;
 
         uint64_t current_lane_id;

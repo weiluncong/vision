@@ -32,19 +32,18 @@ void CCamLineParser::ParseLine(const google::protobuf::Message &msg, CLineData &
     AssignStruct(msg, descriptor, line.a2_, "curve_parameter_a2");
     AssignStruct(msg, descriptor, line.a3_, "curve_parameter_a3");
     AssignStruct(msg, descriptor, line.type_, "type");
-    line.type_ = (line.type_ == 1 || line.type_ == 2) ? CLineData::DashedLine : CLineData::SolidLine;
     AssignStruct(msg, descriptor, line.range_, "line_range");
     AssignStruct(msg, descriptor, line.start_, "start_x");
     AssignStruct(msg, descriptor, line.end_, "end_x");
+    line.type_ = (line.type_ == 1 || line.type_ == 2) ? CLineData::DashLine : CLineData::SolidLine;
     line.range_ = line.end_ - line.start_;
 }
 
 void CCamLineParser::ParseVpCamLines(const QString &package_msg_name, const google::protobuf::Message &msg, double time)
 {
     if (!package_msg_name.contains("VpCameraProto.CamLines"))
-    {
         return;
-    }
+
     QVector<CLineData> line_vector;
     auto reflection = msg.GetReflection();
     auto descriptor = msg.GetDescriptor();
@@ -52,77 +51,55 @@ void CCamLineParser::ParseVpCamLines(const QString &package_msg_name, const goog
     int size = reflection->FieldSize(msg, field);
     for (int i = 0; i < size; i++)
     {
-        const auto &nmsg = reflection->GetRepeatedMessage(msg, field, i);
-        auto nreflection = nmsg.GetReflection();
-        auto ndescriptor = nmsg.GetDescriptor();
-        double near, far;
-        AssignStruct(nmsg, ndescriptor, near, "near_x_distance");
-        AssignStruct(nmsg, ndescriptor, far, "far_x_distance");
+        const auto &line_msg = reflection->GetRepeatedMessage(msg, field, i);
+        auto nreflection = line_msg.GetReflection();
+        auto ndescriptor = line_msg.GetDescriptor();
+        double near = 0, far = 0;
+        int type = 0;
+        AssignStruct(line_msg, ndescriptor, near, "near_x_distance");
+        AssignStruct(line_msg, ndescriptor, far, "far_x_distance");
+        AssignStruct(line_msg, ndescriptor, type, "type");
         double distance = far - near;
-        int type;
-        AssignStruct(nmsg, ndescriptor, type, "type");
 
-        auto nfield = ndescriptor->FindFieldByName("curve_x_parameter_a0");
-        int full_size = nreflection->FieldSize(nmsg, nfield);
-        for (int i = 0; i < full_size; i++)
+        auto a0_field = ndescriptor->FindFieldByName("curve_x_parameter_a0");
+        int size = nreflection->FieldSize(line_msg, a0_field);
+
+        auto a1_field = ndescriptor->FindFieldByName("curve_x_parameter_a1");
+        int a1_size = nreflection->FieldSize(line_msg, a1_field);
+        size = (a1_size < size) ? a1_size : size;
+
+        auto a2_field = ndescriptor->FindFieldByName("curve_x_parameter_a2");
+        int a2_size = nreflection->FieldSize(line_msg, a2_field);
+        size = (a2_size < size) ? a2_size : size;
+
+        auto a3_field = ndescriptor->FindFieldByName("curve_x_parameter_a3");
+        int a3_size = nreflection->FieldSize(line_msg, a3_field);
+        size = (a3_size < size) ? a3_size : size;
+
+        auto x_begin_field = ndescriptor->FindFieldByName("x_begin_piont");
+        int x_begin_size = nreflection->FieldSize(line_msg, x_begin_field);
+        size = (x_begin_size < size) ? x_begin_size : size;
+
+        auto x_end_field = ndescriptor->FindFieldByName("x_end_piont");
+        int x_end_size = nreflection->FieldSize(line_msg, x_end_field);
+        size = (x_end_size < size) ? x_end_size : size;
+
+        for (int i = 0; i < size; i++)
         {
             CLineData line;
-            line.a0_ = nreflection->GetRepeatedDouble(nmsg, nfield, i);
+            const auto &point_x_begin = nreflection->GetRepeatedMessage(line_msg, x_begin_field, i);
+            const auto &point_x_end = nreflection->GetRepeatedMessage(line_msg, x_end_field, i);
+            line.a0_ = nreflection->GetRepeatedDouble(line_msg, a0_field, i);
+            line.a1_ = nreflection->GetRepeatedDouble(line_msg, a1_field, i);
+            line.a2_ = nreflection->GetRepeatedDouble(line_msg, a2_field, i);
+            line.a3_ = nreflection->GetRepeatedDouble(line_msg, a3_field, i);
+            line.start_ = ParserPoint(point_x_begin).x_;
+            line.end_ = ParserPoint(point_x_end).x_;
             line.range_ = distance;
             line.type_ = type;
             line_vector.push_back(line);
         }
-        nfield = ndescriptor->FindFieldByName("curve_x_parameter_a1");
-        int size = nreflection->FieldSize(nmsg, nfield);
-        if (size > full_size)
-            size = full_size;
-        for (int i = 0; i < size; i++)
-        {
-            CLineData &line = line_vector[i];
-            line.a1_ = nreflection->GetRepeatedDouble(nmsg, nfield, i);
-        }
-        nfield = ndescriptor->FindFieldByName("curve_x_parameter_a2");
-        size = nreflection->FieldSize(nmsg, nfield);
-        if (size > full_size)
-            size = full_size;
-        for (int i = 0; i < size; i++)
-        {
-            CLineData &line = line_vector[i];
-            line.a2_ = nreflection->GetRepeatedDouble(nmsg, nfield, i);
-        }
-        nfield = ndescriptor->FindFieldByName("curve_x_parameter_a3");
-        size = nreflection->FieldSize(msg, nfield);
-        if (size > full_size)
-            size = full_size;
-        for (int i = 0; i < size; i++)
-        {
-            CLineData &line = line_vector[i];
-            line.a3_ = nreflection->GetRepeatedDouble(nmsg, nfield, i);
-        }
-        nfield = ndescriptor->FindFieldByName("x_begin_piont");
-        size = nreflection->FieldSize(nmsg, nfield);
-        if (size > full_size)
-            size = full_size;
-        for (int i = 0; i < size; i++)
-        {
-            CLineData &line = line_vector[i];
-            const auto &point_msg = nreflection->GetRepeatedMessage(nmsg, nfield, i);
-            CPointData point = ParserPoint(point_msg);
-            line.start_ = point.x_;
-        }
-        nfield = ndescriptor->FindFieldByName("x_end_piont");
-        size = nreflection->FieldSize(nmsg, nfield);
-        if (size > full_size)
-            size = full_size;
-        for (int i = 0; i < size; i++)
-        {
-            CLineData &line = line_vector[i];
-            const auto &point_msg = nreflection->GetRepeatedMessage(nmsg, nfield, i);
-            CPointData point = ParserPoint(point_msg);
-            line.end_ = point.x_;
-        }
     }
-    qDebug() << "line_vector size =" << line_vector.size();
     data_center_->InsertValue(package_msg_name, time, line_vector);
     ParseFinished("topview", time);
 }

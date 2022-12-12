@@ -21,6 +21,10 @@ public:
     void SetColor(const QColor &color) { color_ = color; }
 
 private:
+    void DrawSolidLine(QPainter *painter);
+    void DrawDashLine(QPainter *painter);
+
+private:
     CVehicleBackGroundItem *parent_item_;
     CLineData line_data_;
     QColor color_;

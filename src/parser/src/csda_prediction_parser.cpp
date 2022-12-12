@@ -18,7 +18,7 @@ void CSDAPredictionParser::ParsePredictions(const QString &package_msg_name, con
         return;
     QVector<const google::protobuf::Message *> history_lines_msg;
     QVector<const google::protobuf::Message *> predict_lines_msg;
-    object_parser_->ParsePredictionObject(package_msg_name + "-obj", msg, time);
+    object_parser_->ParsePredictionObjects(package_msg_name + "-obj", msg, time);
 
     auto reflection = msg.GetReflection();
     auto descriptor = msg.GetDescriptor();

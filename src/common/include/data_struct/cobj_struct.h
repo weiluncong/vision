@@ -35,6 +35,9 @@ namespace cav
         int move_status_ = 0;           //目标运动状态 0
         int algorithm_type_ = 0;        //预测算法类型
         // float prob_ = 0;                //目标预测轨迹对应的概率
+
+        //vision use
+        int static_type_ = 0;       //视觉静态目标类型
     };
 
     class CExObjectData
