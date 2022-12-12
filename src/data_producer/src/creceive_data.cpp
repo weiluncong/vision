@@ -33,6 +33,7 @@ void CReceiveData::InitReceive()
         DeliverData();
         break;
     case 1:
+        ReceiveDDSData(dds_topic_map_.keys());
         ReceiveData(FLAGS_v_data_address_soc1, FLAGS_v_proto_address_soc1);
         // ReceiveCameraData();
         DeliverData();
@@ -340,6 +341,9 @@ void CReceiveData::DDSDataCallBack(dds_entity_t reader, void *arg)
 
 bool CReceiveData::CreateDDSListener(dds_listener_t **listener)
 {
+    if (listener == nullptr)
+        return false;
+
     *listener = dds_create_listener(this);
     if ((*listener) == nullptr)
         return false;
