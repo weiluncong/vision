@@ -33,7 +33,7 @@ void CReceiveData::InitReceive()
         DeliverData();
         break;
     case 1:
-        ReceiveDDSData(dds_topic_map_.keys());
+        // ReceiveDDSData(dds_topic_map_.keys());
         ReceiveData(FLAGS_v_data_address_soc1, FLAGS_v_proto_address_soc1);
         // ReceiveCameraData();
         DeliverData();

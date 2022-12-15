@@ -15,7 +15,7 @@ namespace cav
 
         enum LineType
         {
-            SolidLine = 1,  // 实线
+            SolidLine,  // 实线
             DashLine,       // 虚线
             QtDashLine,     // Qt样式的虚线
             SolidDotLine,   // 点实线

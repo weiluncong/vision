@@ -31,11 +31,15 @@ private:
     void SplitTopicName(const QString &topic_name, QString &swc_name, QString &package_msg_name);
     void ParseMessage(const std::string &topic_name, const std::string &package_msg_name,
                       const std::string &data, double time);
+    void ParseStruct(const std::string &topic_name, const std::string &package_msg_name,
+                      const std::string &data, double time);
     void WaitForFinished();
     void InitParseFunc();
 
-        template <typename _Func, typename... _Args>
+    template <typename _Func, typename... _Args>
     void AddParserFun(const QString &key, _Func &&f, _Args &&...args);
+    template <typename _Func, typename... _Args>
+    void AddParserStructFun(const QString &key, _Func &&f, _Args &&...args);
 
 private:
     std::shared_ptr<CameraParser> camera_parser_ = nullptr;
@@ -56,6 +60,7 @@ private:
     QStringList msg_parsed_;
     QMap<QString, CThreadPool *> parse_pools_;
     QMap<QString, std::function<void(const QString &, const google::protobuf::Message &, double)>> parse_functions_;
+    QMap<QString, std::function<void(const QString &, const std::string &data, double)>> parse_struct_functions_;
 };
 
 template <typename _Func, typename... _Args>
@@ -65,4 +70,10 @@ void CParserManager::AddParserFun(const QString &key, _Func &&f, _Args &&...args
                                            std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 
+template <typename _Func, typename... _Args>
+void CParserManager::AddParserStructFun(const QString &key, _Func &&f, _Args &&...args)
+{
+    parse_struct_functions_.insert(key, std::bind(std::forward<_Func>(f), std::forward<_Args>(args)...,
+                                           std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+}
 #endif // CPARSERMANAGER_H

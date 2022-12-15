@@ -52,6 +52,7 @@ void CParserManager::InitParseFunc()
     AddParserFun("LidarFreeSpaceProto.FreeSpaceData", &CSDALidarParser::ParseLidarFreeSpace, csda_lidar_parser_);
 
     // vision parser
+    AddParserStructFun("Struct.ParsingImage", &CSdaVisionParser::ParseSemantic, cvision_parser_);
     AddParserFun("VpCameraProto.CamObjects", &CObjectParser::ParseVisionDynamicObjects, cobject_parser_);
     AddParserFun("VpCameraProto.CamFreeSpace", &CSdaVisionParser::ParserVisionFreespace, cvision_parser_);
     AddParserFun("VpCameraProto.CamTsr", &CObjectParser::ParsesVisionStaticObjects, cobject_parser_);
@@ -118,20 +119,15 @@ void CParserManager::HandleMetaData(double timestamp, const QString &topic_name,
 
         parse_pools_[swc_name]->submit(std::bind(&CParserManager::ParseMessage, this, TOSTR(topic_name),
                                                  TOSTR(package_msg_name), data, time));
-
-        //        bool parse_flag = false;
-        //        for (auto i : signal_parser_)
-        //        {
-        //            parse_flag |= topic_name.contains(i);
-        //        }
-
-        //        if (parse_flag)
-        //        {
-        //            google::protobuf::Message *msg = proto_pool_->GetProtoMessage(TOSTR(topic_name), TOSTR(package_msg_name), data);
-        //            if (!msg)
-        //                return;
-        //            data_center_->InsertValue(topic_name, time, msg);
-        //        }
+    }
+    else if (parse_struct_functions_.keys().contains(package_msg_name))
+    {
+        if (!parse_pools_.contains(swc_name))
+        {
+            parse_pools_[swc_name] = new CThreadPool(1);
+        }
+        parse_pools_[swc_name]->submit(std::bind(&CParserManager::ParseStruct, this, TOSTR(topic_name),
+                                                 TOSTR(package_msg_name), data, time));
     }
     else
     {
@@ -142,14 +138,6 @@ void CParserManager::HandleMetaData(double timestamp, const QString &topic_name,
             camera_parser_->ParseCamera(topic_name, data, time);
             return;
         }
-        else if (topic_name.contains("ParsingImage-fc"))
-        {
-            cvision_parser_->ParseSemantic(topic_name, data, time);
-        }
-        // google::protobuf::Message *msg = proto_pool_->GetProtoMessage(TOSTR(topic_name), TOSTR(package_msg_name), data);
-        // if (!msg)
-        //     return;
-        // data_center_->InsertValue(topic_name, time, msg);
     }
 }
 
@@ -181,6 +169,15 @@ void CParserManager::ParseMessage(const std::string &topic_name, const std::stri
             return;
 
         parse_functions_[TOQSTR(package_msg_name)](TOQSTR(topic_name), *msg, time);
+    }
+}
+
+void CParserManager::ParseStruct(const std::string &topic_name, const std::string &package_msg_name,
+                                  const std::string &data, double time)
+{
+    if (parse_struct_functions_.keys().contains(TOQSTR(package_msg_name)))
+    {
+        parse_struct_functions_[TOQSTR(package_msg_name)](TOQSTR(topic_name), data, time);
     }
 }
 

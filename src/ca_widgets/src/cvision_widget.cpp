@@ -121,17 +121,16 @@ void CVisionCameraWidget::UpdateView(const QString &time_str, double time)
     last_time_str_ = time_str;
     last_time_ = time;
     last_mat_data_ = cv::imdecode(img, cv::IMREAD_COLOR);
-
     //数据分模块更新
-    if (semantic_show_)
+    if (semantic_show_ && !semantic_data_.img_.empty())
     {
         UpdateSemantic(last_mat_data_, semantic_data_.img_);
     }
-    if (lane_semantic_show_)
+    if (lane_semantic_show_ && !lane_semantic_data_.img_.empty())
     {
         UpdateSemantic(last_mat_data_, lane_semantic_data_.img_);
     }
-    if (obj_boundingbox_show_)
+    if (obj_boundingbox_show_ && !object_data_.empty())
     {
         UpdateObjectBox(last_mat_data_, object_data_);
     }
