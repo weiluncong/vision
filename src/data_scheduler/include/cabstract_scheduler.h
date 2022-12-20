@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "cdata_center.h"
+#include "cglobal_param.h"
 
 class CAbstractScheduler : public QObject
 {

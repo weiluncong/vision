@@ -37,7 +37,7 @@ T StringToAny(const std::string &str)
 DECLARE_bool(v_online);
 DECLARE_bool(v_total_record);
 DECLARE_bool(v_point_record);
-DECLARE_bool(v_record_lidar);
+DECLARE_bool(v_lidar_record);
 DECLARE_bool(v_parser);
 DECLARE_uint32(v_model_setting);
 DECLARE_uint32(v_camera_num);

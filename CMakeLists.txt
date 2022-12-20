@@ -4,7 +4,7 @@ project(cavision)
 set(CMAKE_BUILD_TYPE Debug)
 
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 2)
+set(VERSION_MINOR 3)
 set(VERSION_PATCH 0)
 
 string(TIMESTAMP COMPILE_TIME %m-%d_%H-%M) # 月日时分: %m%d%H%M
@@ -59,12 +59,12 @@ endforeach()
 qt5_add_resources(QRC_SOURCES  ${CMAKE_CURRENT_SOURCE_DIR}/icon.qrc)
 
 list(APPEND includePath
-	        ${CMAKE_SOURCE_DIR}/third_party
+            ${CMAKE_SOURCE_DIR}/third_party
             ${CMAKE_SOURCE_DIR}/third_party/yaml
             ${CMAKE_SOURCE_DIR}/third_party/Qt/include
             ${CMAKE_SOURCE_DIR}/third_party/OpenCV/include
             ${CMAKE_SOURCE_DIR}/third_party/eigen3
-	        ${CMAKE_SOURCE_DIR}/third_party/mdf4
+            ${CMAKE_SOURCE_DIR}/third_party/mdf4
             ${CMAKE_SOURCE_DIR}/third_party/pack
             ${CMAKE_SOURCE_DIR}/third_party/Ogre
             ${CMAKE_SOURCE_DIR}/third_party/Ogre/OGRE
@@ -72,9 +72,10 @@ list(APPEND includePath
             ${CMAKE_SOURCE_DIR}/third_party/Boost
             ${CMAKE_SOURCE_DIR}/third_party/pcan
             ${CMAKE_SOURCE_DIR}/third_party/python3.7m/include
-	        ${CMAKE_SOURCE_DIR}/third_party/capilot/include
+            ${CMAKE_SOURCE_DIR}/third_party/capilot/include
             ${CMAKE_SOURCE_DIR}/third_party/ffmpeg
             ${CMAKE_SOURCE_DIR}/third_party/DDS/include
+            ${CMAKE_SOURCE_DIR}/third_party/CAN/include
 )
 
 link_directories(
@@ -92,10 +93,11 @@ link_directories(
     ${CMAKE_SOURCE_DIR}/third_party/capilot/lib
     ${CMAKE_SOURCE_DIR}/third_party/ffmpeg
     ${CMAKE_SOURCE_DIR}/third_party/DDS/lib
+    ${CMAKE_SOURCE_DIR}/third_party/CAN/lib
 )
 
 include_directories(${includePath})
-list(APPEND mlibs caframework common protobuf gflags glog kpb zmq_cm zmq pthread yaml-cpp OgreOverlay OgreMain pcanbasic ddsc)
+list(APPEND mlibs caframework common protobuf gflags glog kpb zmq_cm zmq pthread yaml-cpp OgreOverlay OgreMain pcanbasic ddsc CANFDNET)
 list(APPEND mlibs boost_filesystem boost_program_options boost_system boost_thread)# boost
 list(APPEND mlibs avutil swresample postproc swscale avcodec avformat avfilter)# ffmpeg
 

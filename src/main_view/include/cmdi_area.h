@@ -23,6 +23,8 @@ private:
     void CreateActions();
 
     void HandleActAddCamera();
+    void HandleActAddGraphic();
+    void HandleAddGraphicItem(const QString &add_signal);
     void HandleActAddVehicleTopView();
     void HandleActAddVisionCamera();
 
@@ -32,6 +34,7 @@ private:
     QAction *act_add_camera_;
     QAction *act_add_vision_camera_;
     QAction *act_add_vehicle_topview_;
+    QAction *act_add_graphic_;
     CDataCenter *data_center_;
     CDataScheduler *data_scheduler_;
 };

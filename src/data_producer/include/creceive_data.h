@@ -18,8 +18,13 @@
 #include "dds_data.h"
 #include "dds/dds.h"
 #include "dds/ddsrt/environ.h"
+#include "zlgcan/zlgcan.h"
+#include "CANFDNET.h"
 
 #define MAX_SAMPLES 1
+#define CAN400IP "192.168.0.178"
+#define CAN600IP "192.168.0.179"
+#define CANINTERFACE 8000
 
 const size_t kTopicNameMaxLen = 100;
 const size_t kTimestampLen = sizeof(double);
@@ -47,6 +52,8 @@ public:
     ~CReceiveData();
 
 public:
+    CParserManager *parser_manager_ = nullptr;
+
     bool receive_flag_ = true;
     bool switch_flag_ = false;
 
@@ -71,7 +78,22 @@ private:
                          dds_entity_t *res_reader, dds_listener_t *listener);
     QString ConvertDDSTopic(const QString &dds_topic);
     void DDSMsgToString(DDSData_Msg *src_data);
+    /** @brief can数据接收*/
+    void ReceiveCanData(UINT zcan_type, int chnnel_num, const std::string &name, char *ip_address);
 
+    /** @brief 实时接收到的数据处理*/
+    void DeliverData();
+
+    CProtoPool *proto_pool_ = nullptr;
+    CDataCenter *data_center_ = nullptr;
+    CSignalManager *signal_manager_ = nullptr;
+    std::vector<cv::VideoCapture *> camera_captures_;
+
+    CSafeQueue<std::string> msgs_queue_;
+    std::mutex recv_mutex_;
+    std::condition_variable condition_var_;
+
+    /** @brief dds相关变量*/
     dds_entity_t participant_ = 0;
     const dds_domainid_t domain_id_ = 0;
     QMap<QString, QString> dds_topic_map_ = {
@@ -135,19 +157,13 @@ private:
         {"sab____TboxProto__BusTboxSts", ""},
         {"sab____TboxProto__BusTboxTime", ""},
         {"sab____VcuProto__BusVcuSwitchSts", ""},
-        {"sab____BusbcmProto__BusBcmTPMS", ""}};
-    /** @brief 实时接收到的数据处理*/
-    void DeliverData();
+        {"sab____BusbcmProto__BusBcmTPMS", ""},
+        {"C2_SEND_PB_TOPIC", ""}};
 
-    CParserManager *parser_manager_ = nullptr;
-    CProtoPool *proto_pool_ = nullptr;
-    CDataCenter *data_center_ = nullptr;
-    CSignalManager *signal_manager_ = nullptr;
-    std::vector<cv::VideoCapture *> camera_captures_;
-
-    CSafeQueue<std::string> msgs_queue_;
-    std::mutex recv_mutex_;
-    std::condition_variable condition_var_;
+    /** @brief can相关变量*/
+    DEVICE_HANDLE h_Dev_;
+    std::string can_topic_name_;
+    uint zcan_type_ = 0;
 };
 
 #endif // CRECEIVE_H

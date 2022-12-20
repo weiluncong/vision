@@ -1,11 +1,14 @@
 #include "cmdi_area.h"
 #include "ccamera_widget.h"
+#include "cgraphic_widget.h"
 
 CMdiArea::CMdiArea(QWidget *parent)
     : QMdiArea(parent)
 {
     data_center_ = CDataCenter::GetCDataCenter();
     data_scheduler_ = CDataScheduler::GetCDataScheduler();
+    connect(static_cast<CChartScheduler *>(data_scheduler_->widget_schedulers_["graphic"]), &CChartScheduler::addChartItem, this, &CMdiArea::HandleAddGraphicItem);
+
     setOption(QMdiArea::DontMaximizeSubWindowOnActivation);
     setBackground(Qt::gray);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -35,6 +38,8 @@ void CMdiArea::CreateActions()
     connect(act_add_vision_camera_, &QAction::triggered, this, &CMdiArea::HandleActAddVisionCamera);
     act_add_vehicle_topview_ = new QAction(tr("vehicle_topview"));
     connect(act_add_vehicle_topview_, &QAction::triggered, this, &CMdiArea::HandleActAddVehicleTopView);
+    act_add_graphic_ = new QAction(tr("chart_widget"));
+    connect(act_add_graphic_, &QAction::triggered, this, &CMdiArea::HandleActAddGraphic);
 }
 
 void CMdiArea::CreateMenus()
@@ -45,6 +50,8 @@ void CMdiArea::CreateMenus()
     camera_view->addAction(act_add_vision_camera_);
     QMenu *view_2d = new QMenu("&2d view");
     view_2d->addAction(act_add_vehicle_topview_);
+    view_2d->addAction(act_add_graphic_);
+
     QMenu *view_3d = new QMenu("&3d view");
 
     QMenu *info_view = new QMenu("&info view");
@@ -106,4 +113,25 @@ void CMdiArea::HandleActAddVisionCamera()
     this->activeSubWindow()->setWindowIcon(QIcon(":/icon/vedio.png"));
     this->activeSubWindow()->resize(400, 300);
     this->activeSubWindow()->setMaximumSize(800, 600);
+}
+
+void CMdiArea::HandleActAddGraphic()
+{
+    CGraphicWidget *graphic = new CGraphicWidget();
+    graphic->setWindowTitle("graphic");
+    this->addSubWindow(graphic);
+    static_cast<CChartScheduler *>(data_scheduler_->widget_schedulers_["graphic"])->AddGraphicWidget(graphic);
+    graphic->show();
+
+
+}
+
+void CMdiArea::HandleAddGraphicItem(const QString &add_signal)
+{
+    if (subWindowList().size() == 0 ||
+        !activeSubWindow()->windowTitle().contains("graphic"))
+    {
+        HandleActAddGraphic();
+    }
+    static_cast<CGraphicWidget *>(activeSubWindow()->widget())->AddSignals(add_signal);
 }

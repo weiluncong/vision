@@ -44,15 +44,46 @@ public:
     void InsertRecordData(double timestamp, const std::string &data);
     std::multimap<double, std::string> GetRecordData(bool remove);
 
-    void InsertSignalName(const QString &name) { all_signal_names_.append(name); }
+    
+    template <class T>
+    QMap<double, T> GetMapValue(const QString &topic_name)
+    {
+        QString class_name = TOQSTR(typeid(T).name());
+        CDataMap<T> *map_ptr = static_cast<CDataMap<T> *>(data_ptr_map_[class_name]);
+        if (!map_ptr)
+        {
+            return QMap<double, T>();
+        }
+        else
+        {
+            if (FLAGS_v_online)
+            {
+                return map_ptr->Pop(topic_name);
+            }
+            else
+            {
+                return map_ptr->Value(topic_name);
+            }
+        }
+    }
+
+    template <class T>
+    void ClearValue(const QString &topic_name)
+    {
+        QString class_name = TOQSTR(typeid(T).name());
+        CDataMap<T> *map_ptr = static_cast<CDataMap<T> *>(data_ptr_map_[class_name]);
+        map_ptr->Clear(topic_name);
+    }
 
 public:
     // data record
     std::mutex record_mutex_;
     std::multimap<double, std::string> data_buf_;
     // 曲线图全量信号
-    QStringList all_signal_names_;
+    QStringList dat_msg_signal_names_;
 
+    /**< TickTime */
+    QVector<double> tick_time_;
     double data_start_time_ = 0;
     double data_end_time_ = 0;
 };

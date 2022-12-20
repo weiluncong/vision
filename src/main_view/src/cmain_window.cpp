@@ -54,10 +54,14 @@ void CMainWindow::CreateActions()
     act_hide_explorer_ = new QAction(tr("&hide"), this);
     act_hide_explorer_->setShortcut(QKeySequence("Ctrl+return"));
     act_hide_explorer_->setStatusTip(tr("hide explorerBox"));
-    /** @brief 添加游标指令*/
-    act_add_cursor_ = new QAction(QIcon(":/icon/cursor.png"), tr("&cursor"), this);
-    act_add_cursor_->setStatusTip("show the measurement cursor");
-    act_add_cursor_->setShortcut(QKeySequence("C"));
+    connect(act_hide_explorer_, &QAction::triggered, window_manager_, &CWindowManager::HandleActHideExplorerBox);
+
+    /** @brief 游标开关指令*/
+    act_cursor_ = new QAction(QIcon(":/icon/cursor.png"), tr("&cursor"), this);
+    act_cursor_->setStatusTip("show the measurement cursor");
+    act_cursor_->setShortcut(QKeySequence("C"));
+    connect(act_cursor_, &QAction::triggered, window_manager_, &CWindowManager::HandleActAddCursor);
+    
     act_add_double_cursors_ = new QAction(QIcon(":/icon/cursors.png"), tr("&double cursors"), this);
     act_add_double_cursors_->setStatusTip("show the measurement cursors");
     act_add_double_cursors_->setShortcut(QKeySequence("V"));
@@ -114,7 +118,7 @@ void CMainWindow::CreateMenus()
     tool_menu_ = menuBar()->addMenu(tr("&Tool"));
     tool_menu_->addAction(act_mode_);
     tool_menu_->addAction(act_switch_);
-    tool_menu_->addAction(act_add_cursor_);
+    tool_menu_->addAction(act_cursor_);
     tool_menu_->addAction(act_add_double_cursors_);
     QMenu *short_cut_menu = tool_menu_->addMenu(tr("&ShortCut"));
     short_cut_menu->addAction(act_hide_explorer_);
@@ -149,7 +153,7 @@ void CMainWindow::CreateToolBar()
     tool_bar->addAction(act_total_record_);
     tool_bar->addAction(act_point_record_);
     tool_bar->addSeparator();
-    tool_bar->addAction(act_add_cursor_);
+    tool_bar->addAction(act_cursor_);
     tool_bar->addAction(act_add_double_cursors_);
 }
 

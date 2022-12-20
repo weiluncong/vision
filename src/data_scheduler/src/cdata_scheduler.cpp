@@ -10,7 +10,8 @@ CDataScheduler::CDataScheduler()
     widget_schedulers_["topview"] = topview_scheduler;
     CAbstractScheduler *sda_vision_scheduler = new CVisionScheduler();
     widget_schedulers_["cvision"] = sda_vision_scheduler;
-
+    CChartScheduler *chart_scheduler = new CChartScheduler();
+    widget_schedulers_["graphic"] = chart_scheduler;
 
     data_center_ = CDataCenter::GetCDataCenter();
     signal_manager_ = CSignalManager::GetCSignalManager();
@@ -102,6 +103,7 @@ void CDataScheduler::SyncData(double timestamp)
     widget_schedulers_["camera"]->SyncData(timestamp);
     widget_schedulers_["topview"]->SyncData(timestamp);
     widget_schedulers_["cvision"]->SyncData(timestamp);
+    widget_schedulers_["graphic"]->SyncData(timestamp);
 }
 
 void CDataScheduler::HandleParserFinished(const QString &type, double timestamp)

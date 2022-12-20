@@ -49,5 +49,4 @@ void CSDAPredictionParser::ParsePredictions(const QString &package_msg_name, con
     }
     line_parser_->ParsePredictionLines(package_msg_name + "-history_trajectory", history_lines_msg, time);
     line_parser_->ParsePredictionLines(package_msg_name + "-predict_trajectory", predict_lines_msg, time);
-    ParseFinished("topview", time);
 }

@@ -10,6 +10,8 @@
 #include "cabstract_scheduler.h"
 #include "ccamera_scheduler.h"
 #include "cvision_scheduler.h"
+#include "cchart_scheduler.h"
+#include "cchart_view.h"
 #include "ctopview_scheduler.h"
 
 class CDataScheduler : public QObject

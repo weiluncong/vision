@@ -25,6 +25,10 @@ public slots:
     void HandleDataLoadFinish();
     void HandleActDataTotalRecord();
     void HandleActDataPointRecord();
+    void HandleActAddCursor();
+    // void HandleActAddDoubleCursors();
+    void HandleActOnceDataPointRecord();
+    void HandleActHideExplorerBox();
 
 private:
     CMainWindow *main_window_ = nullptr;

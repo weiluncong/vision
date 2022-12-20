@@ -34,7 +34,7 @@ public:
     QAction *act_open_file_;
     QAction *act_switch_;
     QAction *act_hide_explorer_;
-    QAction *act_add_cursor_;
+    QAction *act_cursor_;
     QAction *act_add_double_cursors_;
     QAction *act_help_;
     QAction *act_save_config_;

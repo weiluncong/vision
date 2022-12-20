@@ -1,11 +1,14 @@
 #include "cload_data.h"
 #include "csignal_manager.h"
+#include "cexplorer_box.h"
 
 CLoadData::CLoadData(const QString &file_path)
     : file_path_(file_path)
 {
     proto_pool_ = CProtoPool::GetCProtoPool();
     parser_manager_ = new CParserManager;
+    CExplorerBox::GetCExplorerBox()->Clear();
+    connect(parser_manager_, &CParserManager::UpdateExplorerBoxModel, CExplorerBox::GetCExplorerBox(), &CExplorerBox::UpdateModelList);
 }
 
 CLoadData::~CLoadData()

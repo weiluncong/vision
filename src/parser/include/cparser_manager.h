@@ -16,6 +16,7 @@
 #include "csda_vision_parser.h"
 #include "csda_lidar_parser.h"
 #include "csda_prediction_parser.h"
+#include "cswc_parser.h"
 
 class CParserManager : public QObject
 {
@@ -26,6 +27,9 @@ public:
     void Parser(const QList<cReplayData> &list);
     void Parser(double timestamp, const std::string &topic_name, const std::string &data);
 
+    void AddOnSignal(QString &singal_name){ on_signal_parser_list_.append(singal_name);}
+    void DelOnSignal(QString &singal_name){ on_signal_parser_list_.removeOne(singal_name),data_center_->ClearValue<std::shared_ptr<google::protobuf::Message>>(singal_name);}
+
 private:
     void HandleMetaData(double timestamp, const QString &topic_name, const std::string &data);
     void SplitTopicName(const QString &topic_name, QString &swc_name, QString &package_msg_name);
@@ -33,6 +37,8 @@ private:
                       const std::string &data, double time);
     void ParseStruct(const std::string &topic_name, const std::string &package_msg_name,
                       const std::string &data, double time);
+    void RecodeMsgAndGetSignals(const QString &topic_name, const std::string &package_msg_name, const std::string &data, double time);
+
     void WaitForFinished();
     void InitParseFunc();
 
@@ -43,6 +49,7 @@ private:
 
 private:
     std::shared_ptr<CameraParser> camera_parser_ = nullptr;
+    std::shared_ptr<CSwcParser> swc_parser_ = nullptr;
     std::shared_ptr<CObjectParser> cobject_parser_ = nullptr;
     std::shared_ptr<CCamLineParser> camline_parser_ = nullptr;
     std::shared_ptr<CPointSetParser> cpoint_set_parser_ = nullptr;
@@ -56,11 +63,16 @@ private:
     CSignalManager *signal_manager_ = nullptr;
     double start_time_ = 0;
     double end_time_ = 0;
-    QStringList signal_parser_;
-    QStringList msg_parsed_;
+    QStringList signal_parser_;     //信号解析白名单
+    QStringList msg_parsed_;        //存储被解析的topic名称
+    QStringList on_signal_parser_list_; //在线曲线信号解析列表
+    QStringList all_msg_signal_names_;  //全量信号名称列表
     QMap<QString, CThreadPool *> parse_pools_;
     QMap<QString, std::function<void(const QString &, const google::protobuf::Message &, double)>> parse_functions_;
     QMap<QString, std::function<void(const QString &, const std::string &data, double)>> parse_struct_functions_;
+
+signals:
+    void UpdateExplorerBoxModel(const QStringList &model_list);
 };
 
 template <typename _Func, typename... _Args>

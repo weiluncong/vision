@@ -27,13 +27,13 @@ public:
     void Dat2Replay();
     void SetFilePath(const QString &file_path) { file_path_ = file_path; }
 
+    CParserManager *parser_manager_ = nullptr;
 private:
     void ReplayGetData(const QString &filter);
     void Dat2Csv();
 
 private:
     CProtoPool *proto_pool_;
-    CParserManager *parser_manager_;
     QList<cReplayData> data2parse_;
     QString file_path_;
     std::ifstream ifs_;

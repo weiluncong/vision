@@ -1,4 +1,5 @@
 #include "cmain_widget.h"
+#include "cexplorer_box.h"
 
 CMainWidget::CMainWidget(QWidget *parent)
     : QWidget(parent)
@@ -25,6 +26,8 @@ void CMainWidget::InitUi()
     main_layout_ = new QHBoxLayout(this);
     main_splitter_ = new QSplitter(Qt::Horizontal);
     main_splitter_->addWidget(mdi_area_);
+    main_splitter_->addWidget(CExplorerBox::GetCExplorerBox());
+    CExplorerBox::GetCExplorerBox()->hide();
     main_splitter_->setSizes({900, 100});
     main_layout_->addWidget(main_splitter_);
 }

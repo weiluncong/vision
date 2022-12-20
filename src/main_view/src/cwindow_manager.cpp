@@ -1,5 +1,7 @@
 #include "cwindow_manager.h"
 #include "cmain_window.h"
+#include "cexplorer_box.h"
+#include "cgraphic_widget.h"
 
 CWindowManager::CWindowManager(CMainWindow *main_window, QObject *parent)
     : QObject(parent)
@@ -192,3 +194,56 @@ void CWindowManager::HandleActDataPointRecord()
         SAFE_DELETE(data_point_record_);
     }
 }
+
+/** @brief 定义需要增加游标分析线*/
+void CWindowManager::HandleActAddCursor()
+{
+    static bool switch_flag = false;
+    switch_flag = !switch_flag;
+
+    for (auto i : main_window_->main_widget_->mdi_area_->findChildren<CGraphicWidget *>())
+    {
+        CChartViewCursor *chart_cursor = i->chart_view_cursor_;
+        chart_cursor->cursor_status_ = switch_flag;
+        if (chart_cursor->cursor_line_ == nullptr)
+            continue;
+        if (switch_flag)
+            chart_cursor->cursor_line_->show();
+        else
+            chart_cursor->cursor_line_->hide();
+    }
+    if (switch_flag)
+    {
+        main_window_->act_cursor_->setIcon(QIcon(":/icon/cursor_1.png"));
+        main_window_->act_cursor_->setStatusTip("hide the measurement cursor");
+    }
+    else
+    {
+        main_window_->act_cursor_->setIcon(QIcon(":/icon/cursor.png"));
+        main_window_->act_cursor_->setStatusTip("show the measurement cursor");
+    }
+}
+
+void CWindowManager::HandleActOnceDataPointRecord()
+{
+    data_point_record_->StartPointRecord();
+}
+
+void CWindowManager::HandleActHideExplorerBox()
+{
+    if (CExplorerBox::GetCExplorerBox()->isHidden())
+    {
+
+        if (CExplorerBox::GetCExplorerBox()->width() < 10)
+        {
+            CExplorerBox::GetCExplorerBox()->resize(200, CExplorerBox::GetCExplorerBox()->height());
+            qDebug() << "曲线信号图的宽度小于10! " << CExplorerBox::GetCExplorerBox()->width();
+        }
+        CExplorerBox::GetCExplorerBox()->show();
+    }
+    else
+    {
+        CExplorerBox::GetCExplorerBox()->hide();
+    }
+}
+

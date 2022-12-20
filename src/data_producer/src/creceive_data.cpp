@@ -1,4 +1,5 @@
 #include "creceive_data.h"
+#include "cexplorer_box.h"
 
 CReceiveData::CReceiveData()
 {
@@ -6,6 +7,9 @@ CReceiveData::CReceiveData()
     proto_pool_ = CProtoPool::GetCProtoPool();
     data_center_ = CDataCenter::GetCDataCenter();
     signal_manager_ = CSignalManager::GetCSignalManager();
+    CExplorerBox::GetCExplorerBox()->Clear();
+    connect(parser_manager_, &CParserManager::UpdateExplorerBoxModel, CExplorerBox::GetCExplorerBox(), &CExplorerBox::UpdateModelList);
+    connect(CExplorerBox::GetCExplorerBox(), &CExplorerBox::CurveSignal, parser_manager_, &CParserManager::AddOnSignal);
     InitReceive();
 }
 
@@ -35,6 +39,8 @@ void CReceiveData::InitReceive()
     case 1:
         // ReceiveDDSData(dds_topic_map_.keys());
         ReceiveData(FLAGS_v_data_address_soc1, FLAGS_v_proto_address_soc1);
+        // ReceiveCanData(ZCAN_CANFDNET_400U_TCP, 4, "400", "192.168.0.179");
+        // ReceiveCanData(ZCAN_CANFDDTU_CASCADE_TCP, 10, "600", "192.168.0.178");
         // ReceiveCameraData();
         DeliverData();
         break;
@@ -50,7 +56,8 @@ void CReceiveData::InitReceive()
 
 void CReceiveData::ReceiveData(const std::string &data_address, const std::string &proto_address)
 {
-    std::thread t([&] {
+    std::thread t([&]
+                  {
                     bool proto_flag = true;
                     zmq::message_t msg;
                     zmq::context_t *context = new zmq::context_t();
@@ -107,7 +114,8 @@ void CReceiveData::ReceiveData(const std::string &data_address, const std::strin
 
 void CReceiveData::DeliverData()
 {
-    std::thread t([this] {
+    std::thread t([this]
+                  {
                       std::string msg;
                       std::string topic_name;
                       double timestamp;
@@ -169,7 +177,7 @@ void CReceiveData::RecordData(const std::string &topic_name, double timestamp, c
 {
     if (FLAGS_v_total_record || FLAGS_v_point_record)
     {
-        if (!FLAGS_v_record_lidar && lidar_list_.contains(TOQSTR(topic_name)))
+        if (!FLAGS_v_lidar_record && lidar_list_.contains(TOQSTR(topic_name)))
         {
             return;
         }
@@ -195,7 +203,8 @@ void CReceiveData::ReceiveCameraData()
         qDebug() << "create camera capture failed, no usb camera!!";
         return;
     }
-    std::thread t([=] {
+    std::thread t([=]
+                  {
         while (receive_flag_)
         {
             if (switch_flag_)
@@ -256,8 +265,7 @@ bool CReceiveData::CreateCameraCapture()
     return camera_captures_.empty();
 }
 
-/*******************************************DDS Data Receive********************************************************/
-
+/***************************************DDS data receive*********************/
 void CReceiveData::ReceiveDDSData(const QStringList &topics, const std::string &config_path)
 {
     if (participant_ != 0)
@@ -420,4 +428,91 @@ void CReceiveData::DDSMsgToString(DDSData_Msg *msg)
            msg->payload._buffer, msg->payload._length);
     msgs_queue_.Enqueue(desc_data);
     condition_var_.notify_one();
+}
+
+/***************************************can data receive*********************/
+void CReceiveData::ReceiveCanData(uint zcan_type, int chnnel_num, const std::string &name, char *ip_address)
+{
+    zcan_type_ = zcan_type;
+    h_Dev_ = ZCAN_OpenDevice(zcan_type_, 0, 0);
+    if (h_Dev_ == INVALID_DEVICE_HANDLE)
+    {
+        qDebug() << "Open device failed!";
+        return;
+    }
+    CHANNEL_HANDLE hChannel[chnnel_num];
+    for (int i = 0; i < chnnel_num; i++)
+    {
+        hChannel[i] = ZCAN_InitCAN(h_Dev_, i, nullptr);
+        if (hChannel[i] == INVALID_CHANNEL_HANDLE)
+        {
+            qDebug() << "Init CAN failed!";
+            return;
+        }
+    }
+    qDebug() << "as tcp client";
+    uint val = 1;
+    ZCAN_SetReference(zcan_type_, 0, 0, SETREF_SET_DATA_RECV_MERGE, &val);
+    val = 0;
+    ZCAN_SetReference(zcan_type_, 0, 0, CMD_TCP_TYPE, &val);
+    ZCAN_SetReference(zcan_type_, 0, 0, CMD_DESIP, (void *)ip_address);
+    val = CANINTERFACE;
+    ZCAN_SetReference(zcan_type_, 0, 0, CMD_DESPORT, &val);
+
+    for (int i = 0; i < chnnel_num; i++)
+    {
+        if (ZCAN_StartCAN(hChannel[i]) != STATUS_OK)
+        {
+            qDebug() << "Start CAN error!";
+            return;
+        }
+    }
+    can_topic_name_ = "RawDataReceiver-ReinjectionData.CanData-" + name + "_";
+
+    std::thread t([&]
+                  {
+        std::cout << can_topic_name_ << " recever thread start!" << std::endl;
+        ZCANDataObj dataBuf[100];
+        memset(dataBuf, 0, sizeof(dataBuf));
+        while (receive_flag_)
+        {
+            if (!switch_flag_)
+            {
+                continue;
+            }
+            uint recv = ZCAN_ReceiveData(h_Dev_, dataBuf, sizeof(dataBuf) / sizeof(dataBuf[0]));
+            if (recv == 0)
+            {
+                qDebug() << "receive can data len = 0 ;";
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
+            else
+            {
+                for (uint i = 0; i < recv; i++)
+                {
+                    ZCANDataObj data = dataBuf[i];
+                    if (data.dataType == ZCAN_DT_ZCAN_CAN_CANFD_DATA)
+                    {
+                        ZCANCANFDData &can = data.data.zcanCANFDData;
+                        if (can.frame.can_id != 0)
+                        {
+                            double timestamp = KTime().getTime();
+                            std::string topic_name = can_topic_name_ + std::to_string((int)data.chnl);
+                            qDebug() << "can topic_name =" << TOQSTR(topic_name) << ", timestamp =" << timestamp << ", Can.frame.can_id =" << can.frame.can_id;
+                            std::string msg_data;
+                            msg_data.resize(sizeof(data));
+                            memcpy(&msg_data[0], &data, sizeof(data));
+                            RecordData(topic_name, timestamp, msg_data);
+                        }
+                        else
+                        {
+                            qDebug() << "receive id is 0!";
+                        }
+                    }
+                }
+            }
+        }
+        ZCAN_CloseDevice(h_Dev_);
+        std::cout << can_topic_name_ << " recever thread over!" << std::endl; });
+    t.detach();
 }

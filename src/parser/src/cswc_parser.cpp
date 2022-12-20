@@ -1,101 +1,112 @@
 #include "cswc_parser.h"
 
-CSwcParser::CSwcParser()
+void CSwcParser::GetMsgSignalName(const QString &source_name, const google::protobuf::Message &msg, bool &flag)
 {
-}
-
-void CSwcParser::ParseSwcData(const google::protobuf::Message &msg, const QString &package_msg_name, double timestamp, QMap<double, double> &dat_map)
-{
-    QStringList source_names = package_msg_name.split("~");
-    source_names.removeFirst();
-    auto reflection = msg.GetReflection();
-    auto descriptor = msg.GetDescriptor();
-    auto field = descriptor->FindFieldByName(TOSTR(source_names.first()));
-    if (!field)
-        return;
-
-    if (field->cpp_type() == google::protobuf::FieldDescriptor::CPPTYPE_MESSAGE)
+    if (source_name.contains("CanPacks"))
     {
-        source_names.removeFirst();
-        if (field->is_repeated())
-        {
-            int index = source_names.takeFirst().toInt();
-            if (index < reflection->FieldSize(msg, field))
-            {
-                const auto &nmsg = reflection->GetRepeatedMessage(msg, field, index);
-                ParseSwcData(nmsg, source_names.join("~"), timestamp, dat_map);
-            }
-        }
-        else
-        {
-            const auto &nmsg = reflection->GetMessage(msg, field);
-            ParseSwcData(nmsg, source_names.join("~"), timestamp, dat_map);
-        }
-    }
-    else
-    {
-        if (field->is_repeated())
-        {
-            int index = source_names.last().toInt();
-            if (index < reflection->FieldSize(msg, field))
-            {
-                dat_map[timestamp] = GetRepeatedMsg(msg, field, index).toDouble();
-            }
-        }
-        else
-        {
-            dat_map[timestamp] = StringToAny<double>(FieldToStr(msg, field));
-        }
-    }
-}
-
-void CSwcParser::ParseAllSignalName(const QString &topic_name, const google::protobuf::Message &msg, bool &flag)
-{
-    if (topic_name.contains("CanPacks"))
         return;
-
+    }
+    QString val_name;
     auto reflection = msg.GetReflection();
     auto descriptor = msg.GetDescriptor();
     int field_count = descriptor->field_count();
     for (int i = 0; i < field_count; ++i)
     {
         auto field = descriptor->field(i);
-        if (!field)
-            continue;
 
-        QString signal_name = topic_name + '~' + TOQSTR(field->name());
-        if (field->cpp_type() == google::protobuf::FieldDescriptor::CPPTYPE_MESSAGE) // type为message
+        if (field)
         {
-            if (field->is_repeated()) // repeated
+            if (field->cpp_type() != 10 && !field->is_repeated()) //判断是否是meesage
             {
-                int size = reflection->FieldSize(msg, field);
-                for (int j = 0; j < size; ++j)
+                val_name = source_name + '~' + TOQSTR(field->name());
+                data_center_->dat_msg_signal_names_.append(val_name);
+                flag = true;
+            }
+            else if (field->cpp_type() != 10 && field->is_repeated())
+            {
+                val_name = source_name + '~' + TOQSTR(field->name());
+                int val_size = msg.GetReflection()->FieldSize(msg, field);
+
+                for (int k = 0; k < val_size; k++)
                 {
-                    const auto &nmsg = reflection->GetRepeatedMessage(msg, field, j);
-                    ParseAllSignalName(signal_name + '~' + QString::number(j), nmsg, flag);
+                    data_center_->dat_msg_signal_names_.append(val_name + '~' + QString::number(k));
+                    flag = true;
                 }
             }
-            else
+            else if (field->cpp_type() == 10 && !field->is_repeated())
             {
                 const auto &nmsg = reflection->GetMessage(msg, field);
-                ParseAllSignalName(signal_name, nmsg, flag);
+                GetMsgSignalName(source_name + '~' + TOQSTR(field->name()), nmsg, flag);
             }
-        }
-        else // type不为message
-        {
-            if (field->is_repeated()) // repeated
+
+            else if (field->cpp_type() == 10 && field->is_repeated())
             {
-                int size = msg.GetReflection()->FieldSize(msg, field);
-                flag = (size > 0);
-                for (int j = 0; j < size; ++j)
+                int repeatedSize = reflection->FieldSize(msg, field);
+                for (int j = 0; j < repeatedSize; ++j)
                 {
-                    data_center_->InsertSignalName(signal_name + '~' + QString::number(j));
+                    const auto &nmsg = reflection->GetRepeatedMessage(msg, field, j);
+                    val_name = source_name + '~' + TOQSTR(field->name()) + '~' + QString::number(j);
+
+                    GetMsgSignalName(val_name, nmsg, flag);
                 }
             }
-            else
+        }
+    }
+}
+
+void CSwcParser::ParseTickTime(const double &tick_data)
+{
+    data_center_->tick_time_.push_back(tick_data);
+}
+
+void CSwcParser::ParseOnlineSwcData(const google::protobuf::Message &msg, const QString &source_name,
+                                    const double &timestamp)
+{
+    QStringList source_names = source_name.split("~");
+    QMap<double, double> time_point;
+    source_names.removeFirst();
+    ParseOfflineSwcData(msg, source_names, timestamp, time_point);
+    if(!time_point.isEmpty()) {
+        if (std::isnan(time_point[timestamp]) ||  std::isinf(time_point[timestamp]))
+            return;
+        data_center_->InsertValue<double>(source_name, timestamp, time_point[timestamp]);
+        ParseFinished("graphic", timestamp);
+    }
+}
+
+
+void CSwcParser::ParseOfflineSwcData(const google::protobuf::Message &msg, QStringList &source_names,
+                             const double &timestamp, QMap<double, double> &dat_map)
+{
+    auto reflection = msg.GetReflection();
+    auto descriptor = msg.GetDescriptor();
+    auto field = descriptor->FindFieldByName(TOSTR(source_names.first()));
+    if (field)
+    {
+        if (field->cpp_type() != 10)
+        {
+            if (!field->is_repeated()) //判断是否是meesage
+                dat_map[timestamp] = FieldToQStr(msg, field).toDouble();
+            else if (field->is_repeated() && source_names.last().toInt() < reflection->FieldSize(msg, field))
+                dat_map[timestamp] = GetRepeatedMsg(msg, field, source_names.last().toDouble()).toDouble();
+        }
+        else if (field->cpp_type() == 10)
+        {
+            if (!field->is_repeated())
             {
-                data_center_->InsertSignalName(signal_name);
-                flag = true;
+                const auto &nmsg = reflection->GetMessage(msg, field);
+                source_names.removeFirst();
+                ParseOfflineSwcData(nmsg, source_names, timestamp, dat_map);
+            }
+            else if (field->is_repeated())
+            {
+                source_names.removeFirst();
+                if (source_names.first().toInt() < reflection->FieldSize(msg, field))
+                {
+                    const auto &nmsg = reflection->GetRepeatedMessage(msg, field, source_names.first().toDouble());
+                    source_names.removeFirst();
+                    ParseOfflineSwcData(nmsg, source_names, timestamp, dat_map);
+                }
             }
         }
     }

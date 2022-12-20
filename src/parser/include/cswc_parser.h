@@ -6,12 +6,19 @@
 class CSwcParser : public AbstractParser
 {
 public:
-    CSwcParser();
+    CSwcParser() {}
     ~CSwcParser() {}
 
-    void ParseSwcData(const google::protobuf::Message &msg, const QString &package_msg_name, double timestamp, QMap<double, double> &dat_map);
+    //parser online  swc data
+    void ParseOnlineSwcData(const google::protobuf::Message &msg, const QString &source_name, const double &timestamp);
 
-    void ParseAllSignalName(const QString &topic_name, const google::protobuf::Message &msg, bool &flag);
+    //parser offline swc data
+    void ParseOfflineSwcData(const google::protobuf::Message &msg, QStringList &source_names, const double &timestamp, QMap<double, double> &dat_map);
+
+    void ParseTickTime(const double &);
+
+    void GetMsgSignalName(const QString &source_name, const google::protobuf::Message &msg, bool &flag);
+
 };
 
 #endif // CSWC_PARSER_H

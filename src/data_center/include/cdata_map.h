@@ -21,6 +21,7 @@ public:
     const QString &FirstKey() const { return map_.firstKey(); }
     const QString &LastKey() const { return map_.lastKey(); }
     QList<QString> Keys() const { return map_.keys(); }
+    QList<double> Keys(const QString &key) const { return map_.value(key).keys(); }
 
     const T Value(const QString &key, const double &time) const
     {
@@ -31,6 +32,8 @@ public:
         }
         return T();
     }
+
+    QMap<double, T> Value(const QString &key) const{ return map_[key]; }
 
     const T Pop(const QString &key, const double &time)
     {
@@ -43,7 +46,19 @@ public:
         return T();
     }
 
+    const QMap<double, T> Pop(const QString &key)
+    {
+        if (map_.contains(key))
+        {
+            return map_.take(key);
+        }
+
+        return QMap<double, T>();
+    }
+
     void Clear() { SafeClear(map_); }
+
+    void Clear(const QString &key) { SafeClear(map_[key]); }
 
     inline void Insert(const QString &key, const double &time, const T &data)
     {

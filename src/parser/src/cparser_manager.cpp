@@ -6,6 +6,13 @@ CParserManager::CParserManager(QObject *parent)
     proto_pool_ = CProtoPool::GetCProtoPool();
     data_center_ = CDataCenter::GetCDataCenter();
     signal_manager_ = CSignalManager::GetCSignalManager();
+
+    signal_parser_ = QStringList({"adas_udp_receiver-adasmap_diagnosis.AdasMapDiagnosisInfo",
+                      "adas_udp_receiver-adasmap_diagnosis.AdasMapHeartBeats",
+                      "aeb_com-AebProto.AebResult",
+                      "aeb_com-AebProto.AebTriggerAndDiagnostic",
+                      "capilot-ProcessStatus-adas_udp_receiver"});
+
     InitParseFunc();
 }
 
@@ -24,6 +31,7 @@ CParserManager::~CParserManager()
 void CParserManager::InitParseFunc()
 {
     camera_parser_ = std::shared_ptr<CameraParser>(new CameraParser());
+    swc_parser_ = std::shared_ptr<CSwcParser>(new CSwcParser());
     cobject_parser_ = std::shared_ptr<CObjectParser>(new CObjectParser());
     camline_parser_ = std::shared_ptr<CCamLineParser>(new CCamLineParser());
     cpoint_set_parser_ = std::shared_ptr<CPointSetParser>(new CPointSetParser());
@@ -61,7 +69,7 @@ void CParserManager::InitParseFunc()
     AddParserFun("localization.InsData", &CSdaParser::ParseIns, csda_parser_);
     AddParserFun("hdmap.StaticHDMapInfo", &CSdaParser::ParseHDMap, csda_parser_);
     AddParserFun("idmap.StaticIDMapInfo", &CSdaParser::ParseIdmapStatic, csda_parser_);
-    AddParserFun("prediction.RNPEnvOut", &CSdaParser::ParseRNPEnvOut, csda_parser_);
+    // AddParserFun("prediction.RNPEnvOut", &CSdaParser::ParseRNPEnvOut, csda_parser_);
     AddParserFun("localization.CurrentLaneId", &CSdaParser::ParseCurrentLane, csda_parser_);
 
     // sda prediction parser
@@ -129,16 +137,15 @@ void CParserManager::HandleMetaData(double timestamp, const QString &topic_name,
         parse_pools_[swc_name]->submit(std::bind(&CParserManager::ParseStruct, this, TOSTR(topic_name),
                                                  TOSTR(package_msg_name), data, time));
     }
-    else
-    {
-        if (topic_name.contains("_usb") || topic_name.contains("-usb") ||
+    else if (topic_name.contains("_usb") || topic_name.contains("-usb") ||
             topic_name.contains("RawData-fc") || topic_name.contains("RawData_fc") ||
             topic_name.contains("RawImage-fc"))
-        {
-            camera_parser_->ParseCamera(topic_name, data, time);
-            return;
-        }
+    {
+        camera_parser_->ParseCamera(topic_name, data, time);
+        return;
     }
+    else
+        RecodeMsgAndGetSignals(topic_name, TOSTR(package_msg_name), data, time);
 }
 
 void CParserManager::SplitTopicName(const QString &topic_name, QString &swc_name, QString &package_msg_name)
@@ -189,9 +196,7 @@ void CParserManager::WaitForFinished()
         for (auto &i : parse_pools_.keys())
         {
             if (parse_pools_[i]->queue_.Empty())
-            {
                 parse_finish.insert(i);
-            }
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -205,4 +210,39 @@ void CParserManager::WaitForFinished()
         delete i;
     }
     SafeClear(parse_pools_);
+}
+
+void CParserManager::RecodeMsgAndGetSignals(const QString &topic_name, const std::string &package_msg_name, const std::string &data, double time)
+{
+    google::protobuf::Message *msg = proto_pool_->GetProtoMessage(TOSTR(topic_name), package_msg_name, data);
+    if (!msg)
+        return;
+    if (FLAGS_v_online)
+    {
+        //parser online signal
+        for(auto siganl_name : on_signal_parser_list_)
+        {
+            if(siganl_name.contains(topic_name))
+            {
+                swc_parser_->ParseOnlineSwcData(*msg, siganl_name, time);
+            }
+        }
+    }
+    else
+    {
+        //recode off msg data
+        data_center_->InsertValue(topic_name, time, msg);
+    }
+
+    //get all signals
+    if (!msg_parsed_.contains(topic_name))
+    {
+        bool flag = false;
+        swc_parser_->GetMsgSignalName(topic_name, *msg, flag);
+        if (flag)
+        {
+            msg_parsed_.append(topic_name);
+            emit UpdateExplorerBoxModel(data_center_->dat_msg_signal_names_);
+        }
+    }
 }
