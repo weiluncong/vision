@@ -219,13 +219,7 @@ void CParserManager::RecodeMsgAndGetSignals(const QString &topic_name, const std
     if (FLAGS_v_online)
     {
         // parser online signal
-        for (auto siganl_name : on_signal_parser_list_)
-        {
-            if (siganl_name.contains(topic_name))
-            {
-                swc_parser_->ParseOnlineSwcData(*msg, siganl_name, time);
-            }
-        }
+        swc_parser_->ParseOnlineSwcData(*msg, on_signal_parser_list_, topic_name, time);
     }
     else
     {

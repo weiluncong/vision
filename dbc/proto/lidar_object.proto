@@ -3,14 +3,12 @@ syntax = "proto3";
 package LidarObjectProto;
 
 enum ObjectType {
-  UNKNOW_OBJ = 0;
-  CONE = 1;
-  PEDESTRAIN = 2;
-  CAR = 3;
-  CYCLIST = 4;
-  MINI_TRUCK = 5;
-  MEDIUM_TRUCK = 6;
-  BIG_TRUCK = 7;
+  CAR = 0;
+  BUS = 1;
+  TRUCK = 2;
+  RIDERN = 3;
+  PEDESTRAIN = 4;
+  UNKNOWN_OBJ = 12;
 }
 
 enum MotionType {
@@ -54,7 +52,7 @@ enum DataSource {
 }
 
 enum TrackingState {
-  UNKNOW = 0;
+  UNKNOWN = 0;
   INIT = 1;
   STABLE = 2;
   PREDICTION = 3;

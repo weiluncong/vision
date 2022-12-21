@@ -16,7 +16,7 @@ void CSwcParser::GetMsgSignalName(const QString &source_name, const google::prot
 
         if (field)
         {
-            if (field->cpp_type() != 10 && !field->is_repeated()) //判断是否是meesage
+            if (field->cpp_type() != 10 && !field->is_repeated()) // 判断是否是meesage
             {
                 val_name = source_name + '~' + TOQSTR(field->name());
                 data_center_->dat_msg_signal_names_.append(val_name);
@@ -59,24 +59,29 @@ void CSwcParser::ParseTickTime(const double &tick_data)
     data_center_->tick_time_.push_back(tick_data);
 }
 
-void CSwcParser::ParseOnlineSwcData(const google::protobuf::Message &msg, const QString &source_name,
-                                    const double &timestamp)
+void CSwcParser::ParseOnlineSwcData(const google::protobuf::Message &msg, const QStringList &online_signals, const QString &topic_name,
+                                    double timestamp)
 {
-    QStringList source_names = source_name.split("~");
-    QMap<double, double> time_point;
-    source_names.removeFirst();
-    ParseOfflineSwcData(msg, source_names, timestamp, time_point);
-    if(!time_point.isEmpty()) {
-        if (std::isnan(time_point[timestamp]) ||  std::isinf(time_point[timestamp]))
-            return;
-        data_center_->InsertValue<double>(source_name, timestamp, time_point[timestamp]);
-        ParseFinished("graphic", timestamp);
+    for (auto siganl_name : online_signals)
+    {
+        if (siganl_name.contains(topic_name))
+        {
+            QStringList source_names = siganl_name.split("~");
+            QMap<double, double> time_point;
+            source_names.removeFirst();
+            ParseOfflineSwcData(msg, source_names, timestamp, time_point);
+            double val = time_point[timestamp];
+            if (!time_point.isEmpty() && !std::isnan(val) && !std::isinf(val))
+            {
+                data_center_->InsertValue<double>(siganl_name, timestamp, val);
+            }
+        }
     }
+    ParseFinished("graphic", timestamp);
 }
 
-
 void CSwcParser::ParseOfflineSwcData(const google::protobuf::Message &msg, QStringList &source_names,
-                             const double &timestamp, QMap<double, double> &dat_map)
+                                     const double &timestamp, QMap<double, double> &dat_map)
 {
     auto reflection = msg.GetReflection();
     auto descriptor = msg.GetDescriptor();
@@ -85,7 +90,7 @@ void CSwcParser::ParseOfflineSwcData(const google::protobuf::Message &msg, QStri
     {
         if (field->cpp_type() != 10)
         {
-            if (!field->is_repeated()) //判断是否是meesage
+            if (!field->is_repeated()) // 判断是否是meesage
                 dat_map[timestamp] = FieldToQStr(msg, field).toDouble();
             else if (field->is_repeated() && source_names.last().toInt() < reflection->FieldSize(msg, field))
                 dat_map[timestamp] = GetRepeatedMsg(msg, field, source_names.last().toDouble()).toDouble();

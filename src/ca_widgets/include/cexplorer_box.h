@@ -1,12 +1,7 @@
 #ifndef CEXPLORER_BOX_H
 #define CEXPLORER_BOX_H
 
-#include <QObject>
-#include <QWidget>
 #include <QtWidgets>
-#include <QGroupBox>
-#include <QLayout>
-
 class CExplorerBox : public QGroupBox
 {
     Q_OBJECT
@@ -14,7 +9,6 @@ public:
     CExplorerBox(QWidget *parent = nullptr);
     ~CExplorerBox();
 
-    /*******************************************************8*/
     QVBoxLayout *main_layout_;
     QComboBox *items_comboBox_;
     QListView *items_list_view_;
@@ -35,11 +29,11 @@ public:
 
     void MulitSelect(const QModelIndex &index);
 
-    //更新全量信号列表
-    void UpdateModelList(const QStringList &model_list){ item_string_model_->setStringList(model_list);}
+    // 更新全量信号列表
+    void UpdateModelList(const QStringList &model_list) { item_string_model_->setStringList(model_list); }
 
-    //清空列表
-    void Clear(){item_string_model_->setStringList(QStringList());}
+    // 清空列表
+    void Clear() { item_string_model_->setStringList(QStringList()); }
 
 signals:
     void CurveSignal(QString &);

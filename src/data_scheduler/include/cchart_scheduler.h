@@ -7,7 +7,6 @@
 
 class CGraphicWidget;
 
-
 class CChartScheduler : public CAbstractScheduler
 {
     Q_OBJECT
@@ -29,15 +28,11 @@ signals:
     void sendChartNameData(QString name, double value, double time);
     void addChartItem(const QString &item_name);
 
-
 private:
     QMap<QString, QMap<double, double>> off_parser_result_map_;
 
     QVector<CGraphicWidget *> graphic_widget_vec_;
     CSwcParser swc_parser_;
-
-
-
 };
 
 #endif // CCHART_SCHEDULER_H

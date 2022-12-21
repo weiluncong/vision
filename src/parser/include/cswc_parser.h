@@ -10,7 +10,7 @@ public:
     ~CSwcParser() {}
 
     //parser online  swc data
-    void ParseOnlineSwcData(const google::protobuf::Message &msg, const QString &source_name, const double &timestamp);
+    void ParseOnlineSwcData(const google::protobuf::Message &msg, const QStringList &online_signals, const QString &topic_name, double timestamp);
 
     //parser offline swc data
     void ParseOfflineSwcData(const google::protobuf::Message &msg, QStringList &source_names, const double &timestamp, QMap<double, double> &dat_map);

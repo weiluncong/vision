@@ -10,7 +10,7 @@ void CVisionScheduler::SyncData(double timestamp)
 {
     if (camera_widget_vec_.isEmpty())
         return;
-    
+
     double time = timestamp;
     auto img_data_ptr = data_center_->GetDataPtr<cav::CImageData>();
     auto obj_data_ptr = data_center_->GetDataPtr<QVector<cav::CObjBoxCV>>();
@@ -48,7 +48,7 @@ void CVisionScheduler::SyncData(double timestamp)
                     camera->SetRawData(img_data);
             }
 
-            //update img
+            // update img
             if (img_data_ptr->Keys().contains(camera->Name()))
             {
                 QString time_str = QDateTime::fromMSecsSinceEpoch((time + data_center_->data_start_time_) * 1000).toString("yyyy-MM-dd hh:mm:ss.zzz");

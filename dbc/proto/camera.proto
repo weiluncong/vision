@@ -1,126 +1,60 @@
-syntax = "proto3";
+syntax = "proto2";
 
-import "common.proto";
+import "perception_base.proto";
 package CameraProto;
 
-message CamObject {
-  int32 track_id = 1;
-  double longitudinal_distance = 2;
-  double lateral_distance = 3;
-  double vertical_distance = 4;
-  double longitudinal_absolute_velocity = 5;
-  double lateral_absolute_velocity = 6;
-  double longitudinal_relative_velocity = 7;
-  double lateral_relative_velocity = 8;
-  double longitudinal_absolute_acceleration = 9;
-  double lateral_absolute_acceleration = 10;
-  double longitudinal_relative_acceleration = 11;
-  double lateral_relative_acceleration = 12;
-  double length = 13;
-  double width = 14;
-  double height = 15;
-  double heading_angle = 16;
-  .CommonProto.ObjectClass classfication = 17;
-  double confidence = 18;
-  double azimuth = 19;
-  int32 age = 20;
-  .CommonProto.Rect box2d = 21;
-  .CommonProto.Cube box3d = 22;
-  int32 region_id = 23;
-  double dist_in_line = 24;
-  .CommonProto.CutInFlag cut_in_flag = 25;
-  .CommonProto.MeasureState cut_in_measure_state = 26;
-  repeated .CommonProto.Point2DPosition obj_refer_points = 27;
-  .CommonProto.TurnSignal obj_turn_signal = 28;
-  .CommonProto.ObjectMotionState obj_motion_type = 29;
-  .CommonProto.ObjectLaneAssignment obj_lane_assignment = 30;
+enum CameraType {
+  CameraType_PinHole = 0;
+  CameraType_FishEye = 1;
 }
 
-message CamLine {
-  bool is_valid = 1;
-  double curve_parameter_a0 = 2;
-  double curve_parameter_a1 = 3;
-  double curve_parameter_a2 = 4;
-  double curve_parameter_a3 = 5;
-  double mean_curvature = 6;
-  .CommonProto.LineColor color = 7;
-  .CommonProto.LineType type = 8;
-  double line_range = 9;
-  int32 confidence = 10;
-  double start_x = 11;
-  double end_x = 12;
-  int32 line_track_id = 13;
+enum CameraVersion {
+  CameraVersion_CV = 0;
+  CameraVersion_VCS = 1;
 }
 
-message CamFsPoint {
-  .CommonProto.PointMotionState motion_state = 1;
-  .CommonProto.PointType type = 2;
-  .CommonProto.Point2DPosition position = 3;
+enum CalibrationStatus {
+  CalibrationStatus_Default = 0;
+  CalibrationStatus_IntrinsicDone = 1;
+  CalibrationStatus_ExtrinsicDone = 2;
 }
 
-message TrafficSign {
-  .CommonProto.TrafficSignType type = 1;
-  double longitudinal_distance = 2;
-  double lateral_distance = 3;
-  double height = 4;
-  double sign_value = 5;
-  double confidence = 6;
+message CameraValidHeight {
+  optional int32 left_y = 1;
+  optional int32 right_y = 2;
 }
 
-message GroundTrafficSign {
-  .CommonProto.GroundTrafficSignType type = 1;
-  double longitudinal_distance = 2;
-  double lateral_distance = 3;
-  double confidence = 4;
+message VCSParam {
+  repeated float rotation = 1;
+  repeated float translation = 2;
 }
 
-message TrafficLight {
-  .CommonProto.TrafficLightColor color = 1;
-  .CommonProto.TrafficLightDirection dirction = 2;
-  double longitudinal_distance = 3;
-  double lateral_distance = 4;
-  double height = 5;
-  double confidence = 6;
+message DistortParam {
+  repeated float param = 1;
 }
 
-message CamObjects {
-  double time_stamp = 1;
-  repeated .CameraProto.CamObject objs = 2;
-  repeated .CommonProto.SensorParameters sensors_parameters = 3;
-  int32 frame_index = 4;
-}
-
-message CamLines {
-  double time_stamp = 1;
-  repeated .CameraProto.CamLine lines = 2;
-  repeated .CommonProto.SensorParameters sensors_parameters = 3;
-  int32 frame_index = 4;
-}
-
-message FcLines {
-  double time_stamp = 1;
-  repeated .CameraProto.CamLine lines = 2;
-  repeated .CommonProto.SensorParameters sensors_parameters = 3;
-  int32 frame_index = 4;
-}
-
-message CamLinesWithImage {
-  .CameraProto.CamLines lines = 1;
-  bytes image = 2;
-}
-
-message CamFreeSpace {
-  double time_stamp = 1;
-  repeated .CameraProto.CamFsPoint points = 2;
-  repeated .CommonProto.SensorParameters sensors_parameters = 3;
-  int32 frame_index = 4;
-}
-
-message CamTsr {
-  double time_stamp = 1;
-  repeated .CameraProto.TrafficSign ts = 2;
-  repeated .CameraProto.GroundTrafficSign gs = 3;
-  repeated .CameraProto.TrafficLight tl = 4;
-  int32 frame_index = 5;
+message CameraParam {
+  optional float focal_u = 1;
+  optional float focal_v = 2;
+  optional float center_u = 3;
+  optional float center_v = 4;
+  optional float camera_x = 5;
+  optional float camera_y = 6;
+  optional float camera_z = 7;
+  optional float pitch = 8;
+  optional float yaw = 9;
+  optional float roll = 10;
+  optional int32 type = 11 [default = 0];
+  optional float fov = 12;
+  optional int32 version = 13 [default = 0];
+  optional .CameraProto.CalibrationStatus cali_status = 14;
+  optional .CameraProto.CameraValidHeight valid_height = 15;
+  optional .CameraProto.DistortParam distort = 20;
+  optional .CameraProto.VCSParam vcs = 21;
+  optional .PerceptionBaseProto.CameraMatrix mat = 30;
+  optional string vendor = 50;
+  optional int64 time_stamp = 60;
+  optional int32 cam_id = 61;
+  optional int32 frame_id = 62;
 }
 

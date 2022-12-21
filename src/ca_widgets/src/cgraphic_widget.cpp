@@ -69,16 +69,18 @@ void CGraphicWidget::CreateActions()
     connect(re_chose_, &QAction::triggered, this, &CGraphicWidget::ReCheck);
 
     chose_all_ = new QAction(tr("ChooseAll"), this);
-    connect(chose_all_, &QAction::triggered, this, [this] { SetAllItem(true); });
+    connect(chose_all_, &QAction::triggered, this, [this]
+            { SetAllItem(true); });
 
     chose_none_ = new QAction(tr("ChooseNone"), this);
-    connect(chose_none_, &QAction::triggered, this, [this] { SetAllItem(false); });
+    connect(chose_none_, &QAction::triggered, this, [this]
+            { SetAllItem(false); });
 
     onlye_chose_ = new QAction(tr("ChooseOnly"), this);
-    connect(onlye_chose_, &QAction::triggered, this, [this] {
+    connect(onlye_chose_, &QAction::triggered, this, [this]
+            {
         SetAllItem(false);
-        ReCheck();
-    });
+        ReCheck(); });
 
     chart_window_switch_ = new QAction(tr("HideChartWindow"), this);
     connect(chart_window_switch_, &QAction::triggered, this, &CGraphicWidget::HideOrShowChartWindow);

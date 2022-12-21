@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "common.proto";
+import "sabcommon.proto";
 package RadarProto;
 
 message RadarDetection {
@@ -17,13 +17,13 @@ message RadarDetection {
   double snr = 11;
   int32 point_id = 12;
   int32 obj_id = 13;
-  .CommonProto.PointMotionState motion_status = 14;
+  .SabCommonProto.PointMotionState motion_status = 14;
 }
 
 message RadarFsPoint {
-  .CommonProto.PointType type = 1;
-  .CommonProto.Point2DPosition position = 2;
-  .CommonProto.PointMotionState motion_state = 3;
+  .SabCommonProto.PointType type = 1;
+  .SabCommonProto.Point2DPosition position = 2;
+  .SabCommonProto.PointMotionState motion_state = 3;
 }
 
 message RadarObject {
@@ -43,42 +43,34 @@ message RadarObject {
   double width = 14;
   double height = 15;
   double heading_angle = 16;
-  .CommonProto.ObjectClass classfication = 17;
+  .SabCommonProto.ObjectClass classfication = 17;
   double exist_prob = 18;
   double obstacle_prob = 19;
   int32 loss_num = 20;
   int32 points_count = 21;
   int32 age = 22;
   int32 region_id = 23;
-  repeated .CommonProto.Point2DPosition obj_refer_points = 24;
+  repeated .SabCommonProto.Point2DPosition obj_refer_points = 24;
 }
 
 message RadarDetections {
   double time_stamp = 1;
   repeated .RadarProto.RadarDetection detections = 2;
-  repeated .CommonProto.SensorParameters sensors_parameters = 3;
+  repeated .SabCommonProto.SensorParameters sensors_parameters = 3;
   int32 frame_index = 4;
 }
 
 message RadarObjects {
   double time_stamp = 1;
   repeated .RadarProto.RadarObject objs = 2;
-  repeated .CommonProto.SensorParameters sensors_parameters = 3;
+  repeated .SabCommonProto.SensorParameters sensors_parameters = 3;
   int32 frame_index = 4;
 }
 
 message RadarFreeSpace {
   double time_stamp = 1;
   repeated .RadarProto.RadarFsPoint points = 2;
-  repeated .CommonProto.SensorParameters sensors_parameters = 3;
+  repeated .SabCommonProto.SensorParameters sensors_parameters = 3;
   int32 frame_index = 4;
-}
-
-message RadarPedData {
-  double time_stamp = 1;
-  int32 ped_result = 2;
-  int32 ped_azi = 3;
-  double ped_xm_low = 4;
-  double ped_xm_up = 5;
 }
 

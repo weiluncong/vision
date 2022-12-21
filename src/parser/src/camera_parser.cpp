@@ -44,7 +44,6 @@ void CameraParser::ParseCamera(const QString &package_msg_name, const std::strin
     }
     else if (vision_data_flag)
     {
-        QTime timest = QTime::currentTime();
         if (!image_265_frames_.decode_frame((uint8_t *)data.data(), data.size()))
         {
             qDebug() << "frame decode H265 fail, check video is double fc or not";
@@ -63,7 +62,6 @@ void CameraParser::ParseCamera(const QString &package_msg_name, const std::strin
             auto name = package_msg_name + "~" + QString::number(i);
             data_center_->InsertValue(name, time, vision_image);
             ParseFinished("cvision", time);
-            qDebug() << timest.msecsTo(QTime::currentTime());
         }
     }
 }
