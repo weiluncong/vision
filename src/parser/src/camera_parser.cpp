@@ -3,12 +3,13 @@
 
 CameraParser::CameraParser()
 {
-    decoder_ = new cav::CH265Decoder();
+
+    decoder_had_init_ = false;
 }
 
 CameraParser::~CameraParser()
 {
-    SAFE_DELETE(decoder_);
+    SafeClear(decoder_vec_);
 }
 
 void CameraParser::ParseCamera(const QString &package_msg_name, const std::string &data, double time)
@@ -43,34 +44,59 @@ void CameraParser::ParseCamera(const QString &package_msg_name, const std::strin
     }
     else if (vision_data_flag)
     {
-        int head_size = sizeof(int32_t) + sizeof(int64_t);
-        CImageData vision_image;
-        vision_image.img_.resize(data.size() - head_size);
-        memcpy(vision_image.img_.data(), (char *)(data.data() + head_size), data.size() - head_size);
+        QTime timest = QTime::currentTime();
+        if (!image_265_frames_.decode_frame((uint8_t *)data.data(), data.size()))
+        {
+            qDebug() << "frame decode H265 fail, check video is double fc or not";
+            return;
+        }
+        if (!decoder_had_init_)
+        {
+            DecoderInitail();
+            decoder_had_init_ = true;
+        }
+        for (int i = 0; i < image_265_frames_.frame_count(); i++)
+        {
+            CImageData vision_image;
+            CapilotImageFrame frame = image_265_frames_.get_frame(i);
+            ParserH265Image((const uint8_t *)frame.image_data(), frame.image_size(), i, vision_image);
+            auto name = package_msg_name + "~" + QString::number(i);
+            data_center_->InsertValue(name, time, vision_image);
+            ParseFinished("cvision", time);
+            qDebug() << timest.msecsTo(QTime::currentTime());
+        }
+    }
+}
 
-        // int type = (vision_image.img_[4] & 0x7e) >> 1;
-        // if (type > 0 && type < 9)
-        // {
-        //     vision_image.type_ = cav::CH265Type::KeyP;
-        //     p_num_++;
-        // }
-        // else if (type == 32)
-        // {
-        //     vision_image.type_ = cav::CH265Type::KeyI;
-        //     frame_id_++;
-        //     p_num_ = 0;
-        // }
-        // vision_image.frame_id_ = frame_id_;
-        // vision_image.p_num_ = p_num_;
-        // if (vision_image.p_num_ > 29)
-        //     return;
-        // cv::Mat src = decoder_->Decode(const_cast<uint8_t *>(vision_image.img_.data()), vision_image.img_.size());
-        // if (src.empty())
-        //     return;
-        // vision_image.img_.clear();
-        // cv::imencode(".jpg", src, vision_image.img_, {cv::IMWRITE_JPEG_QUALITY, 30});
+void CameraParser::ParserH265Image(const uint8_t *data, int size, int num, CImageData &vision_image)
+{
+    int type = (data[4] & 0x7e) >> 1;
+    if (type > 0 && type < 9)
+    {
+        vision_image.type_ = cav::CH265Type::KeyP;
+        frame_id_[num].second++;
+    }
+    else if (type == 32)
+    {
+        vision_image.type_ = cav::CH265Type::KeyI;
+        frame_id_[num].first++;
+        frame_id_[num].second = 0;
+    }
+    vision_image.frame_id_ = frame_id_[num].first;
+    vision_image.p_num_ = frame_id_[num].second;
+    if (vision_image.p_num_ > 29)
+        return;
+    cv::Mat src = decoder_vec_.at(num)->Decode(const_cast<uint8_t *>(data), size);
+    if (src.empty())
+        return;
+    cv::imencode(".jpg", src, vision_image.img_, {cv::IMWRITE_JPEG_QUALITY, 30});
+}
 
-        data_center_->InsertValue(package_msg_name, time, vision_image);
-        ParseFinished("cvision", time);
+void CameraParser::DecoderInitail()
+{
+    for (int i = 0; i < image_265_frames_.frame_count(); i++)
+    {
+        CH265Decoder *decoder = new cav::CH265Decoder();
+        decoder_vec_.push_back(decoder);
     }
 }

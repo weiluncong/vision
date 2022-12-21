@@ -28,7 +28,6 @@ void CGraphicWidget::InitGraphic()
     main_layout_->setContentsMargins(0, 0, 0, 0);
     graphic_splitter_ = new QSplitter(Qt::Horizontal);
 
-
     signal_list_widget_ = new QListWidget(); /// init signal ListWidget to show signal info(include color and value)
     signal_list_widget_->setFrameShape(QListWidget::NoFrame);
     signal_list_widget_->setStyleSheet("QListWidget#signal_list_widget_{background-color:transparent}");
@@ -41,12 +40,11 @@ void CGraphicWidget::InitGraphic()
     connect(signal_list_widget_, &QListWidget::itemDoubleClicked, this, &CGraphicWidget::ChangeSeriesColor);
 
     threshold_setting_window_ = new QWidget();
-    threshold_setting_window_->setFixedSize(200,60);
+    threshold_setting_window_->setFixedSize(200, 60);
     QHBoxLayout *set_layout = new QHBoxLayout(threshold_setting_window_);
-    threshold_box = new QDoubleSpinBox();//ThresholdSettingFinished
+    threshold_box = new QDoubleSpinBox(); // ThresholdSettingFinished
     connect(threshold_box, &QDoubleSpinBox::editingFinished, this, &CGraphicWidget::ThresholdSettingFinished);
     set_layout->addWidget(threshold_box);
-
 
     signal_list_widget_menu_ = new QMenu(this);
     CreateActions();
@@ -83,12 +81,11 @@ void CGraphicWidget::CreateActions()
     });
 
     chart_window_switch_ = new QAction(tr("HideChartWindow"), this);
-    connect(chart_window_switch_, &QAction::triggered,this, &CGraphicWidget::HideOrShowChartWindow);
+    connect(chart_window_switch_, &QAction::triggered, this, &CGraphicWidget::HideOrShowChartWindow);
 
     threshold_setting_ = new QAction(tr("ThresholdSetting"), this);
 
-    connect(threshold_setting_, &QAction::triggered,this, &CGraphicWidget::ThresholdSetting);
-
+    connect(threshold_setting_, &QAction::triggered, this, &CGraphicWidget::ThresholdSetting);
 
     signal_list_widget_menu_->addAction(act_delete_item_);
     signal_list_widget_menu_->addSeparator();
@@ -104,7 +101,6 @@ void CGraphicWidget::CreateActions()
     signal_list_widget_menu_->addSeparator();
     signal_list_widget_menu_->addAction(threshold_setting_);
 }
-
 
 /** @brief 当添加信号曲线时响应，添加信号曲线及时间戳*/
 void CGraphicWidget::AddSignals(const QString &name)
@@ -182,7 +178,7 @@ void CGraphicWidget::AddListWidgetItem(const QString &name, const QLineSeries *l
     signalSplitter->addWidget(signal.signalVal);
     signal_list_widget_->addItem(item);
     signal_list_widget_->setItemWidget(item, signalSplitter);
-    //用作后面的记忆功能模块
+    // 用作后面的记忆功能模块
     item->setData(Qt::UserRole, line->objectName());
 }
 /** @brief 当signal被点击时，更改chart坐标轴为当前信号变量的值范围*/
@@ -322,7 +318,6 @@ void CGraphicWidget::ChangeGraphicModel(bool status)
 /** @brief 当有游标线的时候，移动游标线，更新其信号数据*/
 void CGraphicWidget::AppendCurrentPoint(QString name, double value, double time)
 {
-
     if (signal_names_.indexOf(name) == -1)
         return;
     for (auto rowId : series_map_.keys())
@@ -334,7 +329,7 @@ void CGraphicWidget::AppendCurrentPoint(QString name, double value, double time)
             pointF.setY(value);
             row_time_val_map_[rowId][time] = value;
             UpdateSeries(name, pointF, rowId);
-            if(FLAGS_v_online)
+            if (FLAGS_v_online)
                 UpdataListData(rowId, pointF.y());
         }
     }
@@ -343,7 +338,8 @@ void CGraphicWidget::AppendCurrentPoint(QString name, double value, double time)
 /** @brief 更新显示的曲线，以移动坐标轴的方式  **/
 void CGraphicWidget::UpdateSeries(const QString &name, QPointF pointF, const int &rowId)
 {
-    if (series_map_.contains(rowId)) {
+    if (series_map_.contains(rowId))
+    {
         QList<QPointF> oldPointF;
         oldPointF = series_map_[rowId].series->points();
         if (FLAGS_v_online && oldPointF.size() > 220)
@@ -366,7 +362,7 @@ void CGraphicWidget::ChangeChartAxisX(const double &time)
     {
         max_axis_x_ = time + 3;
         chart_->axisX()->setRange(time - 4, max_axis_x_);
-        QValueAxis *factor_axisX = static_cast<QValueAxis *>(chart_ ->axes(Qt::Horizontal)[0]);
+        QValueAxis *factor_axisX = static_cast<QValueAxis *>(chart_->axes(Qt::Horizontal)[0]);
     }
 }
 
@@ -378,7 +374,7 @@ void CGraphicWidget::ChangeChartAxisY(const QString &name, const double &value, 
         series_map_[rowId].axisY->setRange(value, series_map_[rowId].yMax);
         series_map_[rowId].yMin = value;
     }
-    else if(series_map_[rowId].yMax < value)
+    else if (series_map_[rowId].yMax < value)
     {
         series_map_[rowId].axisY->setRange(series_map_[rowId].yMin, value);
         series_map_[rowId].yMax = value;
@@ -393,9 +389,9 @@ void CGraphicWidget::UpdataListData(int row, double value)
         auto currentWidget = signal_list_widget_->itemWidget(signal_list_widget_->item(row));
         currentWidget->findChildren<QLabel *>()[0]->setText(QString::number(value, 10, 9));
         QLabel *valueLable = currentWidget->findChildren<QLabel *>()[0];
-        if(FLAGS_v_online && threshold_value_map_.contains(valueLable->text()))
+        if (FLAGS_v_online && threshold_value_map_.contains(valueLable->text()))
         {
-            if( threshold_value_map_[valueLable->text()] < value)
+            if (threshold_value_map_[valueLable->text()] < value)
             {
                 valueLable->setStyleSheet("QLabel{background-color:rgb(255,0,0);}");
             }
@@ -443,7 +439,6 @@ void CGraphicWidget::SetItemChecked(QListWidgetItem *item, int is_checked)
         check_box->setChecked(!check_box->isChecked());
 }
 
-
 void CGraphicWidget::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event);
@@ -453,7 +448,7 @@ void CGraphicWidget::closeEvent(QCloseEvent *event)
 void CGraphicWidget::ThresholdSettingFinished()
 {
     double value = threshold_box->value();
-    if(value != 0)
+    if (value != 0)
     {
         threshold_value_map_.insert(threshold_setting_window_->windowTitle(), value);
         signal_list_widget_->currentItem()->setToolTip(QString::number(value));
@@ -463,7 +458,7 @@ void CGraphicWidget::ThresholdSettingFinished()
 
 void CGraphicWidget::HideOrShowChartWindow()
 {
-    if(chart_view_cursor_->isVisible())
+    if (chart_view_cursor_->isVisible())
     {
         chart_view_cursor_->setVisible(false);
         chart_window_switch_->setText(tr("ShowChartWindow"));
@@ -477,10 +472,10 @@ void CGraphicWidget::HideOrShowChartWindow()
 
 void CGraphicWidget::ThresholdSetting()
 {
-    if(!FLAGS_v_online)
+    if (!FLAGS_v_online)
         return;
-    QList<QListWidgetItem*> select_items = signal_list_widget_->selectedItems();
-    if(select_items.count() == 1)
+    QList<QListWidgetItem *> select_items = signal_list_widget_->selectedItems();
+    if (select_items.count() == 1)
     {
         QListWidgetItem *item = select_items[0];
         auto currentWidget = signal_list_widget_->itemWidget(item);

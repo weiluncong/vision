@@ -8,6 +8,7 @@ help_str="
         -h, --help:             打印帮助信息
         -d, --del:              删除lock.ini,tool_config.json文件
         -v, --version:          查看软件版本
+	-t, --test:		调试软件
 "
 
 # -q:禁止getopt输出错误报告 -o:定义短选项 -l:定义长选项
@@ -64,7 +65,8 @@ lib_path_list="${lib_root_path}
 			${lib_root_path}/python3.7m/lib
 			${lib_root_path}/capilot/lib
 			${lib_root_path}/ffmpeg
-			${lib_root_path}/DDS/lib"
+			${lib_root_path}/DDS/lib
+			${lib_root_path}/CAN/lib"
 
 for lib_path in $lib_path_list
 do

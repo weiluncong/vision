@@ -64,11 +64,22 @@ private:
      */
     void ParseVisionSemantic(const QString &msg_name, const google::protobuf::Message &msg, double time);
 
+    /**
+     * @brief 解析视觉语义分割信号，用于解析单帧语义分割图像
+     */
+    void ParseOneFrameSemantic(CapilotParsingFrame &vision_decode, int id);
+
+
+
 protected:
     cav::CRLECompressedImage *rle_decode_;
-    cav::CapilotParsingFrame *vision_decode_;
+    cav::CapilotMultiParsingFrame vision_decoders_;
+    QString name_;
+    double timestamp_;
+    bool first_get_semantic_ = true;
+    // cav::CapilotParsingFrame *vision_decode_;
 
-    int full_num_ = 0;
+    QMap<int ,int> full_num_; //key is fc_id
     bool online_parsing_img_flag = true; //抽帧
 };
 

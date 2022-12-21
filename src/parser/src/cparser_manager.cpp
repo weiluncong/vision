@@ -8,10 +8,10 @@ CParserManager::CParserManager(QObject *parent)
     signal_manager_ = CSignalManager::GetCSignalManager();
 
     signal_parser_ = QStringList({"adas_udp_receiver-adasmap_diagnosis.AdasMapDiagnosisInfo",
-                      "adas_udp_receiver-adasmap_diagnosis.AdasMapHeartBeats",
-                      "aeb_com-AebProto.AebResult",
-                      "aeb_com-AebProto.AebTriggerAndDiagnostic",
-                      "capilot-ProcessStatus-adas_udp_receiver"});
+                                  "adas_udp_receiver-adasmap_diagnosis.AdasMapHeartBeats",
+                                  "aeb_com-AebProto.AebResult",
+                                  "aeb_com-AebProto.AebTriggerAndDiagnostic",
+                                  "capilot-ProcessStatus-adas_udp_receiver"});
 
     InitParseFunc();
 }
@@ -138,11 +138,10 @@ void CParserManager::HandleMetaData(double timestamp, const QString &topic_name,
                                                  TOSTR(package_msg_name), data, time));
     }
     else if (topic_name.contains("_usb") || topic_name.contains("-usb") ||
-            topic_name.contains("RawData-fc") || topic_name.contains("RawData_fc") ||
-            topic_name.contains("RawImage-fc"))
+             topic_name.contains("RawData-fc") || topic_name.contains("RawData_fc") ||
+             topic_name.contains("RawImage-fc"))
     {
         camera_parser_->ParseCamera(topic_name, data, time);
-        return;
     }
     else
         RecodeMsgAndGetSignals(topic_name, TOSTR(package_msg_name), data, time);
@@ -180,7 +179,7 @@ void CParserManager::ParseMessage(const std::string &topic_name, const std::stri
 }
 
 void CParserManager::ParseStruct(const std::string &topic_name, const std::string &package_msg_name,
-                                  const std::string &data, double time)
+                                 const std::string &data, double time)
 {
     if (parse_struct_functions_.keys().contains(TOQSTR(package_msg_name)))
     {
@@ -219,10 +218,10 @@ void CParserManager::RecodeMsgAndGetSignals(const QString &topic_name, const std
         return;
     if (FLAGS_v_online)
     {
-        //parser online signal
-        for(auto siganl_name : on_signal_parser_list_)
+        // parser online signal
+        for (auto siganl_name : on_signal_parser_list_)
         {
-            if(siganl_name.contains(topic_name))
+            if (siganl_name.contains(topic_name))
             {
                 swc_parser_->ParseOnlineSwcData(*msg, siganl_name, time);
             }
@@ -230,11 +229,11 @@ void CParserManager::RecodeMsgAndGetSignals(const QString &topic_name, const std
     }
     else
     {
-        //recode off msg data
+        // recode off msg data
         data_center_->InsertValue(topic_name, time, msg);
     }
 
-    //get all signals
+    // get all signals
     if (!msg_parsed_.contains(topic_name))
     {
         bool flag = false;

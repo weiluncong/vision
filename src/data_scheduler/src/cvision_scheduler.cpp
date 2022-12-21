@@ -16,7 +16,7 @@ void CVisionScheduler::SyncData(double timestamp)
     auto obj_data_ptr = data_center_->GetDataPtr<QVector<cav::CObjBoxCV>>();
     for (auto camera : camera_widget_vec_)
     {
-        if (obj_data_ptr)   //update obj
+        if (obj_data_ptr) // update obj
         {
             for (auto name : obj_data_ptr->Keys())
             {
@@ -32,9 +32,11 @@ void CVisionScheduler::SyncData(double timestamp)
 
         if (img_data_ptr)
         {
-            //update semantic
+            // update semantic
             for (auto name : img_data_ptr->Keys())
             {
+                if (!name.contains(QString::number(camera->id_)))
+                    continue;
                 cav::CImageData img_data = data_center_->GetValue<cav::CImageData>(name, time);
                 if (img_data.img_.empty())
                     continue;
@@ -49,7 +51,7 @@ void CVisionScheduler::SyncData(double timestamp)
             //update img
             if (img_data_ptr->Keys().contains(camera->Name()))
             {
-                QString time_str = QDateTime::fromMSecsSinceEpoch(time * 1000).toString("yyyy-MM-dd hh:mm:ss.zzz");
+                QString time_str = QDateTime::fromMSecsSinceEpoch((time + data_center_->data_start_time_) * 1000).toString("yyyy-MM-dd hh:mm:ss.zzz");
                 camera->UpdateView(time_str, time);
             }
         }

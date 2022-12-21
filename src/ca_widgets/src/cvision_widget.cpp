@@ -4,7 +4,8 @@ CVisionCameraWidget::CVisionCameraWidget(QWidget *parent)
     : QWidget(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
-    setMaximumSize(3840, 2160);
+    setMinimumSize(300, 200);
+    setMaximumSize(800, 600);
     InitUi();
 }
 
@@ -58,11 +59,11 @@ void CVisionCameraWidget::InitUi()
     widget_layout->setContentsMargins(0, 0, 0, 0);
 
     semantic_show_ = false;
-    act_semantic_ = new QAction("全局语义分割",this);
+    act_semantic_ = new QAction("全局语义分割", this);
     act_semantic_->setIcon(QIcon(":/icon/Semantic_.png"));
     act_semantic_->setText(tr("show Semantic"));
     connect(act_semantic_, &QAction::triggered, this,
-         &CVisionCameraWidget::HandleSemanticActionChanged);
+            &CVisionCameraWidget::HandleSemanticActionChanged);
 
     lane_line_show_ = false;
     act_lane_line_ = new QAction("车道线显示", this);
@@ -89,7 +90,7 @@ void CVisionCameraWidget::InitUi()
     vision_tool_->addAction(act_lane_line_);
     vision_tool_->addAction(act_obj_boundingbox_);
     vision_tool_->addSeparator();
-	vision_tool_->addAction(act_semantic_);
+    vision_tool_->addAction(act_semantic_);
     vision_tool_->addAction(act_lane_semantic_);
 
     camera_ = new CCamera(this);
@@ -113,15 +114,15 @@ void CVisionCameraWidget::UpdateView(const QString &time_str, double time)
     else if (name_.contains("Struct.RawImage-fc"))
         img = raw_data_.img_;
 
-    //视频数据预处理
+    // 视频数据预处理
     if (img.empty())
         return;
 
-    //记录当前帧所有输入数据
+    // 记录当前帧所有输入数据
     last_time_str_ = time_str;
     last_time_ = time;
     last_mat_data_ = cv::imdecode(img, cv::IMREAD_COLOR);
-    //数据分模块更新
+    // 数据分模块更新
     if (semantic_show_ && !semantic_data_.img_.empty())
     {
         UpdateSemantic(last_mat_data_, semantic_data_.img_);
@@ -134,14 +135,14 @@ void CVisionCameraWidget::UpdateView(const QString &time_str, double time)
     {
         UpdateObjectBox(last_mat_data_, object_data_);
     }
-    if (lane_line_show_)
-    {
-        UpdateLinePoints(last_mat_data_, lane_cv_blocks_);
-    }
-    
+    // if (lane_line_show_)
+    // {
+    //     UpdateLinePoints(last_mat_data_, lane_cv_blocks_);
+    // }
+
     camera_->UpdateView(last_mat_data_, time_str, time);
 
-    //当前模式判断
+    // 当前模式判断
     if (!FLAGS_v_online)
     {
         slider_->setValue((int)(time * 100));
@@ -166,7 +167,7 @@ void CVisionCameraWidget::HandleSemanticActionChanged()
         act_semantic_->setIcon(QIcon(":/icon/Semantic_.png"));
         act_semantic_->setText(tr("hide Semantic"));
     }
-	semantic_show_ = !semantic_show_;
+    semantic_show_ = !semantic_show_;
     UpdateView(last_time_str_, last_time_);
 }
 
@@ -188,12 +189,10 @@ void CVisionCameraWidget::HandleLaneSemanticActionChanged()
     {
         act_lane_semantic_->setIcon(QIcon(":/icon/LaneSemantic_.png"));
         act_lane_semantic_->setText(tr("hide laneSemantic"));
-
     }
-	lane_semantic_show_ = !lane_semantic_show_;
+    lane_semantic_show_ = !lane_semantic_show_;
     UpdateView(last_time_str_, last_time_);
 }
-
 
 void CVisionCameraWidget::HandleObjectBoxActionChanged()
 {
@@ -207,7 +206,7 @@ void CVisionCameraWidget::HandleObjectBoxActionChanged()
         act_obj_boundingbox_->setIcon(QIcon(":/icon/VisionObject_.png"));
         act_obj_boundingbox_->setText(tr("hide VisionObject"));
     }
-	obj_boundingbox_show_ = !obj_boundingbox_show_;
+    obj_boundingbox_show_ = !obj_boundingbox_show_;
     UpdateView(last_time_str_, last_time_);
 }
 
@@ -229,20 +228,21 @@ void CVisionCameraWidget::HandleLaneLineActionChanged()
 
 void CVisionCameraWidget::UpdateSemantic(cv::Mat &img, std::vector<unsigned char> &img_data)
 {
-    cv::Mat sematic = cv::imdecode(img_data, cv::IMREAD_COLOR);;
-    if (sematic.empty())    return;
+    cv::Mat sematic = cv::imdecode(img_data, cv::IMREAD_COLOR);   
+    if (sematic.empty())
+        return;
     cv::resize(img, img, cv::Size(480, 270));
     cv::Mat roi = img(cv::Rect(0, 0, 480, 256));
-    cv::addWeighted(sematic, 1, roi, 0.8 ,0,roi);
+    cv::addWeighted(sematic, 1, roi, 0.8, 0, roi);
 }
 
 void CVisionCameraWidget::UpdateObjectBox(cv::Mat &img, QVector<cav::CObjBoxCV> &blocks)
 {
-    cv::resize(img,img,cv::Size(3840,2160));
+    cv::resize(img, img, cv::Size(3840, 2160));
     for (auto obj : blocks)
     {
         cv::rectangle(img, cv::Point(obj.top_left_.x_, obj.top_left_.y_),
-                      cv::Point(obj.bottom_right_.x_, obj.bottom_right_.y_), 
+                      cv::Point(obj.bottom_right_.x_, obj.bottom_right_.y_),
                       cv::Scalar(0, 0, 255), 3, cv::LINE_4, 0);
     }
 }

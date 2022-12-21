@@ -31,10 +31,17 @@ public:
     CVisionCameraWidget(QWidget *parent = nullptr);
     ~CVisionCameraWidget();
 
+    int id_;    //current frame_id
+
     QString Name() const { return name_; }
     void SetName(const QString &name)
     {
         name_ = name;
+        QStringList name_value = name_.split("~");
+        if (name_value.size() < 2)
+            id_ = 0;
+        else
+            id_ = name_value.last().toInt(); 
         setWindowTitle(name_);
         UpdateView(last_time_str_, last_time_);
     }
@@ -87,21 +94,13 @@ public:
         object_data_ = object_data;
     }
 
-    /**
-     * @brief 更新当前视图车道线点集坐标数据
-     */
-    void SetLaneCVView(const QVector<cav::CSDALineCVBlocks> &lane_cv_blocks)
-    {
-        lane_cv_blocks_ = lane_cv_blocks;
-    }
-
-    /**
-     * @brief 更新当前视图车道线RLE数据
-     */
-    void SetLaneRleView(const QVector<cav::CSDALineRleBlocks> &lane_rle_blocks)
-    {
-        lane_rle_blocks_ = lane_rle_blocks;
-    }
+    // /**
+    //  * @brief 更新当前视图车道线点集坐标数据
+    //  */
+    // void SetLaneCVView(int id, const QVector<cav::CSDALineCVBlocks> &lane_cv_blocks)
+    // {
+    //     lane_cv_blocks_[id] = lane_cv_blocks;
+    // }
 
 private slots:
     void HandleActAddCamera();
@@ -189,14 +188,13 @@ private:
     bool obj_boundingbox_show_ = false;
     bool lane_line_show_ = false;
 
-
     cav::CImageData raw_data_; //原始视频数据
     cav::CImageData semantic_data_;  //全局语义分割数据
     cav::CImageData lane_semantic_data_; //车道线语义分割数据
     QVector<cav::CObjBoxCV> object_data_; //视觉目标数据
 
-    QVector<cav::CSDALineCVBlocks> lane_cv_blocks_;
-    QVector<cav::CSDALineRleBlocks> lane_rle_blocks_;
+    // QVector<cav::CSDALineCVBlocks> lane_cv_blocks_;
+    // QVector<cav::CSDALineRleBlocks> lane_rle_blocks_;
 
     QMenu *camera_menu_ = nullptr;
     QString name_;

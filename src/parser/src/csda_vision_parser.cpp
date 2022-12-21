@@ -3,14 +3,11 @@
 CSdaVisionParser::CSdaVisionParser()
 {
     rle_decode_ = new cav::CRLECompressedImage();
-    vision_decode_ = new cav::CapilotParsingFrame();
-    full_num_ = 0;
 }
 
 CSdaVisionParser::~CSdaVisionParser()
 {
     SAFE_DELETE(rle_decode_);
-    SAFE_DELETE(vision_decode_);
 }
 
 void CSdaVisionParser::ParseSemantic(const QString &package_msg_name, const std::string &data, double time)
@@ -23,40 +20,58 @@ void CSdaVisionParser::ParseSemantic(const QString &package_msg_name, const std:
     {
         return;
     }
-    if (!vision_decode_->decode_frame((uint8_t *)data.data(), data.size()))
+    if (!vision_decoders_.decode_frame((uint8_t *)data.data(), data.size()))
     {
         qDebug() << "pasingImage raw_data pasing error!";
         return;
     }
+    name_ = package_msg_name;
+    timestamp_ = time;
+    if (first_get_semantic_)
+    {
+        first_get_semantic_ = false;
+        for (int i ; i < vision_decoders_.frame_count(); i++)
+            full_num_[i] = 0;
+    }
+    for (int i =0; i < vision_decoders_.frame_count(); i++)
+    {
+        
+        CapilotParsingFrame frame_decoder = vision_decoders_.get_frame(i);
+        full_num_[i]++;
+        ParseOneFrameSemantic(frame_decoder, i);
+    }
+}
 
+void CSdaVisionParser::ParseOneFrameSemantic(CapilotParsingFrame &vision_decode, int id)
+{
     std::vector<uchar> sematic_data, lane_semantic_data;
     int length = IMAGE_SIZE;
     sematic_data.resize(length);
     lane_semantic_data.resize(length);
-    full_num_++;
+    
 
     std::thread *t1 = nullptr;
-    if (vision_decode_->parsing_size() > 0)
+    if (vision_decode.parsing_size() > 0)
     {
-        if (!rle_decode_->Decompress((const uint8_t *)vision_decode_->parsing_data(),
-                                     vision_decode_->parsing_size(),
+        if (!rle_decode_->Decompress((const uint8_t *)vision_decode.parsing_data(),
+                                     vision_decode.parsing_size(),
                                      sematic_data.data(), length))
         {
-            QString name = package_msg_name + "_panorama_semantic";
-            t1 = new std::thread(&CSdaVisionParser::RLEDecode, this, std::ref(sematic_data), name, time, full_num_);
+            QString name = name_ + "_panorama_semantic~" + QString::number(id);
+            t1 = new std::thread(&CSdaVisionParser::RLEDecode, this, std::ref(sematic_data), name, timestamp_, full_num_[id]);
         }
         else
             qDebug() << "pasingImage sematic_data pasing error!";
     }
 
-    if (vision_decode_->lane_parsing_size() > 0)
+    if (vision_decode.lane_parsing_size() > 0)
     {
-        if (!rle_decode_->Decompress((const uint8_t *)vision_decode_->lane_parsing_data(),
-                                     vision_decode_->lane_parsing_size(),
+        if (!rle_decode_->Decompress((const uint8_t *)vision_decode.lane_parsing_data(),
+                                     vision_decode.lane_parsing_size(),
                                      lane_semantic_data.data(), length))
         {
-            QString name = package_msg_name + "_lane_semantic";
-            RLEDecode(lane_semantic_data, name, time, full_num_);
+            QString name = name_ + "_lane_semantic~" + QString::number(id);
+            RLEDecode(lane_semantic_data, name, timestamp_, full_num_[id]);
         }
         else
             qDebug() << "pasingImage lane_semantic_image pasing error!";
@@ -67,6 +82,7 @@ void CSdaVisionParser::ParseSemantic(const QString &package_msg_name, const std:
         delete (t1);
     }
 }
+
 
 void CSdaVisionParser::RLEDecode(const std::vector<uchar> &data, const QString &name, double time, int id)
 {
