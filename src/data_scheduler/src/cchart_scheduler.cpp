@@ -18,12 +18,8 @@ void CChartScheduler::SyncData(double timestamp)
 
         for (auto topic_name : char_data_map->Keys())
         {
-            QMap<double, double> time_value = data_center_->GetMapValue<double>(topic_name);
-            if (!time_value.isEmpty())
-            {
-                QString name_value = topic_name + "#" + time_value[timestamp];
-                emit sendChartNameData(topic_name, time_value[timestamp], timestamp);
-            }
+            double value = data_center_->GetValue<double>(topic_name, timestamp);
+            emit sendChartNameData(topic_name, value, timestamp);
         }
     }
     else
@@ -58,20 +54,21 @@ void CChartScheduler::AddParserSignals(const QString &add_signal)
         {
             for (auto time : off_parser_result_map_[add_signal].keys())
             {
-                // 组装发送数据
                 emit sendChartNameData(add_signal, off_parser_result_map_[add_signal][time], time);
             }
         }
-        else
+        else // 解析新增未解析的信号
         {
-            QMap<double, google::protobuf::Message *> time_msg_map = data_center_->GetMapValue<google::protobuf::Message *>(add_signal.section("~", 0, 0));
+            auto msg_data = data_center_->GetDataPtr<google::protobuf::Message *>();
+            if (!msg_data || msg_data->IsEmpty())
+                return;
+
+            QMap<double, google::protobuf::Message *> time_msg_map = msg_data->Value(add_signal.section("~", 0, 0));
             for (auto time : time_msg_map.keys())
             {
-                // 解析离线新增未解析的信号
                 QStringList topic_names = add_signal.split("~");
                 topic_names.removeFirst();
                 swc_parser_.ParseOfflineSwcData(*time_msg_map[time], topic_names, time, off_parser_result_map_[add_signal]);
-                // 组装发送数据
                 emit sendChartNameData(add_signal, off_parser_result_map_[add_signal][time], time);
             }
         }

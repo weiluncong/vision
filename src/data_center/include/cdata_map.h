@@ -46,16 +46,6 @@ public:
         return T();
     }
 
-    const QMap<double, T> Pop(const QString &key)
-    {
-        if (map_.contains(key))
-        {
-            return map_.take(key);
-        }
-
-        return QMap<double, T>();
-    }
-
     void Clear() { SafeClear(map_); }
 
     void Clear(const QString &key) { SafeClear(map_[key]); }

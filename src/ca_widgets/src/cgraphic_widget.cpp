@@ -322,17 +322,16 @@ void CGraphicWidget::AppendCurrentPoint(QString name, double value, double time)
 {
     if (signal_names_.indexOf(name) == -1)
         return;
-    for (auto rowId : series_map_.keys())
+    for (auto row_id : series_map_.keys())
     {
-        if (series_map_[rowId].series->objectName() == name)
+        if (series_map_[row_id].series->objectName() == name)
         {
-            QPointF pointF;
-            pointF.setX(time);
-            pointF.setY(value);
-            row_time_val_map_[rowId][time] = value;
-            UpdateSeries(name, pointF, rowId);
+            row_time_val_map_[row_id][time] = value;
+            QPointF pointF(time, value);
+            UpdateSeries(name, pointF, row_id);
             if (FLAGS_v_online)
-                UpdataListData(rowId, pointF.y());
+                UpdataListData(row_id, pointF.y());
+            break;
         }
     }
 }

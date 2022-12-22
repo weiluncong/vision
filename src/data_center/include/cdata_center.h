@@ -44,29 +44,6 @@ public:
     void InsertRecordData(double timestamp, const std::string &data);
     std::multimap<double, std::string> GetRecordData(bool remove);
 
-    
-    template <class T>
-    QMap<double, T> GetMapValue(const QString &topic_name)
-    {
-        QString class_name = TOQSTR(typeid(T).name());
-        CDataMap<T> *map_ptr = static_cast<CDataMap<T> *>(data_ptr_map_[class_name]);
-        if (!map_ptr)
-        {
-            return QMap<double, T>();
-        }
-        else
-        {
-            if (FLAGS_v_online)
-            {
-                return map_ptr->Pop(topic_name);
-            }
-            else
-            {
-                return map_ptr->Value(topic_name);
-            }
-        }
-    }
-
     template <class T>
     void ClearValue(const QString &topic_name)
     {
