@@ -2,7 +2,7 @@
 
 CProtoPool *CProtoPool::proto_pool_ = GetCProtoPool();
 
-//第二次 映射，将框架proto加入impoter中
+// 第二次 映射，将框架proto加入impoter中
 void CProtoPool::LoadProtoContent(const std::string &content)
 {
     if (content.empty())
@@ -36,6 +36,8 @@ void CProtoPool::LoadProtoContent(const std::string &content)
         ofs << proto_it->second;
         ofs.close();
     }
+    pcontent.push_back("lat_control.proto");
+    pcontent.push_back("lon_control.proto");
 
     google::protobuf::compiler::DiskSourceTree source_tree;
     source_tree.MapPath("", "./dbc/proto/");

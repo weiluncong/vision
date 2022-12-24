@@ -59,6 +59,28 @@ message AebResult {
   bool eba_request = 49;
   bool hba_request = 50;
   bool aeb_controlmode = 51;
+  uint32 aeb_status = 52;
+  uint32 reb_status = 53;
+  uint32 aeb_targetcrltype = 54;
+  uint32 fctb_active = 55;
+  uint32 rctb_active = 56;
+  bool aeb_active = 57;
+  bool reb_active = 58;
+  uint32 rcw_status = 59;
+  uint32 fcw_status = 60;
+  uint32 fcta_warning = 61;
+  uint32 rcta_warning = 62;
+  bool fcw_warning = 63;
+  bool rcw_warning = 64;
+  uint32 laeb_flag = 65;
+  bool laeb_active_out = 66;
+  uint32 fcw_hustatus = 67;
+  uint32 fcw_husensitiveset = 68;
+  uint32 aeb_hustatus = 69;
+  uint32 reb_hustatus = 70;
+  uint32 rcw_hustatus = 71;
+  bool emergency_lighting_request = 72;
+  uint32 aba_level = 73;
 }
 
 message AebTriggerAndDiagnostic {

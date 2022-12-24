@@ -5,7 +5,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 4)
-set(VERSION_PATCH 1)
+set(VERSION_PATCH 2)
 
 string(TIMESTAMP COMPILE_TIME %m-%d_%H-%M) # 月日时分: %m%d%H%M
 
