@@ -65,7 +65,7 @@ private:
                        size_t &batch, std::string &msg_data);
     /** @brief 数据记录*/
     void RecordData(const std::string &topic_name, double timestamp, const std::string &msg_data);
-    double timestamp_gap_ = 0;
+
     /** @brief usb摄像头数据接收*/
     void ReceiveCameraData();
     bool CreateCameraCapture();
@@ -97,6 +97,7 @@ private:
     dds_entity_t participant_ = 0;
     const dds_domainid_t domain_id_ = 0;
     QMap<QString, QString> dds_topic_map_ = {
+        /// 毫米波雷达
         {"sab____RadarProto__RadarDetections____fr", ""},
         {"sab____RadarProto__RadarFreeSpace____fr", ""},
         {"sab____RadarProto__RadarObjects____fr", ""},
@@ -106,8 +107,12 @@ private:
         {"sab____RadarProto__RadarObjects____rcr", ""},
         {"sab____RadarProto__RadarFreeSpace____rcr", ""},
         {"sab____RadarProto__RadarDetections____rcr", ""},
-        {"lidar_service____Struct__string____left", ""},
-        {"lidar_service____Struct__string____right", ""},
+
+        /// 激光雷达
+        {"sab____Struct__Lidar____left", ""},
+        {"sab____Struct__Lidar____right", ""},
+
+        /// 本车服务
         {"sab____BusepsProto__BusEpsMotionInfo", ""},
         {"sab____BusepsProto__BusEpsSts", ""},
         {"sab____BusespProto__BusEspFbSts", ""},
@@ -158,12 +163,19 @@ private:
         {"sab____TboxProto__BusTboxTime", ""},
         {"sab____VcuProto__BusVcuSwitchSts", ""},
         {"sab____BusbcmProto__BusBcmTPMS", ""},
-        {"C2_SEND_PB_TOPIC", ""}};
+
+        /// 域控数据
+        {"C2_SEND_PB_TOPIC", ""}
+
+        };
 
     /** @brief can相关变量*/
     DEVICE_HANDLE h_Dev_;
     std::string can_topic_name_;
     uint zcan_type_ = 0;
+
+   double zmq_timestamp_gap_ = 0;
+   double sab_timesstamp_gap_ = 0;
 };
 
 #endif // CRECEIVE_H

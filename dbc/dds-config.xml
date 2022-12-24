@@ -4,7 +4,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/iceoryx/etc/cyclonedds.xsd">
 <Domain id="any">
         <General>
-            <NetworkInterfaceAddress>192.168.209.137</NetworkInterfaceAddress>
+            <NetworkInterfaceAddress>192.168.5.115</NetworkInterfaceAddress>
             <AllowMulticast>true</AllowMulticast>
             <MaxMessageSize>65500B</MaxMessageSize>
 			<FragmentSize>4000B</FragmentSize>

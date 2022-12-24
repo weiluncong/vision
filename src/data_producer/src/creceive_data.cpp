@@ -37,7 +37,7 @@ void CReceiveData::InitReceive()
         DeliverData();
         break;
     case 1:
-        // ReceiveDDSData(dds_topic_map_.keys());
+        ReceiveDDSData(dds_topic_map_.keys());
         ReceiveData(FLAGS_v_data_address_soc1, FLAGS_v_proto_address_soc1);
         // ReceiveCanData(ZCAN_CANFDNET_400U_TCP, 4, "400", "192.168.0.179");
         // ReceiveCanData(ZCAN_CANFDDTU_CASCADE_TCP, 10, "600", "192.168.0.178");
@@ -45,6 +45,7 @@ void CReceiveData::InitReceive()
         DeliverData();
         break;
     case 2:
+        ReceiveDDSData(dds_topic_map_.keys());
         ReceiveData(FLAGS_v_data_address_soc1, FLAGS_v_proto_address_soc1);
         ReceiveData(FLAGS_v_data_address_soc2, FLAGS_v_proto_address_soc2);
         DeliverData();
@@ -88,6 +89,12 @@ void CReceiveData::ReceiveData(const std::string &data_address, const std::strin
                                 double timestamp;
                                 std::istringstream is(msg.to_string());
                                 is >> timestamp;
+
+                                /// 时间同步
+                                if (zmq_timestamp_gap_ == 0)
+                                    zmq_timestamp_gap_ = KTime().getTime() - timestamp;
+                                timestamp += zmq_timestamp_gap_;
+
                                 size_t batch = 1;
                                 // std::cout << "origin: " << topic_name << "----" << std::fixed << timestamp << std::endl;
                                 socket->recv(msg);
@@ -162,9 +169,6 @@ void CReceiveData::SplitRecvData(const char *data, size_t size,
     // }
     /// get timestamp
     memcpy(&timestamp, &data[kTopicNameMaxLen], kTimestampLen);
-    if (timestamp_gap_ == 0)
-        timestamp_gap_ = KTime().getTime() - timestamp;
-    timestamp += timestamp_gap_;
     /// get batch
     memcpy(&batch, &data[kTopicNameMaxLen + kTimestampLen], kBatchLen);
     /// get msg data
@@ -417,6 +421,17 @@ void CReceiveData::DDSMsgToString(DDSData_Msg *msg)
     memset(topic_name, 0, kTopicNameMaxLen);
     QString temp_topic = ConvertDDSTopic(msg->topic);
     memcpy(&topic_name, TOSTR(temp_topic).data(), temp_topic.size());
+
+    /// 时间进行处理 MCU 直接当前时间， sba进行时间同步
+    if(temp_topic.contains("sab"))
+    {
+        if(sab_timesstamp_gap_ == 0)
+            sab_timesstamp_gap_ = KTime().getTime() - msg->timestamp;
+
+        msg->timestamp += sab_timesstamp_gap_;
+    } else {
+        msg->timestamp = KTime().getTime();
+    }
 
     memcpy(&desc_data[0], &topic_name, kTopicNameMaxLen);
     memcpy(&desc_data[kTopicNameMaxLen], &msg->timestamp, kTimestampLen);
